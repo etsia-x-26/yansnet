@@ -166,6 +166,159 @@ flutter gen-l10n --arb-dir="lib/l10n/arb"
 
 Alternatively, run `flutter run` and code generation will take place automatically.
 
+---
+
+## Contributing 🤝
+
+Nous accueillons les contributions ! Voici comment participer au projet :
+
+### Git Flow Simple
+
+1. **Fork** le projet sur GitHub
+2. **Clone** votre fork localement :
+   ```sh
+   git clone https://github.com/votre-username/yansnet.git
+   cd yansnet
+   ```
+
+3. **Créer une branche** pour votre feature :
+   ```sh
+   git checkout -b feature/nom-de-votre-feature
+   ```
+
+4. **Développer** votre feature :
+   - Écrivez votre code
+   - Ajoutez des tests si nécessaire
+   - Vérifiez que tous les tests passent :
+     ```sh
+     flutter test --coverage --test-randomize-ordering-seed random
+     ```
+
+5. **Commit** vos changements :
+   ```sh
+   git add .
+   git commit -m "feat: description claire de votre feature"
+   ```
+
+6. **Push** votre branche :
+   ```sh
+   git push origin feature/nom-de-votre-feature
+   ```
+
+7. **Créer une Pull Request** depuis GitHub
+
+### Conventions de Commit
+
+Utilisez des messages de commit clairs et descriptifs :
+- `feat: nouvelle fonctionnalité`
+- `fix: correction de bug`
+- `docs: modification de documentation`
+- `style: formatage, point-virgule manquants, etc.`
+- `refactor: refactorisation du code`
+- `test: ajout ou modification de tests`
+- `chore: tâches de maintenance`
+
+### Avant de Soumettre
+
+- [ ] Vérifiez que votre code compile sans erreur
+- [ ] Lancez les tests et assurez-vous qu'ils passent
+- [ ] Respectez le style de code existant
+- [ ] Ajoutez des tests pour les nouvelles fonctionnalités
+- [ ] Mettez à jour la documentation si nécessaire
+
+### Développement Local
+
+1. Installez les dépendances :
+   ```sh
+   flutter pub get
+   ```
+
+2. Lancez l'application en mode développement :
+   ```sh
+   flutter run --flavor development --target lib/main_development.dart
+   ```
+
+3. Exécutez les tests :
+   ```sh
+   flutter test
+   ```
+
+### Architecture et Structure des Features
+
+Ce projet suit une architecture modulaire avec une structure spécifique pour chaque feature. Utilisez toujours la structure template située dans `/lib/template/` comme référence.
+
+#### Structure d'une Feature
+
+Chaque nouvelle feature doit respecter cette architecture :
+
+```
+lib/
+├── feature_name/
+│   ├── api/
+│   │   └── feature_client.dart       # Client API pour la feature
+│   ├── cubit/
+│   │   └── feature_cubit.dart        # Gestion d'état avec Cubit
+│   ├── models/
+│   │   └── feature_model.dart        # Modèles de données
+│   ├── views/
+│   │   └── feature_page.dart         # Page principale de la feature
+│   ├── widgets/
+│   │   └── feature_widget.dart       # Widgets spécifiques à la feature
+│   └── feature.dart                  # Barrel file pour les exports
+```
+
+#### Étapes pour Créer une Nouvelle Feature
+
+1. **Créer la structure de dossiers** :
+   ```sh
+   mkdir -p lib/ma_feature/{api,cubit,models,views,widgets}
+   ```
+
+2. **Créer les fichiers de base** en utilisant le template comme référence :
+   - `lib/ma_feature/api/ma_feature_client.dart`
+   - `lib/ma_feature/cubit/ma_feature_cubit.dart`
+   - `lib/ma_feature/models/ma_feature_model.dart`
+   - `lib/ma_feature/views/ma_feature_page.dart`
+   - `lib/ma_feature/widgets/ma_feature_widget.dart`
+   - `lib/ma_feature/ma_feature.dart` (barrel file)
+
+3. **Conventions de nommage** :
+   - Utilisez `snake_case` pour les noms de fichiers
+   - Utilisez `PascalCase` pour les noms de classes
+   - Préfixez les classes avec le nom de la feature (ex: `UserProfileCubit`)
+
+4. **Implémentation** :
+   - **API Layer** : Créez les clients API avec Dio
+   - **Cubit** : Gérez l'état avec Bloc/Cubit
+   - **Models** : Définissez les modèles de données avec JSON serialization
+   - **Views** : Créez les pages avec BlocProvider
+   - **Widgets** : Composants réutilisables spécifiques à la feature
+
+5. **Tests** :
+   ```sh
+   mkdir -p test/ma_feature/{cubit,view}
+   ```
+   - Créez les tests unitaires pour chaque couche
+   - Utilisez `bloc_test` pour tester les Cubits
+   - Utilisez `mocktail` pour les mocks
+
+#### Exemple de Barrel File
+
+```dart
+// lib/ma_feature/ma_feature.dart
+export 'api/ma_feature_client.dart';
+export 'cubit/ma_feature_cubit.dart';
+export 'models/ma_feature_model.dart';
+export 'views/ma_feature_page.dart';
+export 'widgets/ma_feature_widget.dart';
+```
+
+#### Intégration dans l'App
+
+1. Ajoutez le BlocProvider dans votre routing
+2. Exportez la feature dans le barrel file principal si nécessaire
+3. Ajoutez les dépendances d'injection si utilisées
+
 [coverage_badge]: coverage_badge.svg
 [flutter_localizations_link]: https://api.flutter.dev/flutter/flutter_localizations/flutter_localizations-library.html
 [internationalization_link]: https://flutter.dev/docs/development/accessibility-and-localization/internationalization
