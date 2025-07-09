@@ -319,6 +319,182 @@ export 'widgets/ma_feature_widget.dart';
 2. Exportez la feature dans le barrel file principal si nécessaire
 3. Ajoutez les dépendances d'injection si utilisées
 
+---
+
+## Développement Interface (UI/UX) 🎨
+
+### Workflow pour les Développeurs d'Interface
+
+Pour travailler sur les interfaces sans affecter la codebase principale :
+
+#### 1. Créer une Branche Dédiée
+```sh
+git checkout -b ui/nom-de-votre-interface
+```
+
+#### 2. Développer dans la Structure Existante
+
+**Créer votre feature** en suivant la structure template :
+```sh
+mkdir -p lib/ma_feature_ui/{views,widgets}
+```
+
+**Structure recommandée** :
+```
+lib/
+├── ma_feature_ui/
+│   ├── views/
+│   │   └── ma_feature_page.dart         # Page complète
+│   ├── widgets/
+│   │   └── ma_feature_widget.dart       # Composants UI
+│   └── ma_feature_ui.dart               # Export des composants
+```
+
+#### 3. Tester Vos Pages
+
+**Ajouter votre page au router** temporairement :
+
+Dans `lib/app/router/app_router.dart`, ajoutez votre route :
+```dart
+GoRoute(
+  name: "ma_feature_demo",
+  path: "/ma_feature_demo",
+  builder: (ctx, state) => const MaFeaturePage()
+)
+```
+
+Dans `lib/app/router/routes.dart`, ajoutez la route :
+```dart
+static const String maFeatureDemoRoute = '/ma_feature_demo';
+```
+
+**Naviguer vers votre page** :
+```dart
+// Dans votre code ou via URL
+context.go('/ma_feature_demo');
+```
+
+#### 4. Environnement de Test
+
+**Lancer en mode développement** :
+```sh
+flutter run --flavor development --target lib/main_development.dart
+```
+
+**Utiliser le Hot Reload** :
+- Sauvegardez pour déclencher auto-reload
+- Tapez `r` dans le terminal pour reload
+- Tapez `R` pour restart complet
+
+#### 5. Données de Test
+
+**Créer des données mockées** dans vos widgets :
+```dart
+class MaFeaturePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    // Données de test directement dans le widget
+    final mockData = [
+      {'title': 'Test 1', 'description': 'Description test'},
+      {'title': 'Test 2', 'description': 'Description test'},
+    ];
+    
+    return Scaffold(
+      appBar: AppBar(title: Text('Ma Feature')),
+      body: ListView.builder(
+        itemCount: mockData.length,
+        itemBuilder: (context, index) {
+          return ListTile(
+            title: Text(mockData[index]['title']!),
+            subtitle: Text(mockData[index]['description']!),
+          );
+        },
+      ),
+    );
+  }
+}
+```
+
+#### 6. Éviter les Conflits
+
+**Ne modifiez PAS** :
+- `pubspec.yaml` (sauf accord préalable)
+- `main_*.dart` (points d'entrée)
+- Fichiers dans `lib/core/` (logique métier)
+- Fichiers API existants
+
+**Modifiez UNIQUEMENT** :
+- Vos fichiers dans `lib/votre_feature_ui/`
+- Temporairement `app_router.dart` pour vos tests
+- Fichiers de style si nécessaire
+
+#### 7. Tests Interface
+
+```sh
+# Tester vos widgets
+flutter test test/ui/
+```
+
+**Créer des tests simples** :
+```dart
+// test/ui/ma_feature_test.dart
+testWidgets('Ma feature page affiche le titre', (tester) async {
+  await tester.pumpWidget(
+    MaterialApp(home: MaFeaturePage()),
+  );
+  
+  expect(find.text('Ma Feature'), findsOneWidget);
+});
+```
+
+#### 8. Avant de Soumettre
+
+**Nettoyer vos modifications** :
+- Retirez vos routes temporaires du router
+- Gardez seulement vos fichiers UI
+- Testez que l'app fonctionne toujours
+
+**Checklist** :
+- [ ] App compile sans erreur
+- [ ] Vos pages s'affichent correctement
+- [ ] Testé sur iOS et Android
+- [ ] Testé en mode clair/sombre
+- [ ] Aucune modification de la logique métier
+- [ ] Routes temporaires supprimées
+
+#### 9. Structure de Commit
+
+```sh
+# Commits avec préfixe ui:
+git add lib/ma_feature_ui/
+git commit -m "ui: création page ma feature"
+
+git add test/ui/ma_feature_test.dart
+git commit -m "ui: ajout tests pour ma feature"
+```
+
+#### 10. Pull Request
+
+**Créer la PR** avec :
+- Screenshots de vos interfaces
+- Description des composants créés
+- Instructions pour tester vos pages
+
+**Dans la description** :
+```markdown
+## Interface Ajoutée
+- Page: MaFeaturePage
+- Composants: MaFeatureWidget
+
+## Comment tester
+1. Ajouter temporairement la route dans app_router.dart
+2. Naviguer vers /ma_feature_demo
+3. Tester les interactions
+
+## Screenshots
+[Ajouter vos captures d'écran]
+```
+
 [coverage_badge]: coverage_badge.svg
 [flutter_localizations_link]: https://api.flutter.dev/flutter/flutter_localizations/flutter_localizations-library.html
 [internationalization_link]: https://flutter.dev/docs/development/accessibility-and-localization/internationalization

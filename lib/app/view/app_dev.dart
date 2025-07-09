@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:yansnet/app/router/app_router.dart';
-import 'package:yansnet/counter/counter.dart';
 import 'package:yansnet/l10n/l10n.dart';
 
 class AppDev extends StatelessWidget {
