@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:yansnet/app/router/app_router.dart';
 import 'package:yansnet/counter/counter.dart';
 import 'package:yansnet/l10n/l10n.dart';
 
@@ -7,7 +8,9 @@ class AppDev extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    final router = AppRouter.createRouter();
+    return MaterialApp.router(
+      title: 'Yansnet Dev',
       theme: ThemeData(
         appBarTheme: AppBarTheme(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
@@ -16,7 +19,7 @@ class AppDev extends StatelessWidget {
       ),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const CounterPage(),
+      routerConfig: router,
     );
   }
 }
