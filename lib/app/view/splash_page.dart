@@ -26,16 +26,16 @@ class _SplashPageState extends State<SplashPage> {
 
 
         //TODO (camcoder): fetch user informations
-        unawaited(
-          context.pushNamed("home"),
-        );
+        // unawaited(
+        //   context.pushNamed("home"),
+        // );
 
 
       } catch(e){
         debugPrint('Some splash initiations failed');
-        unawaited(
-          context.pushNamed("home"),
-        );
+        // unawaited(
+        //   context.pushNamed("home"),
+        // );
       }
     });
   }
