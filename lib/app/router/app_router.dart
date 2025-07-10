@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:yansnet/app/app.dart';
 import 'package:yansnet/app/router/routes.dart';
 import 'package:yansnet/app/view/app_nav_page.dart';
-import 'package:yansnet/counter/view/counter_page.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
