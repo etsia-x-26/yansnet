@@ -1,15 +1,16 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+
+// Routes
 import 'package:yansnet/app/router/routes.dart';
-import 'package:yansnet/app/view/app_nav_page.dart';
-import 'package:yansnet/app/view/splash_page.dart';
+
+import 'package:yansnet/counter/view/counter_page.dart';
 import 'package:yansnet/conversation/views/messages_list_page.dart';
 import 'package:yansnet/conversation/views/chat_conversation_page.dart';
 import 'package:yansnet/conversation/views/group_chat_page.dart';
 import 'package:yansnet/conversation/views/group_info_page.dart';
 import 'package:yansnet/conversation/views/messages_empty_page.dart';
 import 'package:yansnet/conversation/views/messages_no_connection_page.dart';
-import 'package:yansnet/counter/view/counter_page.dart'; // Facultatif si tu l’utilises
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -20,19 +21,17 @@ class AppRouter {
       debugLogDiagnostics: true,
       initialLocation: '/group/X2026/info',
       redirect: (context, state) {
-        return null; // Ajoute ici la redirection après login si besoin
+        // TODO: implement redirection through authentication status
+        return null;
       },
       routes: [
         GoRoute(
           name: "home",
           path: AppRoutes.homeRoute,
-          builder: (ctx, state) => const AppNavigationPage(),
+          builder: (ctx, state) => const CounterPage(),
         ),
-        GoRoute(
-          name: "splash",
-          path: AppRoutes.splashRoute,
-          builder: (ctx, state) => const SplashPage(),
-        ),
+
+        // Messages routes
         GoRoute(
           name: "messages_list",
           path: "/messages",
@@ -46,18 +45,17 @@ class AppRouter {
             GoRoute(
               name: "connection_error",
               path: "error",
-              builder: (ctx, state) => const MessagesNoConnectionPage(),
+              builder: (ctx, state) => MessagesNoConnectionPage(),
             ),
           ],
         ),
+
+        // Chat routes
         GoRoute(
           name: "chat_conversation",
           path: "/chat/:userName",
           builder: (ctx, state) {
-            final userName = state.pathParameters['userName'];
-            if (userName == null) {
-              return const Scaffold(body: Center(child: Text('Invalid user')));
-            }
+            final userName = state.pathParameters['userName'] ?? 'Utilisateur';
             return ChatConversationPage(
               userName: userName,
               userAvatar: 'https://i.pravatar.cc/150?img=1',
@@ -65,14 +63,13 @@ class AppRouter {
             );
           },
         ),
+
+        // Group routes
         GoRoute(
           name: "group_chat",
           path: "/group/:groupName",
           builder: (ctx, state) {
-            final groupName = state.pathParameters['groupName'];
-            if (groupName == null) {
-              return const Scaffold(body: Center(child: Text('Invalid group')));
-            }
+            final groupName = state.pathParameters['groupName'] ?? 'Groupe';
             return GroupChatPage(
               groupName: groupName,
               groupAvatar: 'https://i.pravatar.cc/150?img=10',
@@ -84,10 +81,7 @@ class AppRouter {
               name: "group_info",
               path: "info",
               builder: (ctx, state) {
-                final groupName = state.pathParameters['groupName'];
-                if (groupName == null) {
-                  return const Scaffold(body: Center(child: Text('Invalid group')));
-                }
+                final groupName = state.pathParameters['groupName'] ?? 'Groupe';
                 return GroupInfoPage(
                   groupName: groupName,
                   groupAvatar: 'https://i.pravatar.cc/150?img=10',
@@ -98,9 +92,6 @@ class AppRouter {
           ],
         ),
       ],
-      errorBuilder: (context, state) => Scaffold(
-        body: Center(child: Text('Page not found: ${state.error}')),
-      ),
     );
   }
 }
