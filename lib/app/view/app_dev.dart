@@ -14,6 +14,7 @@ class AppDev extends StatelessWidget {
       designSize: const Size(393, 852),
       minTextAdapt: true,
       child: MaterialApp.router(
+        debugShowCheckedModeBanner: false,
         title: 'Yansnet Dev',
         theme: AppTheme.getLightTheme(),
         themeMode: ThemeMode.light,
