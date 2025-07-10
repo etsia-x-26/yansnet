@@ -20,6 +20,8 @@ dependencies:
   iconsax_flutter: ^1.0.1
   shared_preferences: ^2.5.3
   intl: ^0.20.2
+  font_awesome_flutter: ^10.6.0
+
 
 dev_dependencies:
   bloc_test: ^10.0.0
@@ -35,3 +37,5 @@ flutter:
     - assets/images/
     - assets/icons/
     - shorebird.yaml
+    - assets/images/Empty-bro 1.png
+    - assets/images/wifi_off.png

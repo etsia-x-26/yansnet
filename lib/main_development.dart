@@ -4,3 +4,4 @@ import 'package:yansnet/bootstrap.dart';
 void main() {
   bootstrap(() => const AppDev());
 }
+
