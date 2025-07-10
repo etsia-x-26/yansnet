@@ -3,6 +3,7 @@ import 'package:yansnet/app/view/not_available_page.dart';
 import 'package:yansnet/app/view/splash_page.dart';
 import 'package:yansnet/app/widgets/yansnet_nav_bar.dart';
 import 'package:yansnet/counter/view/counter_page.dart';
+import 'package:yansnet/profile/view/sheet_parametre_profile.dart';
 
 class ApppNavigationPage extends StatefulWidget {
   const ApppNavigationPage({super.key});
@@ -18,7 +19,7 @@ class _ApppNavigationPageState extends State<ApppNavigationPage> {
     const SplashPage(),
     const NotAvailablePage(pageName: 'Explore',),
     const NotAvailablePage(pageName: 'MarketPlace',),
-    const NotAvailablePage(pageName: 'Profile',),
+    const SettingsSheetPage(),
   ];
 
   @override

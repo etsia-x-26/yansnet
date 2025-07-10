@@ -4,6 +4,7 @@ import 'package:yansnet/app/app.dart';
 import 'package:yansnet/app/router/routes.dart';
 import 'package:yansnet/app/view/app_nav_page.dart';
 import 'package:yansnet/counter/view/counter_page.dart';
+import 'package:yansnet/profile/view/sheet_parametre_profile.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -29,6 +30,11 @@ class AppRouter {
           name: "splash",
           path: AppRoutes.splashRoute,
           builder: (ctx, state) => const SplashPage()
+        ),
+        GoRoute(
+            name: "settings",
+            path: AppRoutes.settingsSheetRoute,
+            builder: (ctx, state) => const SettingsSheetPage()
         )
       ]
     );
