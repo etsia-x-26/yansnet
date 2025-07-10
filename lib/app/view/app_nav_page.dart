@@ -3,6 +3,7 @@ import 'package:yansnet/app/view/not_available_page.dart';
 import 'package:yansnet/app/view/splash_page.dart';
 import 'package:yansnet/app/widgets/yansnet_nav_bar.dart';
 import 'package:yansnet/counter/view/counter_page.dart';
+import 'package:yansnet/publication/views/explore_page.dart';
 
 class ApppNavigationPage extends StatefulWidget {
   const ApppNavigationPage({super.key});
@@ -16,7 +17,7 @@ class _ApppNavigationPageState extends State<ApppNavigationPage> {
 
   final List<Widget> _pages = [
     const SplashPage(),
-    const NotAvailablePage(pageName: 'Explore',),
+    const ExplorePage(),
     const NotAvailablePage(pageName: 'MarketPlace',),
     const NotAvailablePage(pageName: 'Profile',),
   ];

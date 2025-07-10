@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yansnet/app/theme/app_theme.dart';
+import 'package:yansnet/publication/widgets/custom_appbar.dart';
 
 class NotAvailablePage extends StatelessWidget {
   const NotAvailablePage({required this.pageName, super.key});
@@ -10,25 +11,45 @@ class NotAvailablePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(8),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              '$pageName is not avaible yet',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                  fontSize: 28.spMax,
-                  fontWeight: FontWeight.w400,
-                  color: kPrimaryColor, // Couleur sombre du logo
-                  letterSpacing: 0.5,
-                  fontFamily: GoogleFonts.jua().fontFamily
+      appBar: const CustomAppBar(
+        messageCount: 3,
+        hasNotification: true,
+      ),
+      body: Stack(
+        children: [
+          Positioned(
+            top: 300,
+            left: 58,
+            right: 58,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Image.asset(
+                    'assets/images/no_page.png',
+                    width: 75,
+                    height: 75,
+                  ),
+                  const SizedBox(height: 10,),
+                  Text(
+                    "Cette page n’est pas encore disponible",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.aBeeZee(
+                      fontSize: 20,
+                      color: const Color(0xFF999999),
+                    ),
+                  ),
+                ],
               ),
-            )
-          ],
-        ),
+            ),
+          ),
+
+          // FloatingAddButton(
+          //   onPressed: () {
+          //     print('Ajout de contenu');
+          //   },
+          // ),
+        ],
       ),
     );
   }
