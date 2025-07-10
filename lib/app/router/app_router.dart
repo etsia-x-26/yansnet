@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yansnet/app/router/routes.dart';
+import 'package:yansnet/app/view/app_nav_page.dart';
+import 'package:yansnet/app/view/splash_page.dart';
 import 'package:yansnet/conversation/views/messages_list_page.dart';
 import 'package:yansnet/conversation/views/chat_conversation_page.dart';
 import 'package:yansnet/conversation/views/group_chat_page.dart';
 import 'package:yansnet/conversation/views/group_info_page.dart';
 import 'package:yansnet/conversation/views/messages_empty_page.dart';
 import 'package:yansnet/conversation/views/messages_no_connection_page.dart';
-import 'package:yansnet/app/view/app_nav_page.dart';
-import 'package:yansnet/app/view/splash_page.dart';
+import 'package:yansnet/counter/view/counter_page.dart'; // Facultatif si tu l’utilises
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -19,8 +20,7 @@ class AppRouter {
       debugLogDiagnostics: true,
       initialLocation: '/group/X2026/info',
       redirect: (context, state) {
-        // TODO: Handle auth redirection
-        return null;
+        return null; // Ajoute ici la redirection après login si besoin
       },
       routes: [
         GoRoute(
