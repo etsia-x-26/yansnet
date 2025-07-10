@@ -4,8 +4,8 @@ import 'package:yansnet/app/app.dart';
 import 'package:yansnet/app/router/routes.dart';
 import 'package:yansnet/app/view/app_nav_page.dart';
 import 'package:yansnet/counter/view/counter_page.dart';
-import 'package:yansnet/feat_publication/views/create_post_page.dart';
-import 'package:yansnet/feat_publication/views/home.dart';
+import 'package:yansnet/publication/views/create_post_page.dart';
+import 'package:yansnet/publication/views/home.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();

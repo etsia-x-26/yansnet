@@ -3,7 +3,7 @@ import 'package:yansnet/app/view/not_available_page.dart';
 import 'package:yansnet/app/view/splash_page.dart';
 import 'package:yansnet/app/widgets/yansnet_nav_bar.dart';
 import 'package:yansnet/counter/view/counter_page.dart';
-import 'package:yansnet/feat_publication/views/home.dart';
+import 'package:yansnet/publication/views/home.dart';
 
 class ApppNavigationPage extends StatefulWidget {
   const ApppNavigationPage({super.key});

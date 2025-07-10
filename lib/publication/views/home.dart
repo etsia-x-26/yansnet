@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:yansnet/feat_publication/widgets/add_button.dart';
+import 'package:yansnet/publication/widgets/add_button.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
