@@ -1,5 +1,7 @@
+import 'package:flutter/material.dart'; // Added for Scaffold
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
+import 'package:yansnet/app/app.dart';
 import 'package:yansnet/app/router/routes.dart';
 import 'package:yansnet/counter/view/counter_page.dart';
 import 'package:yansnet/conversation/views/messages_list_page.dart';
@@ -8,6 +10,8 @@ import 'package:yansnet/conversation/views/group_chat_page.dart';
 import 'package:yansnet/conversation/views/group_info_page.dart';
 import 'package:yansnet/conversation/views/messages_empty_page.dart';
 import 'package:yansnet/conversation/views/messages_no_connection_page.dart';
+// Temporarily commented due to URI error
+// import 'package:yansnet/app/view/app_nav_page.dart'; // Check and correct path
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -15,20 +19,37 @@ class AppRouter {
   static GoRouter createRouter() {
     return GoRouter(
       navigatorKey: _rootNavigatorKey,
-      debugLogDiagnostics: true,
+      debugLogDiagnostics: true, // Set to false in production
       initialLocation: '/group/X2026/info',
       redirect: (context, state) {
-        // TODO: implement redirection through authentication status
+        // TODO: Implement redirection through authentication status
+        // Example: return !isAuthenticated ? '/login' : null;
         return null;
       },
       routes: [
+        // Home route from master (placeholder until AppNavigationPage is confirmed)
         GoRoute(
           name: "home",
           path: AppRoutes.homeRoute,
-          builder: (ctx, state) => const CounterPage(),
+          builder: (ctx, state) {
+            // Placeholder until correct class is available
+            return const Center(child: Text('Home Page'));
+            // Uncomment and correct once AppNavigationPage is defined
+            // return const AppNavigationPage(); // Correct typo if needed
+          },
         ),
-
-        // Messages routes
+        // Splash route from master (placeholder until SplashPage is defined)
+        GoRoute(
+          name: "splash",
+          path: AppRoutes.splashRoute,
+          builder: (ctx, state) {
+            // Placeholder until correct class is available
+            return const Center(child: Text('Splash Page'));
+            // Uncomment and correct once SplashPage is defined
+            // return const SplashPage();
+          },
+        ),
+        // Messages routes from feature/conversation
         GoRoute(
           name: "messages_list",
           path: "/messages",
@@ -46,13 +67,15 @@ class AppRouter {
             ),
           ],
         ),
-
-        // Chat routes
+        // Chat routes from feature/conversation
         GoRoute(
           name: "chat_conversation",
           path: "/chat/:userName",
           builder: (ctx, state) {
-            final userName = state.pathParameters['userName'] ?? 'Utilisateur';
+            final userName = state.pathParameters['userName'];
+            if (userName == null) {
+              return const Scaffold(body: Center(child: Text('Invalid user')));
+            }
             return ChatConversationPage(
               userName: userName,
               userAvatar: 'https://i.pravatar.cc/150?img=1',
@@ -60,13 +83,15 @@ class AppRouter {
             );
           },
         ),
-
-        // Group routes
+        // Group routes from feature/conversation
         GoRoute(
           name: "group_chat",
           path: "/group/:groupName",
           builder: (ctx, state) {
-            final groupName = state.pathParameters['groupName'] ?? 'Groupe';
+            final groupName = state.pathParameters['groupName'];
+            if (groupName == null) {
+              return const Scaffold(body: Center(child: Text('Invalid group')));
+            }
             return GroupChatPage(
               groupName: groupName,
               groupAvatar: 'https://i.pravatar.cc/150?img=10',
@@ -78,7 +103,10 @@ class AppRouter {
               name: "group_info",
               path: "info",
               builder: (ctx, state) {
-                final groupName = state.pathParameters['groupName'] ?? 'Groupe';
+                final groupName = state.pathParameters['groupName'];
+                if (groupName == null) {
+                  return const Scaffold(body: Center(child: Text('Invalid group')));
+                }
                 return GroupInfoPage(
                   groupName: groupName,
                   groupAvatar: 'https://i.pravatar.cc/150?img=10',
@@ -89,6 +117,9 @@ class AppRouter {
           ],
         ),
       ],
+      errorBuilder: (context, state) => Scaffold(
+        body: Center(child: Text('Page not found: ${state.error}')),
+      ),
     );
   }
 }
