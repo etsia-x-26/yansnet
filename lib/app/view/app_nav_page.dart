@@ -5,6 +5,10 @@ class AppNavigationPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text('Navigation Page')));
+    return const Scaffold(
+      body: Center(
+        child: Text('Navigation principale'),
+      ),
+    );
   }
 }

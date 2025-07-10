@@ -1,17 +1,14 @@
-import 'package:flutter/material.dart'; // Added for Scaffold
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:yansnet/app/app.dart';
 import 'package:yansnet/app/router/routes.dart';
-import 'package:yansnet/counter/view/counter_page.dart';
 import 'package:yansnet/conversation/views/messages_list_page.dart';
 import 'package:yansnet/conversation/views/chat_conversation_page.dart';
 import 'package:yansnet/conversation/views/group_chat_page.dart';
 import 'package:yansnet/conversation/views/group_info_page.dart';
 import 'package:yansnet/conversation/views/messages_empty_page.dart';
 import 'package:yansnet/conversation/views/messages_no_connection_page.dart';
-// Temporarily commented due to URI error
-// import 'package:yansnet/app/view/app_nav_page.dart'; // Check and correct path
+import 'package:yansnet/app/view/app_nav_page.dart';
+import 'package:yansnet/app/view/splash_page.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -19,37 +16,23 @@ class AppRouter {
   static GoRouter createRouter() {
     return GoRouter(
       navigatorKey: _rootNavigatorKey,
-      debugLogDiagnostics: true, // Set to false in production
+      debugLogDiagnostics: true,
       initialLocation: '/group/X2026/info',
       redirect: (context, state) {
-        // TODO: Implement redirection through authentication status
-        // Example: return !isAuthenticated ? '/login' : null;
+        // TODO: Handle auth redirection
         return null;
       },
       routes: [
-        // Home route from master (placeholder until AppNavigationPage is confirmed)
         GoRoute(
           name: "home",
           path: AppRoutes.homeRoute,
-          builder: (ctx, state) {
-            // Placeholder until correct class is available
-            return const Center(child: Text('Home Page'));
-            // Uncomment and correct once AppNavigationPage is defined
-            // return const AppNavigationPage(); // Correct typo if needed
-          },
+          builder: (ctx, state) => const AppNavigationPage(),
         ),
-        // Splash route from master (placeholder until SplashPage is defined)
         GoRoute(
           name: "splash",
           path: AppRoutes.splashRoute,
-          builder: (ctx, state) {
-            // Placeholder until correct class is available
-            return const Center(child: Text('Splash Page'));
-            // Uncomment and correct once SplashPage is defined
-            // return const SplashPage();
-          },
+          builder: (ctx, state) => const SplashPage(),
         ),
-        // Messages routes from feature/conversation
         GoRoute(
           name: "messages_list",
           path: "/messages",
@@ -63,11 +46,10 @@ class AppRouter {
             GoRoute(
               name: "connection_error",
               path: "error",
-              builder: (ctx, state) => MessagesNoConnectionPage(),
+              builder: (ctx, state) => const MessagesNoConnectionPage(),
             ),
           ],
         ),
-        // Chat routes from feature/conversation
         GoRoute(
           name: "chat_conversation",
           path: "/chat/:userName",
@@ -83,7 +65,6 @@ class AppRouter {
             );
           },
         ),
-        // Group routes from feature/conversation
         GoRoute(
           name: "group_chat",
           path: "/group/:groupName",
