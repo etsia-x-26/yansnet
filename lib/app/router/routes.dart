@@ -6,6 +6,9 @@ class AppRoutes {
   // Main Routes
   static const String homeRoute = '/home';
   static const String splashRoute = '/splash';
+  
+  //Channel Routes
+  static const String createChannel = '/channel/create';
 
   // Message Routes
   static const String messagesRoute = '/messages';
@@ -19,4 +22,5 @@ class AppRoutes {
   // Group Routes
   static const String groupChatRoute = '/group';
   static const String groupInfoRoute = '/group/:groupName/info';
+  static const String createGroup = '/group/create';
 }
