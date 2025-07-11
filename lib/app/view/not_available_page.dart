@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:yansnet/app/theme/app_theme.dart';
-import 'package:yansnet/publication/widgets/custom_appbar.dart';
+import 'package:yansnet/publication/widgets/yansnet_app_bar.dart';
 
 class NotAvailablePage extends StatelessWidget {
   const NotAvailablePage({required this.pageName, super.key});
@@ -11,7 +9,7 @@ class NotAvailablePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(
+      appBar: const YansnetAppBar(
         messageCount: 3,
         hasNotification: true,
       ),
@@ -30,7 +28,9 @@ class NotAvailablePage extends StatelessWidget {
                     width: 75,
                     height: 75,
                   ),
-                  const SizedBox(height: 10,),
+                  const SizedBox(
+                    height: 10,
+                  ),
                   Text(
                     "Cette page n’est pas encore disponible",
                     textAlign: TextAlign.center,

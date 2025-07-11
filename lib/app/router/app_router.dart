@@ -3,9 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:yansnet/app/app.dart';
 import 'package:yansnet/app/router/routes.dart';
 import 'package:yansnet/app/view/app_nav_page.dart';
-import 'package:yansnet/counter/view/counter_page.dart';
 import 'package:yansnet/publication/views/create_post_page.dart';
-import 'package:yansnet/publication/views/home.dart';
 import 'package:yansnet/conversation/views/messages_list_page.dart';
 import 'package:yansnet/conversation/views/chat_conversation_page.dart';
 import 'package:yansnet/conversation/views/group_chat_page.dart';
@@ -34,17 +32,12 @@ class AppRouter {
         GoRoute(
           name: 'splash',
           path: AppRoutes.splashRoute,
-          builder: (ctx, state) => const SplashPage()
-        ),
-        GoRoute(
-          name: 'homePage',
-          path: AppRoutes.splashRoute,
-          builder: (ctx, state) => const Home()
+          builder: (ctx, state) => const SplashPage(),
         ),
         GoRoute(
           name: 'createPostPage',
           path: AppRoutes.createPostPageRoute,
-          builder: (ctx, state) => const CreatePostPage()
+          builder: (ctx, state) => const CreatePostPage(),
         ),
 
         // Messages routes
