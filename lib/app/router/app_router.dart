@@ -4,6 +4,8 @@ import 'package:yansnet/app/app.dart';
 import 'package:yansnet/app/router/routes.dart';
 import 'package:yansnet/app/view/app_nav_page.dart';
 import 'package:yansnet/counter/view/counter_page.dart';
+import 'package:yansnet/publication/views/create_post_page.dart';
+import 'package:yansnet/publication/views/home.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -21,14 +23,24 @@ class AppRouter {
       // refreshListenable: ,
       routes: [
         GoRoute(
-          name: "home",
+          name: 'home',
           path: AppRoutes.homeRoute,
           builder: (ctx, state) => const ApppNavigationPage()
         ),
         GoRoute(
-          name: "splash",
+          name: 'splash',
           path: AppRoutes.splashRoute,
           builder: (ctx, state) => const SplashPage()
+        ),
+        GoRoute(
+          name: 'homePage',
+          path: AppRoutes.splashRoute,
+          builder: (ctx, state) => const Home()
+        ),
+        GoRoute(
+          name: 'createPostPage',
+          path: AppRoutes.createPostPageRoute,
+          builder: (ctx, state) => const CreatePostPage()
         )
       ]
     );
