@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:iconsax/iconsax.dart';
 import '../widgets/chat_header.dart';
 import '../widgets/chat_message_bubble.dart';
 import '../widgets/chat_input_field.dart';
@@ -120,7 +121,8 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
                 children: [
                   // Icône Instagram-like
                   IconButton(
-                    icon: const FaIcon(FontAwesomeIcons.instagram, size: 24, color: Colors.grey),
+                    // icon: const FaIcon(FontAwesomeIcons.instagram, size: 24, color: Colors.grey),
+                    icon: const Icon(Iconsax.instagram),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                     onPressed: () {
