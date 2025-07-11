@@ -24,7 +24,8 @@ dependencies:
   skeletonizer: ^2.1.0+1
   flutter_screenutil: ^5.9.3
   image_picker: ^1.0.7
-
+  build_runner: ^2.5.4
+  freezed: ^3.1.0
 
 dev_dependencies:
   bloc_test: ^10.0.0
@@ -40,3 +41,5 @@ flutter:
     - assets/images/
     - assets/icons/
     - shorebird.yaml
+    - assets/images/Empty-bro 1.png
+    - assets/images/wifi_off.png
