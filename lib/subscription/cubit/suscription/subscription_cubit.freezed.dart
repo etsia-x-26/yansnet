@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'profile_cubit.dart';
+part of 'subscription_cubit.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -12,7 +12,7 @@ part of 'profile_cubit.dart';
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
-mixin _$ProfileState {
+mixin _$SubscriptionState {
 
 
 
@@ -20,7 +20,7 @@ mixin _$ProfileState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileState);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SubscriptionState);
 }
 
 
@@ -29,20 +29,20 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'ProfileState()';
+  return 'SubscriptionState()';
 }
 
 
 }
 
 /// @nodoc
-class $ProfileStateCopyWith<$Res>  {
-$ProfileStateCopyWith(ProfileState _, $Res Function(ProfileState) __);
+class $SubscriptionStateCopyWith<$Res>  {
+$SubscriptionStateCopyWith(SubscriptionState _, $Res Function(SubscriptionState) __);
 }
 
 
-/// Adds pattern-matching-related methods to [ProfileState].
-extension ProfileStatePatterns on ProfileState {
+/// Adds pattern-matching-related methods to [SubscriptionState].
+extension SubscriptionStatePatterns on SubscriptionState {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -192,7 +192,7 @@ return error(_that.message);case _:
 /// @nodoc
 
 
-class _Initial implements ProfileState {
+class _Initial implements SubscriptionState {
   const _Initial();
   
 
@@ -212,7 +212,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'ProfileState.initial()';
+  return 'SubscriptionState.initial()';
 }
 
 
@@ -224,7 +224,7 @@ String toString() {
 /// @nodoc
 
 
-class _Loading implements ProfileState {
+class _Loading implements SubscriptionState {
   const _Loading();
   
 
@@ -244,7 +244,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'ProfileState.loading()';
+  return 'SubscriptionState.loading()';
 }
 
 
@@ -256,13 +256,13 @@ String toString() {
 /// @nodoc
 
 
-class _Success implements ProfileState {
+class _Success implements SubscriptionState {
   const _Success({required this.message});
   
 
  final  String message;
 
-/// Create a copy of ProfileState
+/// Create a copy of SubscriptionState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
@@ -281,14 +281,14 @@ int get hashCode => Object.hash(runtimeType,message);
 
 @override
 String toString() {
-  return 'ProfileState.success(message: $message)';
+  return 'SubscriptionState.success(message: $message)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$SuccessCopyWith<$Res> implements $ProfileStateCopyWith<$Res> {
+abstract mixin class _$SuccessCopyWith<$Res> implements $SubscriptionStateCopyWith<$Res> {
   factory _$SuccessCopyWith(_Success value, $Res Function(_Success) _then) = __$SuccessCopyWithImpl;
 @useResult
 $Res call({
@@ -307,7 +307,7 @@ class __$SuccessCopyWithImpl<$Res>
   final _Success _self;
   final $Res Function(_Success) _then;
 
-/// Create a copy of ProfileState
+/// Create a copy of SubscriptionState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
   return _then(_Success(
@@ -322,13 +322,13 @@ as String,
 /// @nodoc
 
 
-class _Error implements ProfileState {
+class _Error implements SubscriptionState {
   const _Error({required this.message});
   
 
  final  String message;
 
-/// Create a copy of ProfileState
+/// Create a copy of SubscriptionState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
@@ -347,14 +347,14 @@ int get hashCode => Object.hash(runtimeType,message);
 
 @override
 String toString() {
-  return 'ProfileState.error(message: $message)';
+  return 'SubscriptionState.error(message: $message)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class _$ErrorCopyWith<$Res> implements $ProfileStateCopyWith<$Res> {
+abstract mixin class _$ErrorCopyWith<$Res> implements $SubscriptionStateCopyWith<$Res> {
   factory _$ErrorCopyWith(_Error value, $Res Function(_Error) _then) = __$ErrorCopyWithImpl;
 @useResult
 $Res call({
@@ -373,7 +373,7 @@ class __$ErrorCopyWithImpl<$Res>
   final _Error _self;
   final $Res Function(_Error) _then;
 
-/// Create a copy of ProfileState
+/// Create a copy of SubscriptionState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
   return _then(_Error(

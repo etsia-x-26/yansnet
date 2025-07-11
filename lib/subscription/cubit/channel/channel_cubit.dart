@@ -1,18 +1,19 @@
 import 'package:bloc/bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:yansnet/subscription/api/subscription_api.dart';
+import 'package:yansnet/subscription/models/channel.dart';
 
-part 'profile_state.dart';
-part 'profile_cubit.freezed.dart';
+part 'channel_state.dart';
+part 'channel_cubit.freezed.dart';
 
-class ProfileCubit extends Cubit<ProfileState> {
+class ChannelCubit extends Cubit<ChannelState> {
   final SubscriptionAPI subscriptionAPI = SubscriptionAPI();
-  ProfileCubit() : super(const ProfileState.initial());
+  ChannelCubit() : super(const ChannelState.initial());
 
-  Future<void> getGroups() async {
+  Future<void> getChannels() async {
     try {
       print('yes ');
-      var responseEntity = await subscriptionAPI.getGroups();
+      var responseEntity = await subscriptionAPI.getChannels();
       print(responseEntity);
       /*
       if (responseEntity.success) {
@@ -32,35 +33,37 @@ class ProfileCubit extends Cubit<ProfileState> {
     }
   }
 
-  Future<void> getUsers() async {
+  Future<void> followChannels(int channelId, int followerId) async {
     try {
       print('yes ');
-      var responseEntity = await subscriptionAPI.getGroups();
-      print(responseEntity);
-      /*
-      if (responseEntity.success) {
-        List<User> users = [];
-        for (var user in responseEntity.data) {
-          users.add(User.fromJson(user));
-        }
-        emit(MailRequestState.userLoaded(users: users));
-      } else {
-        emit(const MailRequestState.error(message: 'Une erreur est survenue'));
-      }
-
-       */
-    } catch (e) {
-      //emit(const MailRequestState.error(message: 'Une erreur est survenue'));
-      print(e);
-    }
-  }
-
-  Future<void> followUsers(int followerId, int followedId) async {
-    try {
-      print('yes ');
-      var responseEntity = await subscriptionAPI.followUser(
+      var responseEntity = await subscriptionAPI.followChannel(
+        channelId,
         followerId,
-        followedId,
+      );
+      print(responseEntity);
+      /*
+      if (responseEntity.success) {
+        List<User> users = [];
+        for (var user in responseEntity.data) {
+          users.add(User.fromJson(user));
+        }
+        emit(MailRequestState.userLoaded(users: users));
+      } else {
+        emit(const MailRequestState.error(message: 'Une erreur est survenue'));
+      }
+
+       */
+    } catch (e) {
+      //emit(const MailRequestState.error(message: 'Une erreur est survenue'));
+      print(e);
+    }
+  }
+  Future<void> createChannel(String title, String description) async {
+    try {
+      print('yes ');
+      var responseEntity = await subscriptionAPI.createChannel(
+        title,
+        description,
       );
       print(responseEntity);
       /*

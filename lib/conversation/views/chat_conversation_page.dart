@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../widgets/chat_header.dart';
-import '../widgets/chat_message_bubble.dart';
-import '../widgets/chat_input_field.dart';
+import 'package:iconsax/iconsax.dart';
+//import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:yansnet/conversation/widgets/chat_header.dart';
+import 'package:yansnet/conversation/widgets/chat_input_field.dart';
+import 'package:yansnet/conversation/widgets/chat_message_bubble.dart';
 
 class ChatConversationPage extends StatefulWidget {
-  final String userName;
-  final String userAvatar;
-  final String lastSeen;
-
   const ChatConversationPage({
-    Key? key,
     required this.userName,
     required this.userAvatar,
     required this.lastSeen,
-  }) : super(key: key);
+    super.key,
+  });
+  final String userName;
+  final String userAvatar;
+  final String lastSeen;
 
   @override
   State<ChatConversationPage> createState() => _ChatConversationPageState();
@@ -102,7 +102,9 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(30),
               border: Border.all(
-                color: const Color(0xFF5D1A1A), // Couleur violet/marron de la bordure
+                color: const Color(
+                  0xFF5D1A1A,
+                ), // Couleur violet/marron de la bordure
                 width: 2, // Épaisseur de la bordure
               ),
               boxShadow: [
@@ -120,7 +122,8 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
                 children: [
                   // Icône Instagram-like
                   IconButton(
-                    icon: const FaIcon(FontAwesomeIcons.instagram, size: 24, color: Colors.grey),
+                    // icon: const FaIcon(FontAwesomeIcons.instagram, size: 24, color: Colors.grey),
+                    icon: const Icon(Iconsax.instagram),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                     onPressed: () {

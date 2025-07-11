@@ -10,6 +10,8 @@ import 'package:yansnet/conversation/views/group_chat_page.dart';
 import 'package:yansnet/conversation/views/group_info_page.dart';
 import 'package:yansnet/conversation/views/messages_empty_page.dart';
 import 'package:yansnet/conversation/views/messages_no_connection_page.dart';
+import 'package:yansnet/subscription/views/create_channel_screen.dart';
+import 'package:yansnet/subscription/views/sheet_parametre_profile.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -18,7 +20,7 @@ class AppRouter {
     return GoRouter(
       navigatorKey: _rootNavigatorKey,
       debugLogDiagnostics: true,
-      initialLocation: '/group/X2026/info',
+      initialLocation: '/home',
       redirect: (context, state) {
         // TODO: implement redirection through authentication status
         return null;
@@ -33,6 +35,17 @@ class AppRouter {
           name: "splash",
           path: AppRoutes.splashRoute,
           builder: (ctx, state) => const SplashPage()
+        ),
+
+        GoRoute(
+            name: "param",
+            path: AppRoutes.splashRoute,
+            builder: (ctx, state) => const SettingsSheetPage()
+        ),
+        GoRoute(
+            name: "channelCreate",
+            path: AppRoutes.splashRoute,
+            builder: (ctx, state) => const CreateChannelScreen()
         ),
 
         // Messages routes

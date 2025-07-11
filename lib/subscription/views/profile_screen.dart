@@ -1,5 +1,6 @@
 // lib/profile_page.dart
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:yansnet/subscription/widgets/profile_app_bar.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -73,6 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                       ),
                       // Couleur noire
                       onPressed: () {
+                        context.go('/param');
                         // Action quand on clique sur le menu
                       },
                     ),

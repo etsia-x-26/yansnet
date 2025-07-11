@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart'; // Ajoutez cette import
+import 'package:iconsax/iconsax.dart';// Ajoutez cette import
 
 class GroupInfoPage extends StatefulWidget {
   final String groupName;
@@ -149,11 +149,12 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
                 children: [
                   // Instagram-like icon
                   IconButton(
-                    icon: const FaIcon(FontAwesomeIcons.instagram, size: 24, color: Colors.grey),
+                    // icon: const FaIcon(FontAwesomeIcons.instagram, size: 24, color: Colors.grey),
+                    icon: const Icon(Iconsax.instagram),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                     onPressed: () {
-                      // Action for Instagram
+                      // Action pour Instagram
                     },
                   ),
                   const SizedBox(width: 8),
