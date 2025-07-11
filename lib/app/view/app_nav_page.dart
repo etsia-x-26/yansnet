@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:yansnet/app/view/not_available_page.dart';
 import 'package:yansnet/app/widgets/yansnet_nav_bar.dart';
 import 'package:yansnet/publication/views/explore_page.dart';
-import 'package:yansnet/publication/views/home.dart';
+import 'package:yansnet/publication/views/home_page.dart';
 
 class ApppNavigationPage extends StatefulWidget {
   const ApppNavigationPage({super.key});
@@ -15,10 +15,14 @@ class _ApppNavigationPageState extends State<ApppNavigationPage> {
   int _currentIndex = 0;
 
   final List<Widget> _pages = [
-    const Home(),
+    const HomePage(),
     const ExplorePage(),
-    const NotAvailablePage(pageName: 'MarketPlace',),
-    const NotAvailablePage(pageName: 'Profile',),
+    const NotAvailablePage(
+      pageName: 'MarketPlace',
+    ),
+    const NotAvailablePage(
+      pageName: 'Profile',
+    ),
   ];
 
   @override
@@ -34,6 +38,5 @@ class _ApppNavigationPageState extends State<ApppNavigationPage> {
         },
       ),
     );
-    ;
   }
 }
