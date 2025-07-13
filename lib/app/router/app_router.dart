@@ -20,7 +20,7 @@ class AppRouter {
     return GoRouter(
       navigatorKey: _rootNavigatorKey,
       debugLogDiagnostics: true,
-      initialLocation: '/group/X2026/info',
+      initialLocation: '/home',
       redirect: (context, state) {
         // TODO: implement redirection through authentication status
         return null;

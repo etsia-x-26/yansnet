@@ -14,13 +14,19 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool hasNotification;
 
   @override
-  Size get preferredSize => const Size.fromHeight(77);
+  Size get preferredSize => const Size.fromHeight(70);
 
   @override
   Widget build(BuildContext context) {
     return AppBar(
       backgroundColor: Colors.white.withOpacity(0.9),
-      elevation: 0,
+      forceMaterialTransparency: true,
+      bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.grey,
+            height: 1.0,
+          )),
       titleSpacing: 20,
       title: Text.rich(
         TextSpan(
