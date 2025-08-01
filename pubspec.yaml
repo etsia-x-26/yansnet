@@ -16,7 +16,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   go_router: ^16.0.0
-  google_fonts: ^6.2.1
+  google_fonts: ^6.3.0
 #  iconsax_flutter: ^1.0.1
   iconsax: ^0.0.8
   shared_preferences: ^2.5.3
