@@ -21,7 +21,7 @@ dependencies:
   iconsax: ^0.0.8
   shared_preferences: ^2.5.3
   intl: ^0.20.2
-  share_plus: ^10.0.0  # Use the latest version
+  share_plus: ^11.1.0  # Use the latest version
   skeletonizer: ^2.1.0+1
   flutter_screenutil: ^5.9.3
   image_picker: ^1.0.7
