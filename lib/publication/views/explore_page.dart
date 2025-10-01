@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../widgets/custom_search_appbar.dart';
+import 'package:yansnet/publication/widgets/custom_search_appbar.dart';
 
 
 class ExplorePage extends StatefulWidget {
@@ -149,11 +149,11 @@ class _ExplorePageState extends State<ExplorePage> {
 
             LayoutBuilder(
               builder: (context, constraints) {
-                const int itemsPerRow = 3;
+                const itemsPerRow = 3;
                 const double spacing = 8;
 
-                final double totalSpacing = spacing * (itemsPerRow - 1);
-                final double itemWidth = (constraints.maxWidth - totalSpacing) / itemsPerRow;
+                const totalSpacing = spacing * (itemsPerRow - 1);
+                final itemWidth = (constraints.maxWidth - totalSpacing) / itemsPerRow;
                 const double itemHeight = 140;
 
                 return Wrap(

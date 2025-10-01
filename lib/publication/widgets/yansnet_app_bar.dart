@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class YansnetAppBar extends StatelessWidget implements PreferredSizeWidget {
@@ -14,15 +15,14 @@ class YansnetAppBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       title: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
+        padding: const EdgeInsets.symmetric(horizontal: 24),
         child: Text(
           'YansNet',
           style: TextStyle(
             fontFamily: GoogleFonts.jua().fontFamily,
             fontStyle: FontStyle.normal,
-            fontWeight: FontWeight.w900,
+            fontWeight: FontWeight.w500,
             fontSize: 32,
-            height: 1,
             color: const Color(0xFF420C18),
           ),
         ),
@@ -32,11 +32,7 @@ class YansnetAppBar extends StatelessWidget implements PreferredSizeWidget {
           clipBehavior: Clip.none,
           children: [
             IconButton(
-              icon: const Icon(Icons.notifications_outlined),
-              style: const ButtonStyle(
-                iconColor: WidgetStatePropertyAll(Color(0xFF420C18)),
-                iconSize: WidgetStatePropertyAll(24),
-              ),
+              icon: const Icon(Icons.notifications_outlined, size: 28),
               onPressed: () {},
             ),
             if (hasNotification)
@@ -57,48 +53,39 @@ class YansnetAppBar extends StatelessWidget implements PreferredSizeWidget {
         Stack(
           clipBehavior: Clip.none,
           children: [
-            Padding(
-              padding: const EdgeInsets.only(right: 32),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  IconButton(
-                    icon: Image.asset(
-                      'assets/icons/message-circle.png',
-                      width: 21,
-                      height: 21,
-                      color: const Color(0xFF420C18),
-                    ),
-                    onPressed: () {},
-                  ),
-                  if (messageCount > 0)
-                    Positioned(
-                      right: 8,
-                      top: 8,
-                      child: Container(
-                        width: 14,
-                        height: 14,
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFB3261E),
-                          shape: BoxShape.circle,
-                        ),
-                        alignment: Alignment.center,
-                        child: Text(
-                          '$messageCount',
-                          style: GoogleFonts.alegreyaSans(
-                            fontSize: 8,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ),
-                ],
-              ),
+            IconButton(
+              icon: const Icon(Icons.chat_bubble_outline_rounded, size: 24),
+              onPressed: () {
+                context.push('/messages');
+              },
             ),
+            if (messageCount > 0)
+              Positioned(
+                right: 8,
+                top: 8,
+                child: Container(
+                  width: 14,
+                  height: 14,
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFB3261E),
+                    shape: BoxShape.circle,
+                  ),
+                  alignment: Alignment.center,
+                  child: Text(
+                    '$messageCount',
+                    style: GoogleFonts.alegreyaSans(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
       ],
+      forceMaterialTransparency: true,
+      actionsPadding: const EdgeInsets.symmetric(horizontal: 16),
     );
   }
 

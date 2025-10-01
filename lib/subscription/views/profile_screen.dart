@@ -45,8 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen>
           // Section Informations de Profil
           Padding(
             padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 0.0,
+              horizontal: 16,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,11 +88,11 @@ class _ProfileScreenState extends State<ProfileScreen>
                   style: TextStyle(fontSize: 14, color: Colors.black87),
                 ),
                 const SizedBox(height: 12),
-                Row(
+                const Row(
                   children: [
-                    const Icon(Icons.link, size: 16, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    const Text(
+                    Icon(Icons.link, size: 16, color: Colors.grey),
+                    SizedBox(width: 4),
+                    Text(
                       'pixsellz.io',
                       style: TextStyle(
                         fontSize: 14,
@@ -101,23 +100,23 @@ class _ProfileScreenState extends State<ProfileScreen>
                         decoration: TextDecoration.underline,
                       ),
                     ),
-                    const SizedBox(width: 16),
-                    const Icon(
+                    SizedBox(width: 16),
+                    Icon(
                       Icons.calendar_today,
                       size: 16,
                       color: Colors.grey,
                     ),
-                    const SizedBox(width: 4),
-                    const Text(
+                    SizedBox(width: 4),
+                    Text(
                       'Promotion X2026',
                       style: TextStyle(fontSize: 14, color: Colors.black87),
                     ),
                   ],
                 ),
                 const SizedBox(height: 16),
-                Row(
+                const Row(
                   children: [
-                    const Text(
+                    Text(
                       '217',
                       style: TextStyle(
                         fontSize: 16,
@@ -125,13 +124,13 @@ class _ProfileScreenState extends State<ProfileScreen>
                         color: Colors.black,
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    const Text(
+                    SizedBox(width: 4),
+                    Text(
                       'Following',
                       style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
-                    const SizedBox(width: 16),
-                    const Text(
+                    SizedBox(width: 16),
+                    Text(
                       '118',
                       style: TextStyle(
                         fontSize: 16,
@@ -139,8 +138,8 @@ class _ProfileScreenState extends State<ProfileScreen>
                         color: Colors.black,
                       ),
                     ),
-                    const SizedBox(width: 4),
-                    const Text(
+                    SizedBox(width: 4),
+                    Text(
                       'Followers',
                       style: TextStyle(fontSize: 16, color: Colors.grey),
                     ),
@@ -150,7 +149,7 @@ class _ProfileScreenState extends State<ProfileScreen>
             ),
           ),
           // Tab Bar
-          Container(
+          ColoredBox(
             color: Colors.white,
             child: TabBar(
               controller: _tabController,
@@ -171,12 +170,11 @@ class _ProfileScreenState extends State<ProfileScreen>
               children: [
                 const Center(child: Text('Aucune publication')),
                 GridView.builder(
-                  padding: const EdgeInsets.all(4.0),
+                  padding: const EdgeInsets.all(4),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
-                    crossAxisSpacing: 4.0,
-                    mainAxisSpacing: 4.0,
-                    childAspectRatio: 1.0,
+                    crossAxisSpacing: 4,
+                    mainAxisSpacing: 4,
                   ),
                   itemCount: assetImagePaths.length,
                   itemBuilder: (context, index) {

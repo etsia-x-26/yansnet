@@ -40,7 +40,7 @@ class _PostItemState extends State<PostItem> {
     showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
-        return CommentsModal();
+        return const CommentsModal();
       },
     );
   }
@@ -48,7 +48,7 @@ class _PostItemState extends State<PostItem> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 0),
+      padding: const EdgeInsets.only(left: 4, right: 4, top: 4),
       child: Container(
         decoration: const BoxDecoration(
           border: Border(

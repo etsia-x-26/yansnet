@@ -22,6 +22,13 @@ class CommentItem extends StatefulWidget {
 
 class _CommentItemState extends State<CommentItem> {
   bool _showReplies = false;
+  late int _likesCount;
+
+  @override
+  void initState() {
+    super.initState();
+    _likesCount = widget.likes;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,60 +36,122 @@ class _CommentItemState extends State<CommentItem> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         ListTile(
+          contentPadding: EdgeInsets.zero,
+          dense: true,
           leading: const CircleAvatar(),
+          isThreeLine: true,
           title: Text(widget.username),
-          subtitle: Text(widget.comment),
-          trailing: Flexible(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (widget.likes <= 0)
-                  IconButton(
-                    icon: const Icon(Icons.favorite_border, size: 16),
-                    padding: EdgeInsets.zero,
-                    onPressed: () {},
+          subtitle: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(widget.comment),
+              const SizedBox(height: 5),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    widget.time,
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey,
+                    ),
                   ),
-                if (widget.likes > 0)
-                  Row(
+                  const SizedBox(width: 10),
+                  const Text(
+                    'Reply',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+          trailing: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 1,
+            children: [
+              if (_likesCount <= 0)
+                SizedBox(
+                  width: 60, // Fixed width to match liked state
+                  child: IconButton(
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(
+                      maxWidth: 0,
+                      maxHeight: 20,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _likesCount++;
+                      });
+                    },
+                    icon: const Icon(
+                      Icons.favorite_border,
+                      size: 18,
+                    ),
+                  ),
+                ),
+              if (_likesCount > 0)
+                SizedBox(
+                  width: 60,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.favorite, size: 16, color: Colors.red),
-                      const SizedBox(width: 2),
-                      Text(widget.likes.toString()),
+                      IconButton(
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(
+                          maxWidth: 1,
+                          maxHeight: 20,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _likesCount--;
+                          });
+                        },
+                        icon: const Icon(
+                          Icons.favorite,
+                          size: 18,
+                          color: Colors.red,
+                        ),
+                      ),
+                      Text(
+                        _likesCount.toString(),
+                        style: const TextStyle(
+                          fontSize: 12,
+                        ),
+                      ),
                     ],
                   ),
-                Text(widget.time),
-              ],
-            ),
+                ),
+            ],
           ),
         ),
-        if (widget.hasReplies && _showReplies)
-          const Padding(
-            padding: EdgeInsets.only(left: 16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Reply'),
-                Text('View more replies', style: TextStyle(color: Colors.blue)),
-              ],
-            ),
+        if (widget.hasReplies)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  setState(() {
+                    _showReplies = !_showReplies;
+                  });
+                },
+                child: Text(
+                  _showReplies ? 'View less' : 'View more',
+                  style: const TextStyle(fontSize: 14, color: Colors.blue),
+                ),
+              ),
+            ],
           ),
-        Padding(
-          padding: const EdgeInsets.only(left: 16),
-          child: !_showReplies && widget.hasReplies
-              ? GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      _showReplies = true;
-                    });
-                  },
-                  child: const Text(
-                    'View more replies',
-                    style: TextStyle(color: Colors.blue),
-                  ),
-                )
-              : widget.hasReplies
-              ? null
-              : const Text('Reply', style: TextStyle(color: Colors.blue)),
+
+        // Horizontal divider with low opacity
+        Container(
+          height: 0.5,
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          color: const Color.fromARGB(255, 211, 211, 211),
         ),
       ],
     );

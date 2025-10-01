@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
-import '../widgets/chat_message_bubble.dart';
-import '../widgets/chat_input_field.dart';
+import 'package:yansnet/conversation/widgets/chat_input_field.dart';
 
 class GroupChatPage extends StatefulWidget {
+  const GroupChatPage({
+    required this.groupName, required this.groupAvatar, required this.memberCount, super.key,
+  });
   final String groupName;
   final String groupAvatar;
   final int memberCount;
-
-  const GroupChatPage({
-    Key? key,
-    required this.groupName,
-    required this.groupAvatar,
-    required this.memberCount,
-  }) : super(key: key);
 
   @override
   State<GroupChatPage> createState() => _GroupChatPageState();
@@ -167,29 +162,33 @@ class _GroupChatPageState extends State<GroupChatPage> {
   }
 
   Widget _buildGroupMessage(Map<String, dynamic> message) {
-    final bool isMe = message['isMe'] as bool;
-    final String sender = message['sender'] as String;
-    final String text = message['text'] as String;
+    final isMe = message['isMe'] as bool;
+    final sender = message['sender'] as String;
+    final text = message['text'] as String;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       child: Row(
-        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: isMe
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isMe) ...[
             CircleAvatar(
               radius: 16,
               backgroundColor: Colors.grey[300],
-              backgroundImage:
-              NetworkImage('https://i.pravatar.cc/150?img=${sender.hashCode % 50}'),
+              backgroundImage: NetworkImage(
+                'https://i.pravatar.cc/150?img=${sender.hashCode % 50}',
+              ),
             ),
             const SizedBox(width: 8),
           ],
           Flexible(
             child: Column(
-              crossAxisAlignment:
-              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+              crossAxisAlignment: isMe
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
               children: [
                 if (!isMe)
                   Padding(
@@ -207,14 +206,21 @@ class _GroupChatPageState extends State<GroupChatPage> {
                   constraints: BoxConstraints(
                     maxWidth: MediaQuery.of(context).size.width * 0.7,
                   ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: isMe ? const Color(0xFF5D1A1A) : Colors.grey[300],
                     borderRadius: BorderRadius.only(
                       topLeft: const Radius.circular(20),
                       topRight: const Radius.circular(20),
-                      bottomLeft: isMe ? const Radius.circular(20) : const Radius.circular(4),
-                      bottomRight: isMe ? const Radius.circular(4) : const Radius.circular(20),
+                      bottomLeft: isMe
+                          ? const Radius.circular(20)
+                          : const Radius.circular(4),
+                      bottomRight: isMe
+                          ? const Radius.circular(4)
+                          : const Radius.circular(20),
                     ),
                   ),
                   child: Text(

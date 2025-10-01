@@ -1,7 +1,5 @@
-import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:yansnet/app/widgets/splash_logo.dart';
 import 'package:yansnet/core/utils/pref_utils.dart';
 

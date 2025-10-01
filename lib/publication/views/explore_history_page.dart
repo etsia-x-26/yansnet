@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../widgets/custom_search_appbar.dart';
+import 'package:yansnet/publication/widgets/custom_search_appbar.dart';
 
 class ExploreHistoryPage extends StatefulWidget {
   const ExploreHistoryPage({super.key});
@@ -39,7 +39,6 @@ class _ExploreHistoryPageState extends State<ExploreHistoryPage> {
       appBar: CustomSearchAppBar(
         controller: _exploreController,
         onCancel: () => Navigator.of(context).pop(),
-        showCancel: true, // Assure-toi que `showCancel` est défini dans ton widget CustomSearchAppBar
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -84,7 +83,7 @@ class _ExploreHistoryPageState extends State<ExploreHistoryPage> {
                           height: 35,
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(color: const Color(0xFFC0262E), width: 1),
+                            border: Border.all(color: const Color(0xFFC0262E)),
                             color: isUser ? Colors.black : Colors.white,
                           ),
                           child: isUser

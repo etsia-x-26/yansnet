@@ -37,8 +37,8 @@ class _CreatePostPageState extends State<CreatePostPage> {
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    final ImagePicker picker = ImagePicker();
-    final XFile? image = await picker.pickImage(source: source);
+    final picker = ImagePicker();
+    final image = await picker.pickImage(source: source);
     if (image != null) {
       setState(() {
         _selectedImages.add(image);
@@ -187,7 +187,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
                   onPressed: () => _pickImage(ImageSource.gallery),
                 ),
 
-                Icon(Icons.add_circle, color: Color(0xFF420C18)),
+                const Icon(Icons.add_circle, color: Color(0xFF420C18)),
               ],
             ),
             const SizedBox(height: 16),

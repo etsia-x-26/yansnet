@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 
 class ChatInputField extends StatelessWidget {
-  final TextEditingController controller;
-  final Function(String) onSend;
 
   const ChatInputField({
-    Key? key,
-    required this.controller,
-    required this.onSend,
-  }) : super(key: key);
+    required this.controller, required this.onSend, super.key,
+  });
+  final TextEditingController controller;
+  final Function(String) onSend;
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +32,6 @@ class ChatInputField extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(
                 color: Colors.grey[300]!,
-                width: 1,
               ),
             ),
             child: IconButton(
@@ -57,7 +54,6 @@ class ChatInputField extends StatelessWidget {
                 borderRadius: BorderRadius.circular(22),
                 border: Border.all(
                   color: Colors.grey[300]!,
-                  width: 1,
                 ),
               ),
               child: Row(
@@ -79,9 +75,7 @@ class ChatInputField extends StatelessWidget {
                       ),
                       maxLines: null,
                       textInputAction: TextInputAction.send,
-                      onSubmitted: (text) {
-                        onSend(text);
-                      },
+                      onSubmitted: onSend,
                     ),
                   ),
                   IconButton(
@@ -107,7 +101,6 @@ class ChatInputField extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(
                 color: Colors.grey[300]!,
-                width: 1,
               ),
             ),
             child: IconButton(

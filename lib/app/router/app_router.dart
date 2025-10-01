@@ -3,13 +3,13 @@ import 'package:go_router/go_router.dart';
 import 'package:yansnet/app/app.dart';
 import 'package:yansnet/app/router/routes.dart';
 import 'package:yansnet/app/view/app_nav_page.dart';
-import 'package:yansnet/publication/views/create_post_page.dart';
-import 'package:yansnet/conversation/views/messages_list_page.dart';
 import 'package:yansnet/conversation/views/chat_conversation_page.dart';
 import 'package:yansnet/conversation/views/group_chat_page.dart';
 import 'package:yansnet/conversation/views/group_info_page.dart';
 import 'package:yansnet/conversation/views/messages_empty_page.dart';
+import 'package:yansnet/conversation/views/messages_list_page.dart';
 import 'package:yansnet/conversation/views/messages_no_connection_page.dart';
+import 'package:yansnet/publication/views/create_post_page.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -18,7 +18,7 @@ class AppRouter {
     return GoRouter(
       navigatorKey: _rootNavigatorKey,
       debugLogDiagnostics: true,
-      initialLocation: '/group/X2026/info',
+      initialLocation: '/',
       redirect: (context, state) {
         // TODO: implement redirection through authentication status
         return null;
@@ -42,41 +42,46 @@ class AppRouter {
 
         // Messages routes
         GoRoute(
-          name: "messages_list",
-          path: "/messages",
+          name: 'messages_list',
+          path: AppRoutes.messagesRoute,
           builder: (ctx, state) => const MessagesListPage(),
           routes: [
             GoRoute(
-              name: "empty_messages",
-              path: "empty",
+              name: 'empty_messages',
+              path: AppRoutes.emptyMessagesRoute,
               builder: (ctx, state) => const MessagesEmptyPage(),
             ),
             GoRoute(
-              name: "connection_error",
-              path: "error",
-              builder: (ctx, state) => MessagesNoConnectionPage(),
+              name: 'connection_error',
+              path: AppRoutes.connectionErrorRoute,
+              builder: (ctx, state) => const MessagesNoConnectionPage(),
             ),
           ],
         ),
 
         // Chat routes
         GoRoute(
-          name: "chat_conversation",
-          path: "/chat/:userName",
+          name: 'chat_conversation',
+          path: AppRoutes.chatConversationRoute,
           builder: (ctx, state) {
             final userName = state.pathParameters['userName'] ?? 'Utilisateur';
+            final extra = state.extra as Map<String, dynamic>? ?? {};
+            final userAvatar =
+                extra['userAvatar'] as String? ??
+                'https://i.pravatar.cc/150?img=1';
+            final lastSeen = extra['lastSeen'] as String? ?? '25/06/2025';
             return ChatConversationPage(
               userName: userName,
-              userAvatar: 'https://i.pravatar.cc/150?img=1',
-              lastSeen: '25/06/2025',
+              userAvatar: userAvatar,
+              lastSeen: lastSeen,
             );
           },
         ),
 
         // Group routes
         GoRoute(
-          name: "group_chat",
-          path: "/group/:groupName",
+          name: 'group_chat',
+          path: AppRoutes.groupChatRoute,
           builder: (ctx, state) {
             final groupName = state.pathParameters['groupName'] ?? 'Groupe';
             return GroupChatPage(
@@ -87,8 +92,8 @@ class AppRouter {
           },
           routes: [
             GoRoute(
-              name: "group_info",
-              path: "info",
+              name: 'group_info',
+              path: AppRoutes.groupInfoRoute,
               builder: (ctx, state) {
                 final groupName = state.pathParameters['groupName'] ?? 'Groupe';
                 return GroupInfoPage(

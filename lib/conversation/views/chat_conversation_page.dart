@@ -1,21 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 // import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:iconsax/iconsax.dart';
-import '../widgets/chat_header.dart';
-import '../widgets/chat_message_bubble.dart';
-import '../widgets/chat_input_field.dart';
+import 'package:yansnet/conversation/widgets/chat_header.dart';
+import 'package:yansnet/conversation/widgets/chat_message_bubble.dart';
 
 class ChatConversationPage extends StatefulWidget {
+  const ChatConversationPage({
+    required this.userName, required this.userAvatar, required this.lastSeen, super.key,
+  });
   final String userName;
   final String userAvatar;
   final String lastSeen;
-
-  const ChatConversationPage({
-    Key? key,
-    required this.userName,
-    required this.userAvatar,
-    required this.lastSeen,
-  }) : super(key: key);
 
   @override
   State<ChatConversationPage> createState() => _ChatConversationPageState();
@@ -47,6 +42,33 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
     },
   ];
 
+  bool _hasText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _messageController.addListener(() {
+      setState(() {
+        _hasText = _messageController.text.trim().isNotEmpty;
+      });
+    });
+  }
+
+  void _sendMessage() {
+    final text = _messageController.text.trim();
+    if (text.isNotEmpty) {
+      setState(() {
+        _messages.add({
+          'text': text,
+          'isMe': true,
+          'time': TimeOfDay.now().format(context),
+        });
+      });
+      _messageController.clear();
+      _hasText = false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +77,7 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
         userName: widget.userName,
         userAvatar: widget.userAvatar,
         lastSeen: widget.lastSeen,
-        onBackPressed: () => Navigator.of(context).pop(),
+        onBackPressed: () => context.pop(),
         onCallPressed: () {
           // Action pour appel audio
         },
@@ -71,7 +93,7 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
           // Séparateur de date
           Container(
             padding: const EdgeInsets.symmetric(vertical: 16),
-            child: Text(
+            child: const Text(
               "Aujourd'hui",
               style: TextStyle(
                 fontSize: 16,
@@ -103,7 +125,9 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(30),
               border: Border.all(
-                color: const Color(0xFF5D1A1A), // Couleur violet/marron de la bordure
+                color: const Color(
+                  0xFF5D1A1A,
+                ), // Couleur violet/marron de la bordure
                 width: 2, // Épaisseur de la bordure
               ),
               boxShadow: [
@@ -116,47 +140,19 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
               ],
             ),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               child: Row(
                 children: [
                   // Icône Instagram-like
-                  IconButton(
-                    // icon: const FaIcon(FontAwesomeIcons.instagram, size: 24, color: Colors.grey),
-                    icon: const Icon(Iconsax.instagram),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: () {
-                      // Action pour Instagram
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                  // Champ de texte
-                  Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      decoration: const InputDecoration(
-                        hintText: "Votre message",
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: EdgeInsets.symmetric(vertical: 12),
-                        hintStyle: TextStyle(color: Colors.grey),
-                      ),
-                      style: const TextStyle(fontSize: 15),
-                      onSubmitted: (text) {
-                        if (text.trim().isNotEmpty) {
-                          setState(() {
-                            _messages.add({
-                              'text': text,
-                              'isMe': true,
-                              'time': TimeOfDay.now().format(context),
-                            });
-                          });
-                          _messageController.clear();
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 8),
+                  // IconButton(
+                  //   // icon: const FaIcon(FontAwesomeIcons.instagram, size: 24, color: Colors.grey),
+                  //   icon: const Icon(Iconsax.instagram),
+                  //   padding: EdgeInsets.zero,
+                  //   constraints: const BoxConstraints(),
+                  //   onPressed: () {
+                  //     // Action pour Instagram
+                  //   },
+                  // ),
                   // Bouton "+"
                   IconButton(
                     icon: const Icon(Icons.add, size: 24, color: Colors.grey),
@@ -166,16 +162,43 @@ class _ChatConversationPageState extends State<ChatConversationPage> {
                       // Action pour ajouter une pièce jointe
                     },
                   ),
-                  const SizedBox(width: 8),
-                  // Bouton micro
-                  IconButton(
-                    icon: const Icon(Icons.mic, size: 24, color: Colors.grey),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: () {
-                      // Action pour enregistrer un message vocal
-                    },
+                  // Champ de texte
+                  Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      decoration: const InputDecoration(
+                        hintText: 'Votre message',
+                        border: InputBorder.none,
+                        isDense: true,
+                        contentPadding: EdgeInsets.symmetric(vertical: 12),
+                        hintStyle: TextStyle(color: Colors.grey),
+                      ),
+                      style: const TextStyle(fontSize: 15),
+                      onSubmitted: (_) => _sendMessage(),
+                    ),
                   ),
+                  // Show send button when there's text, otherwise show mic button
+                  if (_hasText) ...[
+                    const SizedBox(width: 8),
+                    IconButton(
+                      icon: const Icon(
+                        Icons.send,
+                        size: 24,
+                        color: Color(0xFF5D1A1A),
+                      ),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: _sendMessage,
+                    ),
+                  ] else
+                    IconButton(
+                      icon: const Icon(Icons.mic, size: 24, color: Colors.grey),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                      onPressed: () {
+                        // Action pour enregistrer un message vocal
+                      },
+                    ),
                 ],
               ),
             ),

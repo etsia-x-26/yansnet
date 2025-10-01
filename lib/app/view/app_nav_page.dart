@@ -3,6 +3,7 @@ import 'package:yansnet/app/view/not_available_page.dart';
 import 'package:yansnet/app/widgets/yansnet_nav_bar.dart';
 import 'package:yansnet/publication/views/explore_page.dart';
 import 'package:yansnet/publication/views/home_page.dart';
+import 'package:yansnet/publication/widgets/yansnet_app_bar.dart';
 
 class ApppNavigationPage extends StatefulWidget {
   const ApppNavigationPage({super.key});
@@ -28,6 +29,7 @@ class _ApppNavigationPageState extends State<ApppNavigationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: const YansnetAppBar(hasNotification: true, messageCount: 1),
       body: _pages[_currentIndex],
       bottomNavigationBar: YansnetBottomNavBar(
         currentIndex: _currentIndex,

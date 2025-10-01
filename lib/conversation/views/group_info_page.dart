@@ -3,16 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart'; // Ajoutez cette import
 
 class GroupInfoPage extends StatefulWidget {
+
+  const GroupInfoPage({
+    required this.groupName, required this.groupAvatar, required this.memberCount, super.key,
+  });
   final String groupName;
   final String groupAvatar;
   final int memberCount;
-
-  const GroupInfoPage({
-    Key? key,
-    required this.groupName,
-    required this.groupAvatar,
-    required this.memberCount,
-  }) : super(key: key);
 
   @override
   State<GroupInfoPage> createState() => _GroupInfoPageState();
@@ -96,7 +93,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Text(
-                      'Aujourd\'hui',
+                      "Aujourd'hui",
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 12,

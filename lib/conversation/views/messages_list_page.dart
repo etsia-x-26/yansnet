@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../widgets/message_list_item.dart';
+import 'package:yansnet/conversation/widgets/message_list_item.dart';
 
 class MessagesListPage extends StatelessWidget {
-  const MessagesListPage({Key? key}) : super(key: key);
+  const MessagesListPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -45,14 +45,13 @@ class MessagesListPage extends StatelessWidget {
                 MessageListItem(
                   avatarUrl: 'https://i.pravatar.cc/150?img=1',
                   name: 'Emmy',
-                  lastMessage: 'Bonjour, j\'espère que tu vas bien',
+                  lastMessage: "Bonjour, j'espère que tu vas bien",
                   isOnline: true,
                 ),
                 MessageListItem(
                   avatarUrl: 'https://i.pravatar.cc/150?img=2',
                   name: 'Pixsie',
                   lastMessage: '• •',
-                  isOnline: false,
                   hasUnread: true,
                 ),
                 MessageListItem(
@@ -65,13 +64,11 @@ class MessagesListPage extends StatelessWidget {
                   avatarUrl: 'https://i.pravatar.cc/150?img=4',
                   name: 'Axelle',
                   lastMessage: 'Chalut cha va ?',
-                  isOnline: false,
                 ),
                 MessageListItem(
                   avatarUrl: 'https://i.pravatar.cc/150?img=5',
                   name: 'Ax_Bakery',
                   lastMessage: 'Envoyé il y a une heure',
-                  isOnline: false,
                 ),
               ],
             ),

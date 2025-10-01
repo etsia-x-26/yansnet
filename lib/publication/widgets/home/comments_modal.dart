@@ -31,16 +31,17 @@ class _CommentsModalState extends State<CommentsModal> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 10),
                     CommentItem(
                       username: 'marine_webre',
                       comment: 'Vraiment une belle surprise ce film',
                       time: '5h',
+                      hasReplies: true,
                     ),
                     CommentItem(
                       username: 'marine_webre',
                       comment: 'Ah ça!!',
                       time: '15min',
+                      hasReplies: true,
                     ),
                     CommentItem(
                       username: 'marine_webre',
@@ -61,6 +62,7 @@ class _CommentsModalState extends State<CommentsModal> {
                       username: 'cvm_p_vh',
                       comment: 'J’ai vu hierrr',
                       time: '3h',
+                      hasReplies: true,
                     ),
                   ],
                 ),

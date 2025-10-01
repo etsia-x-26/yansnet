@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 
 class ChatInputBar extends StatelessWidget {
+
+  const ChatInputBar({
+    required this.controller, required this.hintText, required this.onEmojiPressed, required this.onAddPressed, required this.onMicPressed, required this.onSendPressed, super.key,
+    this.backgroundColor,
+    this.borderColor,
+    this.borderRadius,
+  });
   final TextEditingController controller;
   final String hintText;
   final VoidCallback onEmojiPressed;
@@ -11,19 +18,6 @@ class ChatInputBar extends StatelessWidget {
   final Color? borderColor;
   final double? borderRadius;
 
-  const ChatInputBar({
-    Key? key,
-    required this.controller,
-    required this.hintText,
-    required this.onEmojiPressed,
-    required this.onAddPressed,
-    required this.onMicPressed,
-    required this.onSendPressed,
-    this.backgroundColor,
-    this.borderColor,
-    this.borderRadius,
-  }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -31,7 +25,7 @@ class ChatInputBar extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: backgroundColor ?? Colors.white,
-        border: Border.all(color: borderColor ?? Colors.grey[300]!, width: 1),
+        border: Border.all(color: borderColor ?? Colors.grey[300]!),
         borderRadius: BorderRadius.circular(borderRadius ?? 20.0),
       ),
       child: Row(
