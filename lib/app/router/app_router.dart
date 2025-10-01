@@ -10,6 +10,9 @@ import 'package:yansnet/conversation/views/messages_empty_page.dart';
 import 'package:yansnet/conversation/views/messages_list_page.dart';
 import 'package:yansnet/conversation/views/messages_no_connection_page.dart';
 import 'package:yansnet/publication/views/create_post_page.dart';
+import 'package:yansnet/subscription/views/another_profile_screen.dart';
+import 'package:yansnet/subscription/views/create_channel_screen.dart';
+import 'package:yansnet/subscription/views/create_group_screen.dart';
 
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
@@ -66,8 +69,7 @@ class AppRouter {
           builder: (ctx, state) {
             final userName = state.pathParameters['userName'] ?? 'Utilisateur';
             final extra = state.extra as Map<String, dynamic>? ?? {};
-            final userAvatar =
-                extra['userAvatar'] as String? ??
+            final userAvatar = extra['userAvatar'] as String? ??
                 'https://i.pravatar.cc/150?img=1';
             final lastSeen = extra['lastSeen'] as String? ?? '25/06/2025';
             return ChatConversationPage(
@@ -103,7 +105,31 @@ class AppRouter {
                 );
               },
             ),
+            GoRoute(
+              name: 'create_group',
+              path: AppRoutes.createGroup,
+              builder: (ctx, state) => const CreateGroupScreen(),
+            ),
           ],
+        ),
+        // Profile Route
+        GoRoute(
+          name: 'profile',
+          path: AppRoutes.profileRoute,
+          builder: (ctx, state) {
+            final username = state.pathParameters['username'] ?? '';
+            final extra = state.extra as Map<String, dynamic>? ?? {};
+            final displayName = extra['displayName'] as String? ?? username;
+            return AnotherProfilePage(
+              username: username,
+              displayName: displayName,
+            );
+          },
+        ),
+        GoRoute(
+          name: 'create_channel',
+          path: AppRoutes.createChannel,
+          builder: (ctx, state) => const CreateChannelScreen(),
         ),
       ],
     );

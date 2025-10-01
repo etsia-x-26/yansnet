@@ -10,25 +10,40 @@ class CreateChannelScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Créer une chaîne', style: GoogleFonts.jua(),),
+        title: Text(
+          'Créer une chaîne',
+          style: GoogleFonts.jua(),
+        ),
       ),
       body: Column(
         children: [
-          InputCard(align: TextAlign.start, controller: TextEditingController(), enabled: true, onChanged: (p0) {
-
-          }, validator: (p0) {
-            return '';
-          }, obscureText: false, inputType: TextInputType.text, borderEnabled: true, label: 'Nom du groupe',),
-
-          InputCard(align: TextAlign.start, controller: TextEditingController(), enabled: true, onChanged: (p0) {
-
-          }, validator: (p0) {
-            return '';
-          }, obscureText: false, inputType: TextInputType.text, borderEnabled: true, label: 'Description',),
-
-          ValidatedButton(onTap: () {
-
-          }, text: 'Créer')
+          InputCard(
+            align: TextAlign.start,
+            controller: TextEditingController(),
+            enabled: true,
+            onChanged: (p0) {},
+            validator: (p0) {
+              return '';
+            },
+            obscureText: false,
+            inputType: TextInputType.text,
+            borderEnabled: true,
+            label: 'Nom de la chaîne',
+          ),
+          InputCard(
+            align: TextAlign.start,
+            controller: TextEditingController(),
+            enabled: true,
+            onChanged: (p0) {},
+            validator: (p0) {
+              return '';
+            },
+            obscureText: false,
+            inputType: TextInputType.text,
+            borderEnabled: true,
+            label: 'Description',
+          ),
+          ValidatedButton(onTap: () {}, text: 'Créer')
         ],
       ),
     );

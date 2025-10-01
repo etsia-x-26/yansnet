@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:yansnet/publication/widgets/home/comments_modal.dart';
 
@@ -59,6 +60,14 @@ class _PostItemState extends State<PostItem> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ListTile(
+              onTap: () {
+                context.push(
+                  '/profile/${widget.username}',
+                  extra: {
+                    'displayName': widget.displayName,
+                  },
+                );
+              },
               leading: const CircleAvatar(
                 backgroundImage: NetworkImage('https://via.placeholder.com/40'),
               ),

@@ -12,16 +12,24 @@ class YansnetAppBar extends StatelessWidget implements PreferredSizeWidget {
   final bool hasNotification;
 
   @override
+  Size get preferredSize => const Size.fromHeight(70);
+
+  @override
   Widget build(BuildContext context) {
     return AppBar(
-      title: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24),
-        child: Text(
-          'YansNet',
-          style: TextStyle(
-            fontFamily: GoogleFonts.jua().fontFamily,
-            fontStyle: FontStyle.normal,
-            fontWeight: FontWeight.w500,
+      backgroundColor: Colors.white.withOpacity(0.9),
+      forceMaterialTransparency: true,
+      bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.grey,
+            height: 1.0,
+          )),
+      titleSpacing: 20,
+      title: Text.rich(
+        TextSpan(
+          text: 'YansNet',
+          style: GoogleFonts.jua(
             fontSize: 32,
             color: const Color(0xFF420C18),
           ),
@@ -84,11 +92,7 @@ class YansnetAppBar extends StatelessWidget implements PreferredSizeWidget {
           ],
         ),
       ],
-      forceMaterialTransparency: true,
       actionsPadding: const EdgeInsets.symmetric(horizontal: 16),
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }

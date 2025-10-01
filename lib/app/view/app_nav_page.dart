@@ -4,6 +4,7 @@ import 'package:yansnet/app/widgets/yansnet_nav_bar.dart';
 import 'package:yansnet/publication/views/explore_page.dart';
 import 'package:yansnet/publication/views/home_page.dart';
 import 'package:yansnet/publication/widgets/yansnet_app_bar.dart';
+import 'package:yansnet/subscription/views/profile_screen.dart';
 
 class ApppNavigationPage extends StatefulWidget {
   const ApppNavigationPage({super.key});
@@ -21,9 +22,7 @@ class _ApppNavigationPageState extends State<ApppNavigationPage> {
     const NotAvailablePage(
       pageName: 'MarketPlace',
     ),
-    const NotAvailablePage(
-      pageName: 'Profile',
-    ),
+    const ProfileScreen(),
   ];
 
   @override

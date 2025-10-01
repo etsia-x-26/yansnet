@@ -23,5 +23,8 @@ class AppRoutes {
   // Group Routes
   static const String groupChatRoute = '/group';
   static const String groupInfoRoute = '/:groupName/info';
-  static const String createGroup = '/group/create';
+  static const String createGroup = '/create';
+
+  // Profile Routes
+  static const String profileRoute = '/profile/:username';
 }

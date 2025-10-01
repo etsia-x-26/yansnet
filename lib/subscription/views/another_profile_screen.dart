@@ -3,7 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:yansnet/subscription/widgets/profile_app_bar.dart';
 
 class AnotherProfilePage extends StatefulWidget {
-  const AnotherProfilePage({super.key});
+  const AnotherProfilePage({
+    required this.username,
+    required this.displayName,
+    super.key,
+  });
+
+  final String username;
+  final String displayName;
 
   @override
   State<AnotherProfilePage> createState() => _AnotherProfilePageState();
@@ -47,18 +54,18 @@ class _AnotherProfilePageState extends State<AnotherProfilePage>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Texte du nom de profil (Pixsellz)
-                const Text(
-                  'Passi',
-                  style: TextStyle(
+                Text(
+                  widget.displayName,
+                  style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  '@angelpassi',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                Text(
+                  '@${widget.username}',
+                  style: const TextStyle(fontSize: 16, color: Colors.grey),
                 ),
                 const SizedBox(height: 12),
                 const Text(
