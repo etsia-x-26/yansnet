@@ -9,6 +9,7 @@ import 'package:yansnet/conversation/views/group_info_page.dart';
 import 'package:yansnet/conversation/views/messages_empty_page.dart';
 import 'package:yansnet/conversation/views/messages_list_page.dart';
 import 'package:yansnet/conversation/views/messages_no_connection_page.dart';
+import 'package:yansnet/profile/view/sheet_parametre_profile.dart';
 import 'package:yansnet/publication/views/create_post_page.dart';
 import 'package:yansnet/subscription/views/another_profile_screen.dart';
 import 'package:yansnet/subscription/views/create_channel_screen.dart';
@@ -23,7 +24,6 @@ class AppRouter {
       debugLogDiagnostics: true,
       initialLocation: '/',
       redirect: (context, state) {
-        // TODO: implement redirection through authentication status
         return null;
       },
       routes: [
@@ -130,6 +130,17 @@ class AppRouter {
           name: 'create_channel',
           path: AppRoutes.createChannel,
           builder: (ctx, state) => const CreateChannelScreen(),
+        ),
+        GoRoute(
+          name: 'settings',
+          path: AppRoutes.settingsSheetRoute,
+          builder: (ctx, state) {
+            final extra = state.extra as Map<String, dynamic>? ?? {};
+            return SettingsSheetPage(
+              userId: extra['userId'] as String? ?? '',
+              username: extra['username'] as String? ?? 'Utilisateur',
+            );
+          },
         ),
       ],
     );

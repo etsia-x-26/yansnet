@@ -1,5 +1,8 @@
 // lib/profile_page.dart
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+import 'package:yansnet/profile/view/popup.dart';
 import 'package:yansnet/subscription/widgets/profile_app_bar.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -51,9 +54,7 @@ class _ProfileScreenState extends State<ProfileScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
-                  // j'ai utilisé un Row pour placer le texte et l'icône côte à côte
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  // Pour espacer le texte et l'icône
                   children: [
                     const Text(
                       'Pixsellz',
@@ -63,16 +64,70 @@ class _ProfileScreenState extends State<ProfileScreen>
                         color: Colors.black,
                       ),
                     ),
-                    IconButton(
-                      // L'icône de menu est ici maintenant
+                    PopupMenuButton<String>(
                       icon: const Icon(
                         Icons.menu,
                         color: Colors.black,
                         size: 30,
                       ),
-                      // Couleur noire
-                      onPressed: () {
-                        // Action quand on clique sur le menu
+                      offset: const Offset(0, 50),
+                      itemBuilder: (BuildContext context) => [
+                        const PopupMenuItem(
+                          value: 'settings',
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.settings,
+                                color: Colors.black87,
+                                size: 20,
+                              ),
+                              SizedBox(width: 8),
+                              Text(
+                                'Paramètres',
+                                style: TextStyle(color: Colors.black87),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const PopupMenuItem(
+                          value: 'logout',
+                          child: Row(
+                            children: [
+                              Icon(Icons.logout, color: Colors.red, size: 20),
+                              SizedBox(width: 8),
+                              Text(
+                                'Déconnexion',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                      onSelected: (String value) {
+                        if (value == 'settings') {
+                          context.push(
+                            '/settings',
+                            extra: {
+                              'userId': 'current_user_id',
+                              'username': 'pixsellz',
+                            },
+                          );
+                        } else if (value == 'logout') {
+                          showDialog<void>(
+                            context: context,
+                            builder: (context) => LogoutConfirmationPopup(
+                              onConfirm: () {
+                                Navigator.of(context).pop(); // Fermer le popup
+                                SystemNavigator.pop(); // Fermer l'application
+                              },
+                              onCancel: () {
+                                Navigator.of(context).popUntil(
+                                  (route) => route.isFirst,
+                                ); // Fermer le popup
+                              },
+                            ),
+                          );
+                        }
                       },
                     ),
                   ],

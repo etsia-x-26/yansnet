@@ -1,8 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:yansnet/publication/api/publication_client.dart';
 import 'package:yansnet/publication/cubit/publication_state.dart';
-
-import '../models/publication_response.dart';
+import 'package:yansnet/publication/models/publication_response.dart';
 
 class PublicationCubit extends Cubit<PublicationState> {
 

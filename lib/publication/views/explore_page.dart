@@ -16,22 +16,22 @@ class _ExplorePageState extends State<ExplorePage> {
   final List<Map<String, String>> newReleases = [
     {'image': 'https://i.pinimg.com/474x/e4/29/69/e429697f201ade295adfdc189d656047.jpg',
       'title': 'BenIt Bruhner',
-      'subtitle': 'X2026'
+      'subtitle': 'X2026',
     },
     {'image': 'https://i.pinimg.com/736x/ee/97/aa/ee97aad105740376bb29f9fd130931bf.jpg',
       'title': 'Aerdna_eco',
-      'subtitle': 'X2026'
+      'subtitle': 'X2026',
     },
     {'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSXRmV6h5Xm3VjW1Lx-AwiLIYDV7YqE2iLBigD-UEOk_vvY4h8szgzwUy62gz6cw5FQtDA&usqp=CAU',
       'title': 'Aerdna_eco',
-      'subtitle': 'X2026'
+      'subtitle': 'X2026',
     },
     {'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSJb9veKRknkWgd57TYXI2UxPSwcrvewgTnx90P2cg9JeGzJpmBcTR8pl7a68XXr42m4mI&usqp=CAU',
       'title': 'Aerdna_eco',
-      'subtitle': 'X2026'},
+      'subtitle': 'X2026',},
     {'image': 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTe3grk3njWHN-bNSfP7s5yuHpWQUkluynnvoces0F547R-0ENuOq-6c5smAdEtAVfBb-U&usqp=CAU',
       'title': 'Aerdna_eco',
-      'subtitle': 'X2026'},
+      'subtitle': 'X2026',},
   ];
 
   final List<String> exploreImages = [

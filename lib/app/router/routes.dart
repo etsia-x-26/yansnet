@@ -6,6 +6,7 @@ class AppRoutes {
   // Main Routes
   static const String homeRoute = '/';
   static const String splashRoute = '/splash';
+  static const String settingsSheetRoute = '/settings';
   static const String createPostPageRoute = '/create';
 
   //Channel Routes

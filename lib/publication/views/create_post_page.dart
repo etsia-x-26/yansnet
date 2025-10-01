@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -48,7 +47,7 @@ class _CreatePostPageState extends State<CreatePostPage> {
               const SnackBar(content: Text('Publication créée avec succès!')),
             );
             context.pop();
-            context.read<PublicationCubit>().fetchPosts(refresh: false);
+            context.read<PublicationCubit>().fetchPosts();
           },
           error: (message) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -87,7 +86,9 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 8),
+                          horizontal: 20,
+                          vertical: 8,
+                          ),
                     ),
                     onPressed: state.maybeWhen(
                       loading: () => null,
@@ -147,7 +148,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         border: Border.all(color: const Color(0xFF420C18)),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.camera_alt_outlined, color: Color(0xFFC0262E)),
+                      child: const Icon(
+                        Icons.camera_alt_outlined,
+                        color: Color(0xFFC0262E),
+                      ),
                     ),
                   ),
                   if (_selectedImages.isNotEmpty)
