@@ -43,7 +43,7 @@ class CreateChannelScreen extends StatelessWidget {
             borderEnabled: true,
             label: 'Description',
           ),
-          ValidatedButton(onTap: () {}, text: 'Créer')
+          ValidatedButton(onTap: () {}, text: 'Créer'),
         ],
       ),
     );

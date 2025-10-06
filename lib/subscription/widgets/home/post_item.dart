@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 
-import 'comments_modal.dart';
+import 'package:yansnet/subscription/widgets/home/comments_modal.dart';
 
 class PostItem extends StatefulWidget {
   const PostItem({
@@ -49,12 +49,12 @@ class _PostItemState extends State<PostItem> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 0),
+      padding: const EdgeInsets.only(left: 8, right: 8, top: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+            padding: const EdgeInsets.only(top: 8, bottom: 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -72,17 +72,17 @@ class _PostItemState extends State<PostItem> {
                         Text(
                           widget.displayName,
                           style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16),
+                              fontWeight: FontWeight.bold, fontSize: 16,),
                         ),
                         const SizedBox(
                           height: 8,
                         ),
                         Text('@${widget.username}'),
                       ],
-                    )
+                    ),
                   ],
                 ),
-                const Icon(Icons.more_vert)
+                const Icon(Icons.more_vert),
               ],
             ),
           ),
@@ -100,7 +100,7 @@ class _PostItemState extends State<PostItem> {
           ),
           if (widget.imageUrl != null)
             Padding(
-              padding: const EdgeInsets.only(right: 0, bottom: 8),
+              padding: const EdgeInsets.only(bottom: 8),
               child: Image.network(widget.imageUrl!),
             ),
           if (widget.time.isNotEmpty)

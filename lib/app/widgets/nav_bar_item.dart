@@ -34,7 +34,7 @@ class NavBarItem extends StatelessWidget {
                 borderRadius: BorderRadius.horizontal(
                     left: Radius.circular(16.r),
                     right: Radius.circular(16.r),
-                )
+                ),
               ),
               child: Icon(
                 icon,

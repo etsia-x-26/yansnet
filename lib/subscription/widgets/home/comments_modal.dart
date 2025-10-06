@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'comment_input.dart';
-import 'comment_item.dart';
+import 'package:yansnet/subscription/widgets/home/comment_input.dart';
+import 'package:yansnet/subscription/widgets/home/comment_item.dart';
 
 class CommentsModal extends StatefulWidget {
   const CommentsModal({super.key});

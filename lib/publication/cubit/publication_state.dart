@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-import '../models/publication_response.dart';
+import 'package:yansnet/publication/models/publication_response.dart';
 
 part 'publication_state.freezed.dart';
 

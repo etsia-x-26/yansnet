@@ -122,7 +122,7 @@ class _ExploreHistoryPageState extends State<ExploreHistoryPage> {
                                   if (item['verified'] == true) ...[
                                     const SizedBox(width: 4),
                                     const Icon(Icons.verified, size: 12, color: Colors.blue),
-                                  ]
+                                  ],
                                 ],
                               ),
                               if (subtitle != null)

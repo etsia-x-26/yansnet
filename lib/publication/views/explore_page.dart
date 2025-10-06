@@ -127,7 +127,7 @@ class _ExplorePageState extends State<ExplorePage> {
                               ),
                             ],
                           ),
-                        )
+                        ),
                       ],
                     ),
                   );
@@ -170,7 +170,7 @@ class _ExplorePageState extends State<ExplorePage> {
                         fit: BoxFit.cover,
                       ),
                     ),
-                  ))
+                  ),)
                       .toList(),
                 );
               },

@@ -20,11 +20,11 @@ class YansnetAppBar extends StatelessWidget implements PreferredSizeWidget {
       backgroundColor: Colors.white.withOpacity(0.9),
       forceMaterialTransparency: true,
       bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
+          preferredSize: const Size.fromHeight(1),
           child: Container(
             color: Colors.grey,
-            height: 1.0,
-          )),
+            height: 1,
+          ),),
       titleSpacing: 20,
       title: Text.rich(
         TextSpan(

@@ -15,7 +15,7 @@ class SplashLogo extends StatelessWidget {
         fontWeight: FontWeight.w400,
         color: kPrimaryColor, // Couleur sombre du logo
         letterSpacing: 0.5,
-        fontFamily: GoogleFonts.jua().fontFamily
+        fontFamily: GoogleFonts.jua().fontFamily,
       ),
     );
   }

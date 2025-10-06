@@ -9,5 +9,5 @@ void main() {
   bootstrap(() => BlocProvider<PublicationCubit>(
     create: (context) => PublicationCubit(PublicationClient(Dio())),
     child: const AppDev(),
-  ));
+  ),);
 }

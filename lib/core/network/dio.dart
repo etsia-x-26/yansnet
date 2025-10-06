@@ -25,13 +25,13 @@ const imageBaseUrl = 'https://localhost:8080';
 Dio http = Dio(
   BaseOptions(
     baseUrl: apiBaseUrl,
-    contentType: 'application/json'
+    contentType: 'application/json',
   ),
 )..interceptors.addAll(
   [
     TokenInterceptor(),
     DioCacheInterceptor(
-      options: cacheOptions
+      options: cacheOptions,
     ),
   ]
 );

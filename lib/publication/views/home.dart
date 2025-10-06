@@ -82,7 +82,7 @@ class _HomeState extends State<Home> {
             ),
           ),
         ),
-        floatingActionButton: const AddButton());
+        floatingActionButton: const AddButton(),);
   }
 
   Widget _buildPublicationsList(PublicationState state) {
@@ -171,19 +171,19 @@ class _EmptyView extends StatelessWidget {
 }
 
 class _ErrorView extends StatelessWidget {
-  final String message;
-  final VoidCallback onRetry;
 
   const _ErrorView({
     required this.message,
     required this.onRetry,
   });
+  final String message;
+  final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [

@@ -13,7 +13,7 @@ class _AddButtonState extends State<AddButton> {
   OverlayEntry? _overlayEntry;
 
   void _showMenu(BuildContext context) {
-    final RenderBox renderBox = context.findRenderObject()! as RenderBox;
+    final renderBox = context.findRenderObject()! as RenderBox;
     final offset = renderBox.localToGlobal(Offset.zero);
 
     _overlayEntry = OverlayEntry(
@@ -114,7 +114,7 @@ class _AddButtonState extends State<AddButton> {
       ),
       onTap: onTap,
       dense: true,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16),
       minLeadingWidth: 24,
     );
   }

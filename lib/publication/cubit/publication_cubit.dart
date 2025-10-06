@@ -13,7 +13,7 @@ class PublicationCubit extends Cubit<PublicationState> {
 
     try {
       final publication = await _client.createPost(content);
-      emit(PublicationState.success());
+      emit(const PublicationState.success());
     } catch (e) {
       emit(PublicationState.error(e.toString()));
     }
@@ -60,7 +60,7 @@ class PublicationCubit extends Cubit<PublicationState> {
               totalPages: response.totalPages,
               last: response.last,
             ),
-          ));
+          ),);
         } else {
           emit(PublicationState.loaded(response));
         }
