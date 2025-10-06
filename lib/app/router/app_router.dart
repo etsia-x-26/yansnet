@@ -1,14 +1,21 @@
 import 'package:flutter/widgets.dart';
+// import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yansnet/app/app.dart';
+import 'package:yansnet/app/router/auth_change_notifier.dart';
 import 'package:yansnet/app/router/routes.dart';
 import 'package:yansnet/app/view/app_nav_page.dart';
+import 'package:yansnet/authentication/cubit/auth_state.dart';
+import 'package:yansnet/authentication/cubit/authentication_cubit.dart';
+import 'package:yansnet/authentication/views/login_page.dart';
+import 'package:yansnet/authentication/views/register_page.dart';
 import 'package:yansnet/conversation/views/chat_conversation_page.dart';
 import 'package:yansnet/conversation/views/group_chat_page.dart';
 import 'package:yansnet/conversation/views/group_info_page.dart';
 import 'package:yansnet/conversation/views/messages_empty_page.dart';
 import 'package:yansnet/conversation/views/messages_list_page.dart';
 import 'package:yansnet/conversation/views/messages_no_connection_page.dart';
+// import 'package:yansnet/counter/view/counter_page.dart';
 import 'package:yansnet/profile/view/sheet_parametre_profile.dart';
 import 'package:yansnet/publication/views/create_post_page.dart';
 import 'package:yansnet/subscription/views/another_profile_screen.dart';
@@ -18,12 +25,37 @@ import 'package:yansnet/subscription/views/create_group_screen.dart';
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
-  static GoRouter createRouter() {
+  static GoRouter createRouter(AuthenticationCubit authCubit) {
+    // static GoRouter createRouter() {
+    final authNotifier = AuthChangeNotifier(authCubit);
     return GoRouter(
       navigatorKey: _rootNavigatorKey,
       debugLogDiagnostics: true,
-      initialLocation: '/',
+      initialLocation: AppRoutes.authLoginRoute,
+      // initialLocation: AppRoutes.homeRoute,
+      refreshListenable: authNotifier,
       redirect: (context, state) {
+        final authState = authNotifier.state;
+        final isAuthRoute = state.matchedLocation.startsWith('/auth');
+
+        // Si l'utilisateur est connecté et essaie d'accéder aux pages d'auth
+        if (authState is UserFetched && isAuthRoute) {
+          return AppRoutes.homeRoute;
+        }
+
+        // Si l'utilisateur n'est pas connecté et
+        // essaie d'accéder aux pages protégées
+        if (authState is! UserFetched &&
+            !isAuthRoute &&
+            authState is! AuthLoading) {
+          return AppRoutes.authLoginRoute;
+        }
+
+        // Si l'utilisateur est déconnecté
+        if (authState is Logout) {
+          return AppRoutes.authLoginRoute;
+        }
+
         return null;
       },
       routes: [
@@ -41,6 +73,16 @@ class AppRouter {
           name: 'createPostPage',
           path: AppRoutes.createPostPageRoute,
           builder: (ctx, state) => const CreatePostPage(),
+        ),
+        GoRoute(
+          name: 'register',
+          path: AppRoutes.authRegisterRoute,
+          builder: (ctx, state) => const RegisterPage(),
+        ),
+        GoRoute(
+          name: 'login',
+          path: AppRoutes.authLoginRoute,
+          builder: (ctx, state) => const LoginPage(),
         ),
 
         // Messages routes
@@ -80,7 +122,7 @@ class AppRouter {
           },
         ),
 
-        // Group routes
+        // Group routess
         GoRoute(
           name: 'group_chat',
           path: AppRoutes.groupChatRoute,
