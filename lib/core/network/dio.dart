@@ -19,7 +19,7 @@ CacheOptions cacheOptions = CacheOptions(
   policy: CachePolicy.forceCache,
 );
 
-const apiBaseUrl = 'https://localhost:8080';
+const apiBaseUrl = 'http://localhost:8085';
 const imageBaseUrl = 'https://localhost:8080';
 
 Dio http = Dio(

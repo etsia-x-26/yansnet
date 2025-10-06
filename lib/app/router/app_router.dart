@@ -1,8 +1,14 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yansnet/app/app.dart';
+import 'package:yansnet/app/router/auth_change_notifier.dart';
 import 'package:yansnet/app/router/routes.dart';
 import 'package:yansnet/app/view/app_nav_page.dart';
+import 'package:yansnet/authentication/cubit/authentication_cubit.dart';
+import 'package:yansnet/authentication/cubit/auth_state.dart';
+import 'package:yansnet/authentication/views/login_page.dart';
+import 'package:yansnet/authentication/views/register_page.dart';
 import 'package:yansnet/counter/view/counter_page.dart';
 import 'package:yansnet/conversation/views/messages_list_page.dart';
 import 'package:yansnet/conversation/views/chat_conversation_page.dart';
@@ -14,13 +20,33 @@ import 'package:yansnet/conversation/views/messages_no_connection_page.dart';
 class AppRouter {
   static final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
-  static GoRouter createRouter() {
+  static GoRouter createRouter(AuthenticationCubit authCubit) {
+    final authNotifier = AuthChangeNotifier(authCubit);
     return GoRouter(
       navigatorKey: _rootNavigatorKey,
       debugLogDiagnostics: true,
-      initialLocation: '/group/X2026/info',
+      // initialLocation: AppRoutes.authLoginRoute,
+      initialLocation: AppRoutes.homeRoute,
+      refreshListenable: authNotifier,
       redirect: (context, state) {
-        // TODO: implement redirection through authentication status
+        // final authState = authNotifier.state;
+        // final isAuthRoute = state.matchedLocation.startsWith('/auth');
+        //
+        // // Si l'utilisateur est connecté et essaie d'accéder aux pages d'auth
+        // if (authState is UserFetched && isAuthRoute) {
+        //   return AppRoutes.homeRoute;
+        // }
+        //
+        // // Si l'utilisateur n'est pas connecté et essaie d'accéder aux pages protégées
+        // if (authState is! UserFetched && !isAuthRoute && authState is! AuthLoading) {
+        //   return AppRoutes.authLoginRoute;
+        // }
+        //
+        // // Si l'utilisateur est déconnecté
+        // if (authState is Logout) {
+        //   return AppRoutes.authLoginRoute;
+        // }
+        
         return null;
       },
       routes: [
@@ -33,6 +59,16 @@ class AppRouter {
           name: "splash",
           path: AppRoutes.splashRoute,
           builder: (ctx, state) => const SplashPage()
+        ),
+        GoRoute(
+          name: "register",
+          path: AppRoutes.authRegisterRoute,
+          builder: (ctx, state) => const RegisterPage(),
+        ),
+        GoRoute(
+          name: "login",
+          path: AppRoutes.authLoginRoute,
+          builder: (ctx, state) => const LoginPage(),
         ),
 
         // Messages routes
@@ -68,7 +104,7 @@ class AppRouter {
           },
         ),
 
-        // Group routes
+        // Group routess
         GoRoute(
           name: "group_chat",
           path: "/group/:groupName",

@@ -118,7 +118,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                 Row(
                   children: [
                     const Text(
-                      '217',
+                      '0',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -132,7 +132,7 @@ class _ProfileScreenState extends State<ProfileScreen>
                     ),
                     const SizedBox(width: 16),
                     const Text(
-                      '118',
+                      '0',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
