@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../models/message_filter.dart'; // ✅ On importe l'enum depuis models
+import '../models/message_filter.dart';
+enum MessageFilter { all, unread, moreThan99, favorites, groups }
 
 class MessageFilterTabs extends StatelessWidget {
   final MessageFilter selectedFilter;
@@ -33,13 +34,12 @@ class MessageFilterTabs extends StatelessWidget {
             context,
             filter: MessageFilter.unread,
             label: 'Non lues',
-            count: unreadCount > 0 ? unreadCount : null,
           ),
           const SizedBox(width: 8),
           _buildFilterChip(
             context,
             filter: MessageFilter.moreThan99,
-            label: '+99',
+            label: 'Plus de 99',
           ),
           const SizedBox(width: 8),
           _buildFilterChip(
@@ -93,8 +93,7 @@ class MessageFilterTabs extends StatelessWidget {
             if (count != null) ...[
               const SizedBox(width: 6),
               Container(
-                padding:
-                const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                 decoration: BoxDecoration(
                   color: Colors.grey[600],
                   borderRadius: BorderRadius.circular(10),
