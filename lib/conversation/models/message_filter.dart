@@ -2,7 +2,7 @@
 enum MessageFilter {
   all,
   unread,
-  moreThan99,
+  channel,
   favorites,
   groups,
 }
