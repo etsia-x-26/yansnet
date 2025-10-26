@@ -6,7 +6,10 @@ class MessagesListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MaterialApp(
+              home: DefaultTabController(
+                length: 2, 
+                child: Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         backgroundColor: Colors.grey[50],
@@ -35,8 +38,14 @@ class MessagesListPage extends StatelessWidget {
           ),
         ),
         centerTitle: false,
+        bottom: const TabBar(
+          tabs: [
+            Tab(text: 'Chats',),
+            Tab(text: 'Groupes'),
+          ],
+        ),
       ),
-      body: Column(
+      body: TabBarView(
         children: [
           Expanded(
             child: ListView(
@@ -73,6 +82,24 @@ class MessagesListPage extends StatelessWidget {
               ],
             ),
           ),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              children: const [
+                MessageListItem(
+                  avatarUrl: 'https://i.pravatar.cc/150?img=3',
+                  name: 'X2026',
+                  lastMessage: 'Hey !',
+                  isOnline: true,
+                ),
+                MessageListItem(
+                  avatarUrl: 'https://i.pravatar.cc/150?img=4',
+                  name: 'COCFET',
+                  lastMessage: 'Bonsoir à tous',
+                ),
+              ],
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
@@ -85,6 +112,7 @@ class MessagesListPage extends StatelessWidget {
           color: Colors.white,
         ),
       ),
+    )),
     );
   }
 }
