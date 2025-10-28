@@ -10,7 +10,7 @@ class TokenInterceptor extends QueuedInterceptor{
 
   @override
   Future<void> onRequest( RequestOptions options,
-      RequestInterceptorHandler handler) async{
+      RequestInterceptorHandler handler,) async{
     if(accessToken == null){
       accessToken = await PrefUtils().getAuthToken();
 

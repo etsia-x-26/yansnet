@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:yansnet/publication/widgets/yansnet_app_bar.dart';
 
 class NotAvailablePage extends StatelessWidget {
   const NotAvailablePage({required this.pageName, super.key});
@@ -9,11 +8,7 @@ class NotAvailablePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const YansnetAppBar(
-        messageCount: 3,
-        hasNotification: true,
-      ),
-      body: Stack(
+       body: Stack(
         children: [
           Positioned(
             top: 300,
@@ -32,7 +27,7 @@ class NotAvailablePage extends StatelessWidget {
                     height: 10,
                   ),
                   Text(
-                    "Cette page n’est pas encore disponible",
+                    'Cette page n’est pas encore disponible',
                     textAlign: TextAlign.center,
                     style: GoogleFonts.aBeeZee(
                       fontSize: 20,

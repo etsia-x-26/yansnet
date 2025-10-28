@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:yansnet/publication/widgets/add_button.dart';
 import 'package:yansnet/publication/widgets/home/post_item.dart';
-import 'package:yansnet/publication/widgets/yansnet_app_bar.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -16,10 +15,9 @@ class HomePage extends StatelessWidget {
         '${postTimestamp.minute.toString().padLeft(2, '0')}';
 
     return Scaffold(
-      appBar: const YansnetAppBar(hasNotification: true, messageCount: 1),
       floatingActionButton: const AddButton(),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 18),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         child: ListView(
           children: [
             PostItem(

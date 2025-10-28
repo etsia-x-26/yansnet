@@ -17,13 +17,13 @@ class ValidatedButton extends StatelessWidget {
         margin: const EdgeInsets.only(top: 24, bottom: 24, left: 50, right: 50),
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(30),
-            color: kPrimaryColor),
+            color: kPrimaryColor,),
         child: Center(
             child: Text(
               text,
               style: GoogleFonts.aBeeZee(
-                  color: Colors.white, fontSize: 18),
-            )),
+                  color: Colors.white, fontSize: 18,),
+            ),),
       ),
     );
   }

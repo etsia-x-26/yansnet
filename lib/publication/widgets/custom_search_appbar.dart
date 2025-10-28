@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:yansnet/publication/views/explore_history_page.dart';
 
-class CustomSearchAppBar extends StatelessWidget implements PreferredSizeWidget{
+class CustomSearchAppBar extends StatelessWidget
+    implements PreferredSizeWidget {
   const CustomSearchAppBar({
     required this.controller,
     this.onCancel,
@@ -53,8 +54,9 @@ class CustomSearchAppBar extends StatelessWidget implements PreferredSizeWidget{
                           if (navigateOnTap) {
                             FocusScope.of(context).unfocus();
                             Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const ExploreHistoryPage(),
+                              MaterialPageRoute<void>(
+                                builder: (context) =>
+                                    const ExploreHistoryPage(),
                               ),
                             );
                           }
@@ -88,7 +90,7 @@ class CustomSearchAppBar extends StatelessWidget implements PreferredSizeWidget{
                 ),
               ),
             ),
-            if(showCancel)...[
+            if (showCancel) ...[
               const SizedBox(width: 16),
               GestureDetector(
                 onTap: onCancel,
@@ -108,6 +110,7 @@ class CustomSearchAppBar extends StatelessWidget implements PreferredSizeWidget{
       ),
     );
   }
+
   @override
   Size get preferredSize => const Size.fromHeight(64);
 }

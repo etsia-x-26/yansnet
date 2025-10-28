@@ -6,7 +6,7 @@ class ProfileAppBar extends StatelessWidget {
   @override
   PreferredSizeWidget build(BuildContext context) {
     return PreferredSize(
-      preferredSize: const Size.fromHeight(110.0), // Hauteur de l'AppBar
+      preferredSize: const Size.fromHeight(110), // Hauteur de l'AppBar
       child: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,

@@ -1,5 +1,10 @@
 // lib/profile_page.dart
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:yansnet/authentication/cubit/auth_state.dart';
+import 'package:yansnet/authentication/cubit/authentication_cubit.dart';
+import 'package:yansnet/profile/view/popup.dart';
 import 'package:yansnet/subscription/widgets/profile_app_bar.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -32,164 +37,257 @@ class _ProfileScreenState extends State<ProfileScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: const ProfileAppBar().build(context),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Espace pour compenser l'avatar qui déborde
-          const SizedBox(height: 35),
-          // Hauteur égale à la moitié du rayon de l'avatar + bordure
+    return BlocListener<AuthenticationCubit, AuthenticationState>(
+      listener: (context, state) {
+        if (state is Logout) {
+          // Navigate to login page when logout is successful
+          context.pushReplacementNamed('login');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else if (state is AuthError) {
+          // Show error if logout fails
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: const ProfileAppBar().build(context),
+        body: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Espace pour compenser l'avatar qui déborde
+            const SizedBox(height: 35),
+            // Hauteur égale à la moitié du rayon de l'avatar + bordure
 
-          // Section Informations de Profil
-          Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 0.0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  // j'ai utilisé un Row pour placer le texte et l'icône côte à côte
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  // Pour espacer le texte et l'icône
-                  children: [
-                    const Text(
-                      'Pixsellz',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+            // Section Informations de Profil
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Pixsellz',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
-                    ),
-                    IconButton(
-                      // L'icône de menu est ici maintenant
-                      icon: const Icon(
-                        Icons.menu,
-                        color: Colors.black,
-                        size: 30,
+                      PopupMenuButton<String>(
+                        icon: const Icon(
+                          Icons.menu,
+                          color: Colors.black,
+                          size: 30,
+                        ),
+                        offset: const Offset(0, 50),
+                        itemBuilder: (BuildContext context) => [
+                          const PopupMenuItem(
+                            value: 'settings',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.settings,
+                                  color: Colors.black87,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Paramètres',
+                                  style: TextStyle(color: Colors.black87),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const PopupMenuItem(
+                            value: 'logout',
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.logout,
+                                  color: Colors.red,
+                                  size: 20,
+                                ),
+                                SizedBox(width: 8),
+                                Text(
+                                  'Déconnexion',
+                                  style: TextStyle(color: Colors.red),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                        onSelected: (String value) {
+                          if (value == 'settings') {
+                            context.push(
+                              '/settings',
+                              extra: {
+                                'userId': 'current_user_id',
+                                'username': 'pixsellz',
+                              },
+                            );
+                          } else if (value == 'logout') {
+                            showDialog<void>(
+                              context: context,
+                              builder: (context) => LogoutConfirmationPopup(
+                                onConfirm: () {
+                                  Navigator.of(context)
+                                      .pop(); // Fermer le popup
+                                  // Use authentication cubit to logout
+                                  final authState =
+                                      context.read<AuthenticationCubit>().state;
+                                  if (authState is UserFetched) {
+                                    context
+                                        .read<AuthenticationCubit>()
+                                        .logout(authState.user);
+                                    debugPrint(
+                                      'User logged out via profile screen: ${
+                                        authState.user.email
+                                      }',
+                                    );
+                                  } else {
+                                    debugPrint('No authenticated user found');
+                                  }
+                                  context.replaceNamed('login');
+                                },
+                                onCancel: () {
+                                  Navigator.of(context).popUntil(
+                                    (route) => route.isFirst,
+                                  ); // Fermer le popup
+                                },
+                              ),
+                            );
+                          }
+                        },
                       ),
-                      // Couleur noire
-                      onPressed: () {
-                        // Action quand on clique sur le menu
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-                const Text(
-                  '@pixsellz',
-                  style: TextStyle(fontSize: 16, color: Colors.grey),
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  'Digital Goodies Team - Web & Mobile UI/UX development; Graphics; Illustrations',
-                  style: TextStyle(fontSize: 14, color: Colors.black87),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    const Icon(Icons.link, size: 16, color: Colors.grey),
-                    const SizedBox(width: 4),
-                    const Text(
-                      'pixsellz.io',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.blue,
-                        decoration: TextDecoration.underline,
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    const Icon(
-                      Icons.calendar_today,
-                      size: 16,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(width: 4),
-                    const Text(
-                      'Promotion X2026',
-                      style: TextStyle(fontSize: 14, color: Colors.black87),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Row(
-                  children: [
-                    const Text(
-                      '217',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    const Text(
-                      'Following',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                    const SizedBox(width: 16),
-                    const Text(
-                      '118',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    const Text(
-                      'Followers',
-                      style: TextStyle(fontSize: 16, color: Colors.grey),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          // Tab Bar
-          Container(
-            color: Colors.white,
-            child: TabBar(
-              controller: _tabController,
-              indicatorColor: const Color(0xFF5D1225),
-              labelColor: const Color(0xFF5D1225),
-              unselectedLabelColor: Colors.grey,
-              labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-              tabs: const [
-                Tab(text: 'Posts'),
-                Tab(text: 'Media'),
-              ],
-            ),
-          ),
-          // Contenu du Tab Bar (Grid d'Images)
-          Expanded(
-            child: TabBarView(
-              controller: _tabController,
-              children: [
-                const Center(child: Text('Aucune publication')),
-                GridView.builder(
-                  padding: const EdgeInsets.all(4.0),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 4.0,
-                    mainAxisSpacing: 4.0,
-                    childAspectRatio: 1.0,
+                    ],
                   ),
-                  itemCount: assetImagePaths.length,
-                  itemBuilder: (context, index) {
-                    return Image.asset(
-                      assetImagePaths[index],
-                      fit: BoxFit.cover,
-                    );
-                  },
-                ),
-              ],
+                  const SizedBox(height: 4),
+                  const Text(
+                    '@pixsellz',
+                    style: TextStyle(fontSize: 16, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    'Digital Goodies Team - Web & Mobile UI/UX development; Graphics; Illustrations',
+                    style: TextStyle(fontSize: 14, color: Colors.black87),
+                  ),
+                  const SizedBox(height: 12),
+                  const Row(
+                    children: [
+                      Icon(Icons.link, size: 16, color: Colors.grey),
+                      SizedBox(width: 4),
+                      Text(
+                        'pixsellz.io',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.blue,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                      SizedBox(width: 16),
+                      Icon(
+                        Icons.calendar_today,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        'Promotion X2026',
+                        style: TextStyle(fontSize: 14, color: Colors.black87),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  const Row(
+                    children: [
+                      Text(
+                        '0',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        'Following',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                      SizedBox(width: 16),
+                      Text(
+                        '0',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        'Followers',
+                        style: TextStyle(fontSize: 16, color: Colors.grey),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            // Tab Bar
+            ColoredBox(
+              color: Colors.white,
+              child: TabBar(
+                controller: _tabController,
+                indicatorColor: const Color(0xFF5D1225),
+                labelColor: const Color(0xFF5D1225),
+                unselectedLabelColor: Colors.grey,
+                labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                tabs: const [
+                  Tab(text: 'Posts'),
+                  Tab(text: 'Media'),
+                ],
+              ),
+            ),
+            // Contenu du Tab Bar (Grid d'Images)
+            Expanded(
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  const Center(child: Text('Aucune publication')),
+                  GridView.builder(
+                    padding: const EdgeInsets.all(4),
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 4,
+                      mainAxisSpacing: 4,
+                    ),
+                    itemCount: assetImagePaths.length,
+                    itemBuilder: (context, index) {
+                      return Image.asset(
+                        assetImagePaths[index],
+                        fit: BoxFit.cover,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

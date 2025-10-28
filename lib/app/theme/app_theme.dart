@@ -21,8 +21,8 @@ class AppTheme{
           error: kFourthColor,
           onError: Colors.white,
           surface: Colors.white,
-          onSurface: Colors.black),
-      extensions: const [SkeletonizerConfigData()]
+          onSurface: Colors.black,),
+      extensions: const [SkeletonizerConfigData()],
     );
   }
 }

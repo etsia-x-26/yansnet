@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:yansnet/publication/widgets/home/comments_modal.dart';
 
@@ -40,7 +41,7 @@ class _PostItemState extends State<PostItem> {
     showModalBottomSheet<void>(
       context: context,
       builder: (BuildContext context) {
-        return CommentsModal();
+        return const CommentsModal();
       },
     );
   }
@@ -48,7 +49,7 @@ class _PostItemState extends State<PostItem> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 0),
+      padding: const EdgeInsets.only(left: 4, right: 4, top: 4),
       child: Container(
         decoration: const BoxDecoration(
           border: Border(
@@ -59,6 +60,14 @@ class _PostItemState extends State<PostItem> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ListTile(
+              onTap: () {
+                context.push(
+                  '/profile/${widget.username}',
+                  extra: {
+                    'displayName': widget.displayName,
+                  },
+                );
+              },
               leading: const CircleAvatar(
                 backgroundImage: NetworkImage('https://via.placeholder.com/40'),
               ),

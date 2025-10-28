@@ -4,8 +4,9 @@ class AppRoutes {
   static const String authRegisterRoute = '/auth/register';
 
   // Main Routes
-  static const String homeRoute = '/home';
+  static const String homeRoute = '/';
   static const String splashRoute = '/splash';
+  static const String settingsSheetRoute = '/settings';
   static const String createPostPageRoute = '/create';
 
   //Channel Routes
@@ -13,8 +14,8 @@ class AppRoutes {
 
   // Message Routes
   static const String messagesRoute = '/messages';
-  static const String emptyMessagesRoute = '/messages/empty';
-  static const String connectionErrorRoute = '/messages/error';
+  static const String emptyMessagesRoute = '/empty';
+  static const String connectionErrorRoute = '/error';
 
   // Chat Routes
   static const String chatRoute = '/chat';
@@ -22,6 +23,9 @@ class AppRoutes {
 
   // Group Routes
   static const String groupChatRoute = '/group';
-  static const String groupInfoRoute = '/group/:groupName/info';
-  static const String createGroup = '/group/create';
+  static const String groupInfoRoute = '/:groupName/info';
+  static const String createGroup = '/create';
+
+  // Profile Routes
+  static const String profileRoute = '/profile/:username';
 }
