@@ -1,10 +1,6 @@
 import 'package:flutter/material.dart';
 
 class ChatHeader extends StatelessWidget implements PreferredSizeWidget {
-
-  const ChatHeader({
-    required this.userName, required this.userAvatar, required this.lastSeen, required this.onBackPressed, required this.onCallPressed, required this.onVideoCallPressed, required this.onMorePressed, super.key,
-  });
   final String userName;
   final String userAvatar;
   final String lastSeen;
@@ -12,6 +8,17 @@ class ChatHeader extends StatelessWidget implements PreferredSizeWidget {
   final VoidCallback onCallPressed;
   final VoidCallback onVideoCallPressed;
   final VoidCallback onMorePressed;
+
+  const ChatHeader({
+    Key? key,
+    required this.userName,
+    required this.userAvatar,
+    required this.lastSeen,
+    required this.onBackPressed,
+    required this.onCallPressed,
+    required this.onVideoCallPressed,
+    required this.onMorePressed,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

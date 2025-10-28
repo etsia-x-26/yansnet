@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class DateSeparator extends StatelessWidget {
-
-  const DateSeparator({required this.date, super.key});
   final String date;
+
+  const DateSeparator({super.key, required this.date});
 
   @override
   Widget build(BuildContext context) {

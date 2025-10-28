@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart'; // Import Google Fonts
 
 class MessagesAppBar extends StatelessWidget implements PreferredSizeWidget {
-
-  const MessagesAppBar({
-    required this.title, required this.onBackPressed, super.key,
-    this.backgroundColor = Colors.white,
-  });
   final String title;
   final VoidCallback onBackPressed;
   final Color backgroundColor;
+
+  const MessagesAppBar({
+    Key? key,
+    required this.title,
+    required this.onBackPressed,
+    this.backgroundColor = Colors.white,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +36,7 @@ class MessagesAppBar extends StatelessWidget implements PreferredSizeWidget {
         ),
       ),
       centerTitle: false, // Title aligned to the left
-      titleSpacing: 0, // Remove extra spacing around title
+      titleSpacing: 0.0, // Remove extra spacing around title
     );
   }
 

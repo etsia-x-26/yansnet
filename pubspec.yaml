@@ -30,6 +30,7 @@ dependencies:
   skeletonizer: ^2.1.0+1
   very_good_analysis: ^7.0.0
 #  iconsax_flutter: ^1.0.1
+  font_awesome_flutter: ^10.7.0
 
 dev_dependencies:
   bloc_test: ^10.0.0

@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
-// import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:iconsax/iconsax.dart'; // Ajoutez cette import
+import 'package:font_awesome_flutter/font_awesome_flutter.dart'; // Ajoutez cette import
 
 class GroupInfoPage extends StatefulWidget {
-
-  const GroupInfoPage({
-    required this.groupName, required this.groupAvatar, required this.memberCount, super.key,
-  });
   final String groupName;
   final String groupAvatar;
   final int memberCount;
+
+  const GroupInfoPage({
+    Key? key,
+    required this.groupName,
+    required this.groupAvatar,
+    required this.memberCount,
+  }) : super(key: key);
 
   @override
   State<GroupInfoPage> createState() => _GroupInfoPageState();
@@ -93,7 +95,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Text(
-                      "Aujourd'hui",
+                      'Aujourd\'hui',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 12,
@@ -147,8 +149,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
                 children: [
                   // Instagram-like icon
                   IconButton(
-                    // icon: const FaIcon(FontAwesomeIcons.instagram, size: 24, color: Colors.grey),
-                    icon: const Icon(Iconsax.instagram),
+                    icon: const FaIcon(FontAwesomeIcons.instagram, size: 24, color: Colors.grey),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                     onPressed: () {
