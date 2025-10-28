@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class EmptyMessagesIllustration extends StatelessWidget {
-  const EmptyMessagesIllustration({super.key});
+  const EmptyMessagesIllustration({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -14,14 +14,14 @@ class EmptyMessagesIllustration extends StatelessWidget {
 class EmptyMessagesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
+    final Paint paint = Paint()
       ..style = PaintingStyle.fill
       ..strokeWidth = 2;
 
     // Dessin du personnage
     // Corps (robe)
     paint.color = Colors.black;
-    final bodyPath = Path();
+    final Path bodyPath = Path();
     bodyPath.moveTo(size.width * 0.4, size.height * 0.55);
     bodyPath.lineTo(size.width * 0.3, size.height * 0.9);
     bodyPath.lineTo(size.width * 0.5, size.height * 0.9);
@@ -30,7 +30,7 @@ class EmptyMessagesPainter extends CustomPainter {
 
     // Haut du corps (chemise)
     paint.color = Colors.white;
-    final torso = Rect.fromLTWH(
+    final Rect torso = Rect.fromLTWH(
       size.width * 0.35,
       size.height * 0.35,
       size.width * 0.1,
@@ -40,7 +40,7 @@ class EmptyMessagesPainter extends CustomPainter {
 
     // Tête
     paint.color = const Color(0xFFE8B894);
-    final head = Rect.fromLTWH(
+    final Rect head = Rect.fromLTWH(
       size.width * 0.35,
       size.height * 0.2,
       size.width * 0.1,
@@ -50,7 +50,7 @@ class EmptyMessagesPainter extends CustomPainter {
 
     // Cheveux
     paint.color = Colors.black;
-    final hairPath = Path();
+    final Path hairPath = Path();
     hairPath.moveTo(size.width * 0.35, size.height * 0.25);
     hairPath.quadraticBezierTo(
       size.width * 0.4,
@@ -65,7 +65,7 @@ class EmptyMessagesPainter extends CustomPainter {
 
     // Bras
     paint.color = const Color(0xFFE8B894);
-    final leftArm = Rect.fromLTWH(
+    final Rect leftArm = Rect.fromLTWH(
       size.width * 0.25,
       size.height * 0.38,
       size.width * 0.15,
@@ -75,7 +75,7 @@ class EmptyMessagesPainter extends CustomPainter {
 
     // Tableau/Présentation
     paint.color = const Color(0xFF8B4513);
-    final board = Rect.fromLTWH(
+    final Rect board = Rect.fromLTWH(
       size.width * 0.55,
       size.height * 0.35,
       size.width * 0.25,
@@ -85,7 +85,7 @@ class EmptyMessagesPainter extends CustomPainter {
 
     // Pied/base
     paint.color = const Color(0xFFD2B48C);
-    final ground = Rect.fromLTWH(
+    final Rect ground = Rect.fromLTWH(
       size.width * 0.2,
       size.height * 0.9,
       size.width * 0.6,

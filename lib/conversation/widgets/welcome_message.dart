@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
 class WelcomeMessage extends StatelessWidget {
+  final String message;
 
   const WelcomeMessage({
-    required this.message, super.key,
-  });
-  final String message;
+    Key? key,
+    required this.message,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
