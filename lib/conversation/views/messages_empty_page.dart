@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart'; // Ensure this is imported
-import '../widgets/messages_app_bar.dart'; // Ensure this import is correct
-import '../widgets/empty_state_widget.dart';
+import 'package:yansnet/conversation/widgets/empty_state_widget.dart';
 
 class MessagesEmptyPage extends StatelessWidget {
-  const MessagesEmptyPage({Key? key}) : super(key: key);
+  const MessagesEmptyPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: MessagesAppBar(
-        title: 'Messages',
-        onBackPressed: () => Navigator.of(context).pop(),
-        backgroundColor: Colors.white, // Clean background
-      ),
       body: SingleChildScrollView(
         child: Center(
           child: Column(
@@ -28,8 +21,9 @@ class MessagesEmptyPage extends StatelessWidget {
               ),
               const EmptyStateWidget(
                 illustration: SizedBox.shrink(),
-                title: 'Oups !!! Tu n\'as pas\nencore de message',
-                subtitle: 'Tes messages apparaîtront ici une\nfois que tu les auras reçus.',
+                title: "Oups !!! Tu n'as pas \n encore de message",
+                subtitle: 'Tes messages apparaîtront ici une \n'
+                    'fois que tu les auras reçus.',
               ),
             ],
           ),

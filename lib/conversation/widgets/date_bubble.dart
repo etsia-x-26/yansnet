@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 class DateBubble extends StatelessWidget {
-  final String date;
 
   const DateBubble({
-    Key? key,
     required this.date,
-  }) : super(key: key);
+    super.key,
+  });
+  final String date;
 
   @override
   Widget build(BuildContext context) {

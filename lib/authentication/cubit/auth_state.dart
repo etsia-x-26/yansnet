@@ -8,7 +8,7 @@ abstract class AuthenticationState {
 }
 
 class NoAuth extends AuthenticationState {
-  const NoAuth({bool? firstOpening})
+  const NoAuth()
       : super(user: null);
 }
 

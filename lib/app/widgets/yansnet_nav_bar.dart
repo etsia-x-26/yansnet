@@ -8,7 +8,7 @@ class YansnetBottomNavBar extends StatelessWidget {
     required this.currentIndex, required this.onTap, super.key,
   });
   final int currentIndex;
-  final Function(int) onTap;
+  final void Function(int) onTap;
 
 
   @override

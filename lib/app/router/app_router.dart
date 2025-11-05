@@ -10,7 +10,6 @@ import 'package:yansnet/authentication/cubit/authentication_cubit.dart';
 import 'package:yansnet/authentication/views/login_page.dart';
 import 'package:yansnet/authentication/views/register_page.dart';
 import 'package:yansnet/conversation/views/chat_conversation_page.dart';
-import 'package:yansnet/conversation/views/group_chat_page.dart';
 import 'package:yansnet/conversation/views/group_info_page.dart';
 import 'package:yansnet/conversation/views/messages_empty_page.dart';
 import 'package:yansnet/conversation/views/messages_list_page.dart';
@@ -27,37 +26,37 @@ class AppRouter {
 
   static GoRouter createRouter(AuthenticationCubit authCubit) {
     // static GoRouter createRouter() {
-    final authNotifier = AuthChangeNotifier(authCubit);
+    // final authNotifier = AuthChangeNotifier(authCubit);
     return GoRouter(
       navigatorKey: _rootNavigatorKey,
       debugLogDiagnostics: true,
-      initialLocation: AppRoutes.authLoginRoute,
-      // initialLocation: AppRoutes.homeRoute,
-      refreshListenable: authNotifier,
-      redirect: (context, state) {
-        final authState = authNotifier.state;
-        final isAuthRoute = state.matchedLocation.startsWith('/auth');
+      // initialLocation: AppRoutes.authLoginRoute,
+      initialLocation: AppRoutes.homeRoute,
+      // refreshListenable: authNotifier,
+      // redirect: (context, state) {
+      //   final authState = authNotifier.state;
+      //   final isAuthRoute = state.matchedLocation.startsWith('/auth');
 
-        // Si l'utilisateur est connecté et essaie d'accéder aux pages d'auth
-        if (authState is UserFetched && isAuthRoute) {
-          return AppRoutes.homeRoute;
-        }
+      //   // Si l'utilisateur est connecté et essaie d'accéder aux pages d'auth
+      //   if (authState is UserFetched && isAuthRoute) {
+      //     return AppRoutes.homeRoute;
+      //   }
 
-        // Si l'utilisateur n'est pas connecté et
-        // essaie d'accéder aux pages protégées
-        if (authState is! UserFetched &&
-            !isAuthRoute &&
-            authState is! AuthLoading) {
-          return AppRoutes.authLoginRoute;
-        }
+      //   // Si l'utilisateur n'est pas connecté et
+      //   // essaie d'accéder aux pages protégées
+      //   if (authState is! UserFetched &&
+      //       !isAuthRoute &&
+      //       authState is! AuthLoading) {
+      //     return AppRoutes.authLoginRoute;
+      //   }
 
-        // Si l'utilisateur est déconnecté
-        if (authState is Logout) {
-          return AppRoutes.authLoginRoute;
-        }
+      //   // Si l'utilisateur est déconnecté
+      //   if (authState is Logout) {
+      //     return AppRoutes.authLoginRoute;
+      //   }
 
-        return null;
-      },
+      //   return null;
+      // },
       routes: [
         GoRoute(
           name: 'home',
@@ -128,10 +127,14 @@ class AppRouter {
           path: AppRoutes.groupChatRoute,
           builder: (ctx, state) {
             final groupName = state.pathParameters['groupName'] ?? 'Groupe';
-            return GroupChatPage(
+            final extra = state.extra as Map<String, dynamic>? ?? {};
+            final groupAvatar = extra['groupAvatar'] as String? ??
+                'https://i.pravatar.cc/150?img=10';
+            final memberCount = extra['memberCount'] as int? ?? 41;
+            return GroupInfoPage(
               groupName: groupName,
-              groupAvatar: 'https://i.pravatar.cc/150?img=10',
-              memberCount: 41,
+              groupAvatar: groupAvatar,
+              memberCount: memberCount,
             );
           },
           routes: [
@@ -140,10 +143,14 @@ class AppRouter {
               path: AppRoutes.groupInfoRoute,
               builder: (ctx, state) {
                 final groupName = state.pathParameters['groupName'] ?? 'Groupe';
+                final extra = state.extra as Map<String, dynamic>? ?? {};
+                final groupAvatar = extra['groupAvatar'] as String? ??
+                    'https://i.pravatar.cc/150?img=10';
+                final memberCount = extra['memberCount'] as int? ?? 41;
                 return GroupInfoPage(
                   groupName: groupName,
-                  groupAvatar: 'https://i.pravatar.cc/150?img=10',
-                  memberCount: 41,
+                  groupAvatar: groupAvatar,
+                  memberCount: memberCount,
                 );
               },
             ),
