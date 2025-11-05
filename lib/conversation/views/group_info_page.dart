@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart'; // Ajoutez cette import
 
 class GroupInfoPage extends StatefulWidget {
-  final String groupName;
-  final String groupAvatar;
-  final int memberCount;
-
   const GroupInfoPage({
-    Key? key,
     required this.groupName,
     required this.groupAvatar,
     required this.memberCount,
-  }) : super(key: key);
+    super.key,
+  });
+
+  final String groupName;
+  final String groupAvatar;
+  final int memberCount;
 
   @override
   State<GroupInfoPage> createState() => _GroupInfoPageState();
@@ -95,7 +95,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Text(
-                      'Aujourd\'hui',
+                      "Aujourd'hui",
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 12,
@@ -111,7 +111,9 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Text(
-                      'Bienvenue dans le groupe de votre promotion, vous avez été automatiquement intégré à ce groupe. Vous pouvez désormais échanger avec les autres membres.',
+                      'Bienvenue dans le groupe de votre promotion, '
+                      'vous avez été automatiquement intégré à ce groupe. '
+                      'Vous pouvez désormais échanger avec les autres membres.',
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 14,
@@ -136,7 +138,7 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
+                  color: Colors.grey.withValues(alpha: 0.2),
                   spreadRadius: 1,
                   blurRadius: 5,
                   offset: const Offset(0, 2),
@@ -149,7 +151,11 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
                 children: [
                   // Instagram-like icon
                   IconButton(
-                    icon: const FaIcon(FontAwesomeIcons.instagram, size: 24, color: Colors.grey),
+                    icon: const FaIcon(
+                      FontAwesomeIcons.instagram,
+                      size: 24,
+                      color: Colors.grey,
+                    ),
                     padding: EdgeInsets.zero,
                     constraints: const BoxConstraints(),
                     onPressed: () {

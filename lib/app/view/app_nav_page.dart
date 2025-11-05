@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yansnet/app/view/not_available_page.dart';
 import 'package:yansnet/app/widgets/yansnet_nav_bar.dart';
-import 'package:yansnet/authentication/cubit/authentication_cubit.dart';
 import 'package:yansnet/publication/views/explore_page.dart';
 import 'package:yansnet/publication/views/home_page.dart';
 import 'package:yansnet/publication/widgets/yansnet_app_bar.dart';

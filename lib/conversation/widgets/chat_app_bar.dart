@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 
 class ChatAppBar extends StatelessWidget implements PreferredSizeWidget {
+
+  const ChatAppBar({
+    required this.title,
+    required this.subtitle,
+    required this.onCallPressed,
+    required this.onVideoPressed,
+    required this.onMorePressed,
+    required this.onBackPressed,
+    super.key,
+  });
+
   final String title;
   final String subtitle;
   final VoidCallback onCallPressed;
   final VoidCallback onVideoPressed;
   final VoidCallback onMorePressed;
   final VoidCallback onBackPressed;
-
-  const ChatAppBar({
-    Key? key,
-    required this.title,
-    required this.subtitle,
-    required this.onCallPressed,
-    required this.onVideoPressed,
-    required this.onMorePressed,
-    required this.onBackPressed, required Color backgroundColor, required int elevation,
-  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
