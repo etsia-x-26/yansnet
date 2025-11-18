@@ -28,12 +28,23 @@ class MessageListItem extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        context.push(
-          '/chat/$name',
-          extra: {
-            'userAvatar': avatarUrl,
-          },
-        );
+        if (isGroup) {
+          context.push(
+            '/group/$name',
+            extra: {
+              'groupAvatar': avatarUrl,
+              'memberCount': memberCount ?? 0,
+              'isUserAdmin': false, // TODO: Récupérer depuis les données du groupe
+            },
+          );
+        } else {
+          context.push(
+            '/chat/$name',
+            extra: {
+              'userAvatar': avatarUrl,
+            },
+          );
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
@@ -60,7 +71,8 @@ class MessageListItem extends StatelessWidget {
                         '/group/$name',
                         extra: {
                           'groupAvatar': avatarUrl,
-                          'memberCount': memberCount,
+                          'memberCount': memberCount ?? 0,
+                          'isUserAdmin': false, // TODO: Récupérer depuis les données du groupe
                         },
                       );
                     } else {

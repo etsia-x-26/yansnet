@@ -2,15 +2,18 @@ import 'package:flutter/widgets.dart';
 // import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:yansnet/app/app.dart';
-import 'package:yansnet/app/router/auth_change_notifier.dart';
 import 'package:yansnet/app/router/routes.dart';
 import 'package:yansnet/app/view/app_nav_page.dart';
-import 'package:yansnet/authentication/cubit/auth_state.dart';
 import 'package:yansnet/authentication/cubit/authentication_cubit.dart';
 import 'package:yansnet/authentication/views/login_page.dart';
 import 'package:yansnet/authentication/views/register_page.dart';
 import 'package:yansnet/conversation/views/chat_conversation_page.dart';
+import 'package:yansnet/conversation/views/group_details_page.dart';
+import 'package:yansnet/conversation/views/group_documents_page.dart';
+import 'package:yansnet/conversation/views/group_important_messages_page.dart';
 import 'package:yansnet/conversation/views/group_info_page.dart';
+import 'package:yansnet/conversation/views/group_links_page.dart';
+import 'package:yansnet/conversation/views/group_media_page.dart';
 import 'package:yansnet/conversation/views/messages_empty_page.dart';
 import 'package:yansnet/conversation/views/messages_list_page.dart';
 import 'package:yansnet/conversation/views/messages_no_connection_page.dart';
@@ -121,20 +124,30 @@ class AppRouter {
           },
         ),
 
-        // Group routess
+        // Group routes
         GoRoute(
           name: 'group_chat',
-          path: AppRoutes.groupChatRoute,
+          path: '${AppRoutes.groupChatRoute}/:groupName',
           builder: (ctx, state) {
-            final groupName = state.pathParameters['groupName'] ?? 'Groupe';
+            // Décoder le nom du groupe depuis l'URL de manière sécurisée
+            final encodedGroupName = state.pathParameters['groupName'] ?? 'Groupe';
+            String groupName;
+            try {
+              groupName = Uri.decodeComponent(encodedGroupName);
+            } catch (e) {
+              // Si le décodage échoue (nom déjà décodé ou mal formé), utiliser tel quel
+              groupName = encodedGroupName;
+            }
             final extra = state.extra as Map<String, dynamic>? ?? {};
             final groupAvatar = extra['groupAvatar'] as String? ??
                 'https://i.pravatar.cc/150?img=10';
             final memberCount = extra['memberCount'] as int? ?? 41;
+            final isUserAdmin = extra['isUserAdmin'] as bool? ?? false;
             return GroupInfoPage(
               groupName: groupName,
               groupAvatar: groupAvatar,
               memberCount: memberCount,
+              isUserAdmin: isUserAdmin,
             );
           },
           routes: [
@@ -142,17 +155,85 @@ class AppRouter {
               name: 'group_info',
               path: AppRoutes.groupInfoRoute,
               builder: (ctx, state) {
-                final groupName = state.pathParameters['groupName'] ?? 'Groupe';
+                // Décoder le nom du groupe depuis l'URL de manière sécurisée
+                final encodedGroupName = state.pathParameters['groupName'] ?? 'Groupe';
+                String groupName;
+                try {
+                  groupName = Uri.decodeComponent(encodedGroupName);
+                } catch (e) {
+                  // Si le décodage échoue (nom déjà décodé ou mal formé), utiliser tel quel
+                  groupName = encodedGroupName;
+                }
                 final extra = state.extra as Map<String, dynamic>? ?? {};
                 final groupAvatar = extra['groupAvatar'] as String? ??
                     'https://i.pravatar.cc/150?img=10';
                 final memberCount = extra['memberCount'] as int? ?? 41;
-                return GroupInfoPage(
+                final isUserAdmin = extra['isUserAdmin'] as bool? ?? false;
+                return GroupDetailsPage(
                   groupName: groupName,
                   groupAvatar: groupAvatar,
                   memberCount: memberCount,
+                  isUserAdmin: isUserAdmin,
                 );
               },
+              routes: [
+                GoRoute(
+                  name: 'group_media',
+                  path: AppRoutes.groupMediaRoute,
+                  builder: (ctx, state) {
+                    final encodedGroupName = state.pathParameters['groupName'] ?? 'Groupe';
+                    String groupName;
+                    try {
+                      groupName = Uri.decodeComponent(encodedGroupName);
+                    } catch (e) {
+                      groupName = encodedGroupName;
+                    }
+                    return GroupMediaPage(groupName: groupName);
+                  },
+                ),
+                GoRoute(
+                  name: 'group_links',
+                  path: AppRoutes.groupLinksRoute,
+                  builder: (ctx, state) {
+                    final encodedGroupName = state.pathParameters['groupName'] ?? 'Groupe';
+                    String groupName;
+                    try {
+                      groupName = Uri.decodeComponent(encodedGroupName);
+                    } catch (e) {
+                      groupName = encodedGroupName;
+                    }
+                    return GroupLinksPage(groupName: groupName);
+                  },
+                ),
+                GoRoute(
+                  name: 'group_documents',
+                  path: AppRoutes.groupDocumentsRoute,
+                  builder: (ctx, state) {
+                    final encodedGroupName = state.pathParameters['groupName'] ?? 'Groupe';
+                    String groupName;
+                    try {
+                      groupName = Uri.decodeComponent(encodedGroupName);
+                    } catch (e) {
+                      groupName = encodedGroupName;
+                    }
+                    return GroupDocumentsPage(groupName: groupName);
+                  },
+                ),
+                GoRoute(
+                  name: 'group_important_messages',
+                  path: AppRoutes.groupImportantMessagesRoute,
+                  builder: (ctx, state) {
+                    final encodedGroupName = state.pathParameters['groupName'] ?? 'Groupe';
+                    String groupName;
+                    try {
+                      groupName = Uri.decodeComponent(encodedGroupName);
+                    } catch (e) {
+                      groupName = encodedGroupName;
+                    }
+                    return GroupImportantMessagesPage(groupName: groupName);
+                  },
+                ),
+              ],
             ),
             GoRoute(
               name: 'create_group',

@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart'; // Ajoutez cette import
+import 'package:go_router/go_router.dart';
+import 'package:yansnet/conversation/widgets/chat_input_bar.dart';
 
 class GroupInfoPage extends StatefulWidget {
   const GroupInfoPage({
     required this.groupName,
     required this.groupAvatar,
     required this.memberCount,
+    this.isUserAdmin = false,
     super.key,
   });
 
   final String groupName;
   final String groupAvatar;
   final int memberCount;
+  final bool isUserAdmin;
 
   @override
   State<GroupInfoPage> createState() => _GroupInfoPageState();
@@ -19,6 +22,26 @@ class GroupInfoPage extends StatefulWidget {
 
 class _GroupInfoPageState extends State<GroupInfoPage> {
   final TextEditingController _messageController = TextEditingController();
+  bool _hasText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _messageController.addListener(() {
+      setState(() {
+        _hasText = _messageController.text.trim().isNotEmpty;
+      });
+    });
+  }
+
+  void _sendMessage() {
+    final text = _messageController.text.trim();
+    if (text.isNotEmpty) {
+      // TODO: Envoyer le message au groupe
+      _messageController.clear();
+      _hasText = false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -31,36 +54,53 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Navigator.of(context).pop(),
         ),
-        title: Row(
-          children: [
-            // Avatar du groupe
-            CircleAvatar(
-              radius: 20,
-              backgroundImage: NetworkImage(widget.groupAvatar),
-              backgroundColor: Colors.grey[300],
-            ),
-            const SizedBox(width: 12),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  widget.groupName,
-                  style: const TextStyle(
-                    color: Colors.black,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                  ),
+        title: InkWell(
+          onTap: () {
+            // Navigation vers la page de détails du groupe
+            final encodedName = Uri.encodeComponent(widget.groupName);
+            context.push(
+              '/group/$encodedName/info',
+              extra: {
+                'groupAvatar': widget.groupAvatar,
+                'memberCount': widget.memberCount,
+                'isUserAdmin': widget.isUserAdmin,
+              },
+            );
+          },
+          child: Row(
+            children: [
+              // Avatar du groupe
+              CircleAvatar(
+                radius: 20,
+                backgroundImage: NetworkImage(widget.groupAvatar),
+                backgroundColor: Colors.grey[300],
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.groupName,
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    Text(
+                      '${widget.memberCount} membres',
+                      style: const TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
                 ),
-                Text(
-                  '${widget.memberCount} membres',
-                  style: const TextStyle(
-                    color: Colors.grey,
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-          ],
+              ),
+              const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
+            ],
+          ),
         ),
         actions: [
           IconButton(
@@ -73,7 +113,18 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
           ),
           IconButton(
             icon: const Icon(Icons.more_vert, color: Colors.black),
-            onPressed: () {},
+            onPressed: () {
+              // Navigation vers la page de détails du groupe
+              final encodedName = Uri.encodeComponent(widget.groupName);
+              context.push(
+                '/group/$encodedName/info',
+                extra: {
+                  'groupAvatar': widget.groupAvatar,
+                  'memberCount': widget.memberCount,
+                  'isUserAdmin': widget.isUserAdmin,
+                },
+              );
+            },
           ),
         ],
       ),
@@ -125,81 +176,15 @@ class _GroupInfoPageState extends State<GroupInfoPage> {
               ),
             ),
           ),
-          // Bottom app bar styled like ChatConversationPage
-          Container(
-            margin: const EdgeInsets.all(16),
-            padding: const EdgeInsets.all(4), // Padding for the border
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(30),
-              border: Border.all(
-                color: const Color(0xFF5D1A1A), // Violet/maroon border color
-                width: 2, // Border thickness
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withValues(alpha: 0.2),
-                  spreadRadius: 1,
-                  blurRadius: 5,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              child: Row(
-                children: [
-                  // Instagram-like icon
-                  IconButton(
-                    icon: const FaIcon(
-                      FontAwesomeIcons.instagram,
-                      size: 24,
-                      color: Colors.grey,
-                    ),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: () {
-                      // Action for Instagram
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                  // Text field
-                  Expanded(
-                    child: TextField(
-                      controller: _messageController,
-                      decoration: const InputDecoration(
-                        hintText: 'Votre message',
-                        border: InputBorder.none,
-                        isDense: true,
-                        contentPadding: EdgeInsets.symmetric(vertical: 12),
-                        hintStyle: TextStyle(color: Colors.grey),
-                      ),
-                      style: const TextStyle(fontSize: 15),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  // "+" button
-                  IconButton(
-                    icon: const Icon(Icons.add, size: 24, color: Colors.grey),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: () {
-                      // Action for adding attachment
-                    },
-                  ),
-                  const SizedBox(width: 8),
-                  // Mic button
-                  IconButton(
-                    icon: const Icon(Icons.mic, size: 24, color: Colors.grey),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                    onPressed: () {
-                      // Action for voice recording
-                    },
-                  ),
-                ],
-              ),
-            ),
+          // Barre de saisie
+          ChatInputBar(
+            controller: _messageController,
+            onSendPressed: (text) => _sendMessage(),
+            hasText: _hasText,
+            hintText: 'Votre message',
+            onEmojiPressed: () {},
+            onAddPressed: () {},
+            onMicPressed: () {},
           ),
         ],
       ),
