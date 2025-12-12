@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:yansnet/conversation/models/message_filter.dart' as model;
 import 'package:yansnet/conversation/views/messages_empty_page.dart';
+import 'package:yansnet/conversation/views/channels_page.dart'; // 👈 AJOUTEZ CETTE LIGNE
 import 'package:yansnet/conversation/widgets/message_filter_tabs.dart';
 import 'package:yansnet/conversation/widgets/message_list_item.dart';
+
 
 class MessagesListPage extends StatefulWidget {
   const MessagesListPage({super.key});
@@ -177,8 +179,8 @@ class _MessagesListPageState extends State<MessagesListPage> {
 
   // 🔧 Filtrage des messages avec filtres secondaires
   List<Map<String, dynamic>> _getFilteredMessages(
-    List<Map<String, dynamic>> baseMessages,
-  ) {
+      List<Map<String, dynamic>> baseMessages,
+      ) {
     switch (_selectedFilter) {
       case model.MessageFilter.all:
         return baseMessages;
@@ -226,22 +228,22 @@ class _MessagesListPageState extends State<MessagesListPage> {
           child: filteredMessages.isEmpty
               ? const MessagesEmptyPage()
               : ListView.builder(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  itemCount: filteredMessages.length,
-                  itemBuilder: (context, index) {
-                    final message = filteredMessages[index];
-                    return MessageListItem(
-                      avatarUrl: message['avatarUrl'] as String,
-                      name: message['name'] as String,
-                      lastMessage: message['lastMessage'] as String,
-                      unreadCount: message['unreadCount'] as int,
-                      memberCount: message['memberCount'] as int,
-                      isGroup: message['isGroup'] as bool,
-                      isOnline: message['isOnline'] as bool,
-                    );
-                  },
-                ),
+            padding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            itemCount: filteredMessages.length,
+            itemBuilder: (context, index) {
+              final message = filteredMessages[index];
+              return MessageListItem(
+                avatarUrl: message['avatarUrl'] as String,
+                name: message['name'] as String,
+                lastMessage: message['lastMessage'] as String,
+                unreadCount: message['unreadCount'] as int,
+                memberCount: message['memberCount'] as int,
+                isGroup: message['isGroup'] as bool,
+                isOnline: message['isOnline'] as bool,
+              );
+            },
+          ),
         ),
       ],
     );
@@ -301,8 +303,8 @@ class _MessagesListPageState extends State<MessagesListPage> {
               _buildMessagesList(_chatMessages),
               // Onglet Groupes
               _buildMessagesList(_groupMessages),
-              // Onglet Chaînes
-              _buildMessagesList(_channelMessages),
+              // Onglet Chaînes - 👈 REMPLACEZ CETTE LIGNE
+              const ChannelsPage(), // 👈 NOUVELLE VUE POUR LES CHAÎNES
             ],
           ),
           floatingActionButton: FloatingActionButton(
