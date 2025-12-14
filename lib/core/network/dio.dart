@@ -16,10 +16,11 @@ Options defaultOptions = Options(
 CacheOptions cacheOptions = CacheOptions(
   // A default store is required for interceptor.
   store: MemCacheStore(),
-  policy: CachePolicy.forceCache,
+  policy: CachePolicy.noCache,
 );
 
-const apiBaseUrl = 'http://localhost:8085';
+// Remplacez cette URL par l'adresse IP et le port de votre backend
+const apiBaseUrl = 'http://192.168.1.24:8085';
 const imageBaseUrl = 'https://localhost:8080';
 
 Dio http = Dio(
@@ -29,7 +30,7 @@ Dio http = Dio(
   ),
 )..interceptors.addAll(
   [
-    TokenInterceptor(),
+    //TokenInterceptor(),
     DioCacheInterceptor(
       options: cacheOptions,
     ),

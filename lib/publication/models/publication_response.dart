@@ -25,6 +25,7 @@ class Publication with _$Publication {
     required int id,
     required String content,
     required DateTime createdAt, required User user, required Channel channel, DateTime? deletedAt,
+    @Default([]) List<String> media,
     @Default(0) int totalLikes,
     @Default(0) int totalComments,
   }) = _Publication;
