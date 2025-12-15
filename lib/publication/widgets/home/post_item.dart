@@ -30,11 +30,22 @@ class PostItem extends StatefulWidget {
 class _PostItemState extends State<PostItem> {
   bool _isLiked = false;
   late int _likesCount;
+  bool _imageError = false;
 
   @override
   void initState() {
     super.initState();
     _likesCount = widget.likes;
+    _imageError = false;
+  }
+
+  @override
+  void didUpdateWidget(PostItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Réinitialiser l'état d'erreur si l'URL de l'image change
+    if (oldWidget.imageUrl != widget.imageUrl) {
+      _imageError = false;
+    }
   }
 
   void _showCommentsModal(BuildContext context) {
@@ -43,6 +54,129 @@ class _PostItemState extends State<PostItem> {
       builder: (BuildContext context) {
         return const CommentsModal();
       },
+    );
+  }
+
+  Widget _buildImageWidget() {
+    // Si pas d'image, afficher un placeholder gris
+    if (widget.imageUrl == null) {
+      return Container(
+        height: 200,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.image_outlined,
+              size: 48,
+              color: Colors.grey[400],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Aucune image',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Si erreur de chargement, afficher placeholder d'erreur
+    if (_imageError) {
+      return Container(
+        height: 200,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.broken_image_outlined,
+              size: 48,
+              color: Colors.grey[400],
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Image non disponible',
+              style: TextStyle(
+                color: Colors.grey[600],
+                fontSize: 14,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Afficher l'image avec gestion du chargement et des erreurs
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: Image.network(
+        widget.imageUrl!,
+        fit: BoxFit.cover,
+        width: double.infinity,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            height: 300,
+            width: double.infinity,
+            color: Colors.grey[200],
+            child: Center(
+              child: CircularProgressIndicator(
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes!
+                    : null,
+              ),
+            ),
+          );
+        },
+        errorBuilder: (context, error, stackTrace) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              setState(() {
+                _imageError = true;
+              });
+            }
+          });
+          return Container(
+            height: 200,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.broken_image_outlined,
+                  size: 48,
+                  color: Colors.grey[400],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Image non disponible',
+                  style: TextStyle(
+                    color: Colors.grey[600],
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
     );
   }
 
@@ -79,11 +213,11 @@ class _PostItemState extends State<PostItem> {
               padding: const EdgeInsets.all(8),
               child: Text(widget.content),
             ),
-            if (widget.imageUrl != null)
-              Padding(
-                padding: const EdgeInsets.only(right: 16, bottom: 8),
-                child: Image.network(widget.imageUrl!),
-              ),
+            // Toujours afficher une zone d'image (image réelle ou placeholder)
+            Padding(
+              padding: const EdgeInsets.only(right: 16, bottom: 8),
+              child: _buildImageWidget(),
+            ),
             if (widget.time.isNotEmpty)
               Text(
                 widget.time,

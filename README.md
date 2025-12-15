@@ -1,4 +1,29 @@
- # Yansnet
+ # Yansnet Mobile Application
+
+Une application mobile Flutter pour le réseau social Yansnet.
+
+## Problèmes connus et résolutions
+
+### Erreur de connexion backend "Failed host lookup: 'dmp.dme.'"
+
+Cette erreur se produit lorsque l'application ne peut pas atteindre le serveur backend. Pour résoudre ce problème :
+
+1. Vérifiez que l'URL du backend est correctement configurée dans [lib/core/network/dio.dart](file:///C:/Users/tchag/yansnet/lib/core/network/dio.dart)
+2. Assurez-vous que votre appareil/mobile émulateur peut accéder à l'adresse IP du backend
+3. Si vous utilisez un émulateur Android, configurez les paramètres réseau appropriés
+
+### Configuration du Backend
+
+L'URL du backend est configurée dans [lib/core/network/dio.dart](file:///C:/Users/tchag/yansnet/lib/core/network/dio.dart) :
+```dart
+const apiBaseUrl = 'http://10.237.70.218:8085'; // À modifier selon votre configuration
+```
+
+Remplacez cette URL par l'adresse IP et le port de votre serveur backend.
+
+Pour les développeurs:
+- Sur émulateur Android, vous pouvez utiliser 10.0.2.2 pour accéder à localhost de votre machine hôte
+- Sur un appareil physique, assurez-vous que l'appareil et le serveur sont sur le même réseau WiFi
 
 ![coverage][coverage_badge]
 [![style: very good analysis][very_good_analysis_badge]][very_good_analysis_link]
@@ -481,7 +506,7 @@ git commit -m "ui: ajout tests pour ma feature"
 - Instructions pour tester vos pages
 
 **Dans la description** :
-```markdown
+```
 ## Interface Ajoutée
 - Page: MaFeaturePage
 - Composants: MaFeatureWidget

@@ -37,24 +37,59 @@ class _CreatePostPageState extends State<CreatePostPage> {
     }
   }
 
+  void _removeImage(int index) {
+    setState(() {
+      _selectedImages.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<PublicationCubit, PublicationState>(
       listener: (context, state) {
-        state.maybeWhen(
+        state.when(
+          initial: () {},
+          loading: () {},
           success: () {
+            // Afficher le message de succès
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Publication créée avec succès!')),
+              const SnackBar(
+                content: Text('Publication créée avec succès!'),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 2),
+              ),
+            );
+            // Fermer la page
+            context.pop();
+            // Note: Le rechargement des posts se fait déjà dans le cubit
+          },
+          fetchingMore: () {},
+          loaded: (data) {
+            // Quand les posts sont rechargés après création, fermer la page si elle est encore ouverte
+            if (Navigator.canPop(context)) {
+              context.pop();
+            }
+          },
+          created: (publication) {
+            // Si vous utilisez le state created
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Publication créée avec succès!'),
+                backgroundColor: Colors.green,
+                duration: Duration(seconds: 2),
+              ),
             );
             context.pop();
-            context.read<PublicationCubit>().fetchPosts();
           },
           error: (message) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Erreur: $message')),
+              SnackBar(
+                content: Text('Erreur: $message'),
+                backgroundColor: Colors.red,
+                duration: const Duration(seconds: 3),
+              ),
             );
           },
-          orElse: () {},
         );
       },
       child: Scaffold(
@@ -79,6 +114,11 @@ class _CreatePostPageState extends State<CreatePostPage> {
               const Spacer(),
               BlocBuilder<PublicationCubit, PublicationState>(
                 builder: (context, state) {
+                  final isLoading = state.maybeWhen(
+                    loading: () => true,
+                    orElse: () => false,
+                  );
+
                   return ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF420C18),
@@ -86,33 +126,29 @@ class _CreatePostPageState extends State<CreatePostPage> {
                         borderRadius: BorderRadius.circular(20),
                       ),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 20,
-                          vertical: 8,
-                          ),
-                    ),
-                    onPressed: state.maybeWhen(
-                      loading: () => null,
-                      orElse: () => () {
-                        if (_controller.text.isNotEmpty) {
-                          context
-                              .read<PublicationCubit>()
-                              .createPost(_controller.text);
-                        }
-                      },
-                    ),
-                    child: state.maybeWhen(
-                      loading: () => const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
+                        horizontal: 20,
+                        vertical: 8,
                       ),
-                      orElse: () => const Text(
-                        'Post',
-                        style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: isLoading || _controller.text.trim().isEmpty
+                        ? null
+                        : () {
+                      context
+                          .read<PublicationCubit>()
+                          .createPost(_controller.text.trim());
+                    },
+                    child: isLoading
+                        ? const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        color: Colors.white,
+                        strokeWidth: 2,
                       ),
+                    )
+                        : const Text(
+                      'Post',
+                      style: TextStyle(color: Colors.white),
                     ),
                   );
                 },
@@ -125,17 +161,73 @@ class _CreatePostPageState extends State<CreatePostPage> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              TextField(
-                controller: _controller,
-                focusNode: _focusNode,
-                maxLines: null,
-                style: const TextStyle(fontSize: 16),
-                decoration: const InputDecoration(
-                  hintText: 'Description of your post',
-                  border: InputBorder.none,
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  focusNode: _focusNode,
+                  maxLines: null,
+                  expands: true,
+                  textAlignVertical: TextAlignVertical.top,
+                  style: const TextStyle(fontSize: 16),
+                  decoration: const InputDecoration(
+                    hintText: 'Description of your post',
+                    hintStyle: TextStyle(color: Colors.grey),
+                    border: InputBorder.none,
+                  ),
+                  onChanged: (value) {
+                    setState(() {});
+                  },
                 ),
               ),
               const SizedBox(height: 16),
+              // Zone des images
+              if (_selectedImages.isNotEmpty)
+                Container(
+                  height: 100,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _selectedImages.length,
+                    itemBuilder: (context, index) {
+                      return Stack(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(right: 8),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(12),
+                              child: Image.file(
+                                File(_selectedImages[index].path),
+                                width: 100,
+                                height: 100,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: 4,
+                            right: 12,
+                            child: GestureDetector(
+                              onTap: () => _removeImage(index),
+                              child: Container(
+                                padding: const EdgeInsets.all(4),
+                                decoration: const BoxDecoration(
+                                  color: Colors.black54,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                ),
+              // Barre d'outils
               Row(
                 children: [
                   GestureDetector(
@@ -154,30 +246,31 @@ class _CreatePostPageState extends State<CreatePostPage> {
                       ),
                     ),
                   ),
-                  if (_selectedImages.isNotEmpty)
-                    Expanded(
-                      child: SizedBox(
-                        height: 60,
-                        child: ListView.builder(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: _selectedImages.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding: const EdgeInsets.only(right: 8),
-                              child: ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: Image.file(
-                                  File(_selectedImages[index].path),
-                                  width: 50,
-                                  height: 50,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            );
-                          },
-                        ),
+                  GestureDetector(
+                    onTap: () => _pickImage(ImageSource.gallery),
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: const Color(0xFF420C18)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(
+                        Icons.photo_library_outlined,
+                        color: Color(0xFFC0262E),
                       ),
                     ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    '${_controller.text.length}/500',
+                    style: TextStyle(
+                      color: _controller.text.length > 500
+                          ? Colors.red
+                          : Colors.grey,
+                      fontSize: 12,
+                    ),
+                  ),
                 ],
               ),
             ],

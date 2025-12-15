@@ -51,8 +51,9 @@ class TokenInterceptor extends QueuedInterceptor{
         return;
       }
 
+      // Utiliser le même baseUrl que dans dio.dart
       final refreshDio = Dio(
-        BaseOptions(baseUrl: 'https://dmp.dme.:9443/zeb-api'),
+        BaseOptions(baseUrl: apiBaseUrl),
       );
       // Add the Api method to get the token on tsystemshe server
       await refreshDio
