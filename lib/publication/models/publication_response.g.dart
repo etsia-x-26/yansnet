@@ -34,12 +34,12 @@ _$PublicationImpl _$$PublicationImplFromJson(Map<String, dynamic> json) =>
     _$PublicationImpl(
       id: (json['id'] as num).toInt(),
       content: json['content'] as String,
-      deletedAt: json['deletedAt'] == null
-          ? null
-          : DateTime.parse(json['deletedAt'] as String),
       createdAt: DateTime.parse(json['createdAt'] as String),
       user: User.fromJson(json['user'] as Map<String, dynamic>),
       channel: Channel.fromJson(json['channel'] as Map<String, dynamic>),
+      deletedAt: json['deletedAt'] == null
+          ? null
+          : DateTime.parse(json['deletedAt'] as String),
       totalLikes: (json['totalLikes'] as num?)?.toInt() ?? 0,
       totalComments: (json['totalComments'] as num?)?.toInt() ?? 0,
     );
@@ -48,10 +48,10 @@ Map<String, dynamic> _$$PublicationImplToJson(_$PublicationImpl instance) =>
     <String, dynamic>{
       'id': instance.id,
       'content': instance.content,
-      'deletedAt': instance.deletedAt?.toIso8601String(),
       'createdAt': instance.createdAt.toIso8601String(),
       'user': instance.user,
       'channel': instance.channel,
+      'deletedAt': instance.deletedAt?.toIso8601String(),
       'totalLikes': instance.totalLikes,
       'totalComments': instance.totalComments,
     };

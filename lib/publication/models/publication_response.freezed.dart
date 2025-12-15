@@ -294,10 +294,10 @@ Publication _$PublicationFromJson(Map<String, dynamic> json) {
 mixin _$Publication {
   int get id => throw _privateConstructorUsedError;
   String get content => throw _privateConstructorUsedError;
-  DateTime? get deletedAt => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   User get user => throw _privateConstructorUsedError;
   Channel get channel => throw _privateConstructorUsedError;
+  DateTime? get deletedAt => throw _privateConstructorUsedError;
   int get totalLikes => throw _privateConstructorUsedError;
   int get totalComments => throw _privateConstructorUsedError;
 
@@ -320,10 +320,10 @@ abstract class $PublicationCopyWith<$Res> {
   $Res call(
       {int id,
       String content,
-      DateTime? deletedAt,
       DateTime createdAt,
       User user,
       Channel channel,
+      DateTime? deletedAt,
       int totalLikes,
       int totalComments});
 
@@ -348,10 +348,10 @@ class _$PublicationCopyWithImpl<$Res, $Val extends Publication>
   $Res call({
     Object? id = null,
     Object? content = null,
-    Object? deletedAt = freezed,
     Object? createdAt = null,
     Object? user = null,
     Object? channel = null,
+    Object? deletedAt = freezed,
     Object? totalLikes = null,
     Object? totalComments = null,
   }) {
@@ -364,10 +364,6 @@ class _$PublicationCopyWithImpl<$Res, $Val extends Publication>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
-      deletedAt: freezed == deletedAt
-          ? _value.deletedAt
-          : deletedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -380,6 +376,10 @@ class _$PublicationCopyWithImpl<$Res, $Val extends Publication>
           ? _value.channel
           : channel // ignore: cast_nullable_to_non_nullable
               as Channel,
+      deletedAt: freezed == deletedAt
+          ? _value.deletedAt
+          : deletedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       totalLikes: null == totalLikes
           ? _value.totalLikes
           : totalLikes // ignore: cast_nullable_to_non_nullable
@@ -423,10 +423,10 @@ abstract class _$$PublicationImplCopyWith<$Res>
   $Res call(
       {int id,
       String content,
-      DateTime? deletedAt,
       DateTime createdAt,
       User user,
       Channel channel,
+      DateTime? deletedAt,
       int totalLikes,
       int totalComments});
 
@@ -451,10 +451,10 @@ class __$$PublicationImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? content = null,
-    Object? deletedAt = freezed,
     Object? createdAt = null,
     Object? user = null,
     Object? channel = null,
+    Object? deletedAt = freezed,
     Object? totalLikes = null,
     Object? totalComments = null,
   }) {
@@ -467,10 +467,6 @@ class __$$PublicationImplCopyWithImpl<$Res>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
-      deletedAt: freezed == deletedAt
-          ? _value.deletedAt
-          : deletedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -483,6 +479,10 @@ class __$$PublicationImplCopyWithImpl<$Res>
           ? _value.channel
           : channel // ignore: cast_nullable_to_non_nullable
               as Channel,
+      deletedAt: freezed == deletedAt
+          ? _value.deletedAt
+          : deletedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       totalLikes: null == totalLikes
           ? _value.totalLikes
           : totalLikes // ignore: cast_nullable_to_non_nullable
@@ -501,10 +501,10 @@ class _$PublicationImpl implements _Publication {
   const _$PublicationImpl(
       {required this.id,
       required this.content,
-      this.deletedAt,
       required this.createdAt,
       required this.user,
       required this.channel,
+      this.deletedAt,
       this.totalLikes = 0,
       this.totalComments = 0});
 
@@ -516,13 +516,13 @@ class _$PublicationImpl implements _Publication {
   @override
   final String content;
   @override
-  final DateTime? deletedAt;
-  @override
   final DateTime createdAt;
   @override
   final User user;
   @override
   final Channel channel;
+  @override
+  final DateTime? deletedAt;
   @override
   @JsonKey()
   final int totalLikes;
@@ -532,7 +532,7 @@ class _$PublicationImpl implements _Publication {
 
   @override
   String toString() {
-    return 'Publication(id: $id, content: $content, deletedAt: $deletedAt, createdAt: $createdAt, user: $user, channel: $channel, totalLikes: $totalLikes, totalComments: $totalComments)';
+    return 'Publication(id: $id, content: $content, createdAt: $createdAt, user: $user, channel: $channel, deletedAt: $deletedAt, totalLikes: $totalLikes, totalComments: $totalComments)';
   }
 
   @override
@@ -542,12 +542,12 @@ class _$PublicationImpl implements _Publication {
             other is _$PublicationImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.content, content) || other.content == content) &&
-            (identical(other.deletedAt, deletedAt) ||
-                other.deletedAt == deletedAt) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.user, user) || other.user == user) &&
             (identical(other.channel, channel) || other.channel == channel) &&
+            (identical(other.deletedAt, deletedAt) ||
+                other.deletedAt == deletedAt) &&
             (identical(other.totalLikes, totalLikes) ||
                 other.totalLikes == totalLikes) &&
             (identical(other.totalComments, totalComments) ||
@@ -556,8 +556,8 @@ class _$PublicationImpl implements _Publication {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, content, deletedAt,
-      createdAt, user, channel, totalLikes, totalComments);
+  int get hashCode => Object.hash(runtimeType, id, content, createdAt, user,
+      channel, deletedAt, totalLikes, totalComments);
 
   /// Create a copy of Publication
   /// with the given fields replaced by the non-null parameter values.
@@ -579,10 +579,10 @@ abstract class _Publication implements Publication {
   const factory _Publication(
       {required final int id,
       required final String content,
-      final DateTime? deletedAt,
       required final DateTime createdAt,
       required final User user,
       required final Channel channel,
+      final DateTime? deletedAt,
       final int totalLikes,
       final int totalComments}) = _$PublicationImpl;
 
@@ -594,13 +594,13 @@ abstract class _Publication implements Publication {
   @override
   String get content;
   @override
-  DateTime? get deletedAt;
-  @override
   DateTime get createdAt;
   @override
   User get user;
   @override
   Channel get channel;
+  @override
+  DateTime? get deletedAt;
   @override
   int get totalLikes;
   @override

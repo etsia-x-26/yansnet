@@ -24,7 +24,7 @@ class AppRoutes {
   // Group Routes
   static const String groupChatRoute = '/group';
   static const String groupInfoRoute = '/info';
-  static const String createGroup = '/create';
+  static const String createGroup = '/group/create';
   static const String groupMediaRoute = '/media';
   static const String groupLinksRoute = '/links';
   static const String groupDocumentsRoute = '/documents';
