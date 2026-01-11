@@ -24,7 +24,12 @@ class StudentPostCard extends StatelessWidget {
     required this.commentCount,
     this.onLike,
     this.onComment,
+    this.showDelete = false,
+    this.onDelete,
   });
+
+  final bool showDelete;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -77,7 +82,29 @@ class StudentPostCard extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-                    const Icon(Icons.more_horiz, size: 18, color: Colors.grey),
+                    if (showDelete) 
+                      PopupMenuButton<String>(
+                        icon: const Icon(Icons.more_horiz, size: 18, color: Colors.grey),
+                        onSelected: (value) {
+                          if (value == 'delete') {
+                            onDelete?.call();
+                          }
+                        },
+                        itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                          const PopupMenuItem<String>(
+                            value: 'delete',
+                            child: Row(
+                              children: [
+                                Icon(Icons.delete, color: Colors.red, size: 20),
+                                SizedBox(width: 8),
+                                Text('Delete Post', style: TextStyle(color: Colors.red)),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    else 
+                      const Icon(Icons.more_horiz, size: 18, color: Colors.grey),
                   ],
                 ),
                 

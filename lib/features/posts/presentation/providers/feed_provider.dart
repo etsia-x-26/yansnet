@@ -3,12 +3,17 @@ import '../../domain/entities/post_entity.dart';
 import '../../domain/usecases/get_posts_usecase.dart';
 import '../../domain/usecases/create_post_usecase.dart';
 
+import 'dart:io';
+import '../../domain/usecases/delete_post_usecase.dart';
+import '../../../media/domain/usecases/upload_file_usecase.dart';
 import '../../domain/usecases/like_post_usecase.dart';
 
 class FeedProvider extends ChangeNotifier {
   final GetPostsUseCase getPostsUseCase;
   final CreatePostUseCase createPostUseCase;
   final LikePostUseCase likePostUseCase;
+  final DeletePostUseCase deletePostUseCase;
+  final UploadFileUseCase uploadFileUseCase;
 
   List<Post> _posts = [];
   bool _isLoading = false;
@@ -18,6 +23,8 @@ class FeedProvider extends ChangeNotifier {
     required this.getPostsUseCase,
     required this.createPostUseCase,
     required this.likePostUseCase,
+    required this.deletePostUseCase,
+    required this.uploadFileUseCase,
   });
 
   List<Post> get posts => _posts;
@@ -47,13 +54,13 @@ class FeedProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> createPost(String content) async {
+  Future<bool> createPost(String content, {List<String>? mediaPaths}) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      final post = await createPostUseCase(content);
+      final post = await createPostUseCase(content, mediaPaths: mediaPaths);
       _posts.insert(0, post); // Add to top
       return true;
     } catch (e) {
@@ -62,6 +69,27 @@ class FeedProvider extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+  
+  Future<String?> uploadMedia(File file) async {
+    try {
+      return await uploadFileUseCase(file);
+    } catch (e) {
+      print("Upload failed: $e");
+      return null;
+    }
+  }
+
+  Future<bool> deletePost(int postId) async {
+    try {
+      await deletePostUseCase(postId);
+      _posts.removeWhere((p) => p.id == postId);
+      notifyListeners();
+      return true;
+    } catch (e) {
+      print("Delete failed: $e");
+      return false;
     }
   }
   

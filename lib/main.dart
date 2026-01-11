@@ -50,6 +50,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
+import 'features/posts/domain/usecases/delete_post_usecase.dart';
+import 'features/media/data/datasources/media_remote_data_source.dart';
+import 'features/media/data/repositories/media_repository_impl.dart';
+import 'features/media/domain/usecases/upload_file_usecase.dart';
+
 void main() {
   final apiClient = ApiClient();
   
@@ -61,6 +66,11 @@ void main() {
   final getUserUseCase = GetUserUseCase(authRepository);
   final updateUserUseCase = UpdateUserUseCase(authRepository);
 
+  // Media
+  final mediaDataSource = MediaRemoteDataSourceImpl(apiClient);
+  final mediaRepository = MediaRepositoryImpl(remoteDataSource: mediaDataSource);
+  final uploadFileUseCase = UploadFileUseCase(mediaRepository);
+
   // Posts
   final postDataSource = PostRemoteDataSourceImpl(apiClient);
   final postRepository = PostRepositoryImpl(postDataSource);
@@ -69,26 +79,26 @@ void main() {
   final getCommentsUseCase = GetCommentsUseCase(postRepository);
   final addCommentUseCase = AddCommentUseCase(postRepository);
   final likePostUseCase = LikePostUseCase(postRepository);
+  final deletePostUseCase = DeletePostUseCase(postRepository);
+  
+  // ... (rest of inits)
 
-  // Jobs
+  // ... (jobs, events, channels, chat inits same as before)
   final jobDataSource = JobRemoteDataSourceImpl(apiClient);
   final jobRepository = JobRepositoryImpl(jobDataSource);
   final getJobsUseCase = GetJobsUseCase(jobRepository);
 
-  // Events
   final eventDataSource = EventRemoteDataSourceImpl(apiClient);
   final eventRepository = EventRepositoryImpl(eventDataSource);
   final getEventsUseCase = GetEventsUseCase(eventRepository);
   final rsvpEventUseCase = RsvpEventUseCase(eventRepository);
   final cancelRsvpUseCase = CancelRsvpUseCase(eventRepository);
 
-  // Channels
   final channelDataSource = ChannelRemoteDataSourceImpl(apiClient);
   final channelRepository = ChannelRepositoryImpl(channelDataSource);
   final getChannelsUseCase = GetChannelsUseCase(channelRepository);
   final createChannelUseCase = CreateChannelUseCase(channelRepository);
 
-  // Chat
   final chatDataSource = ChatRemoteDataSourceImpl(apiClient);
   final chatRepository = ChatRepositoryImpl(chatDataSource);
   final getConversationsUseCase = GetConversationsUseCase(chatRepository);
@@ -110,6 +120,8 @@ void main() {
           getPostsUseCase: getPostsUseCase,
           createPostUseCase: createPostUseCase,
           likePostUseCase: likePostUseCase,
+          deletePostUseCase: deletePostUseCase,
+          uploadFileUseCase: uploadFileUseCase,
         )),
         ChangeNotifierProvider(create: (_) => CommentsProvider(
           getCommentsUseCase: getCommentsUseCase,

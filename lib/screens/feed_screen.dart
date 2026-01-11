@@ -5,6 +5,7 @@ import '../widgets/feed/student_post_card.dart';
 import '../widgets/feed/alumni_spotlight_card.dart';
 import 'package:provider/provider.dart';
 import '../features/posts/presentation/providers/feed_provider.dart';
+import '../features/auth/presentation/providers/auth_provider.dart';
 import 'create_post_screen.dart';
 import 'comments_screen.dart';
 
@@ -151,6 +152,24 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
                                   imageUrls: post.media.where((m) => m.type == 'IMAGE').map((m) => m.url).toList(),
                                   likeCount: post.totalLikes,
                                   commentCount: post.totalComments,
+                                  showDelete: (context.read<AuthProvider>().currentUser != null && post.user?.id == context.read<AuthProvider>().currentUser!.id),
+                                  onDelete: () async {
+                                     final confirm = await showDialog<bool>(
+                                       context: context,
+                                       builder: (context) => AlertDialog(
+                                         title: const Text('Delete Post?'),
+                                         content: const Text('Are you sure you want to delete this post?'),
+                                         actions: [
+                                           TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+                                           TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Delete', style: TextStyle(color: Colors.red))),
+                                         ],
+                                       ),
+                                     );
+                                     
+                                     if (confirm == true) {
+                                       await context.read<FeedProvider>().deletePost(post.id);
+                                     }
+                                  },
                                   onLike: () {
                                      feedProvider.toggleLike(post.id);
                                   },

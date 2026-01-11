@@ -6,7 +6,7 @@ class CreatePostUseCase {
 
   CreatePostUseCase(this.repository);
 
-  Future<Post> call(String content, {List<String>? mediaPaths}) {
-    return repository.createPost(content, mediaPaths: mediaPaths);
+  Future<Post> call(String content, {List<String>? mediaPaths}) async {
+    return await repository.createPost(content, mediaPaths: mediaPaths);
   }
 }

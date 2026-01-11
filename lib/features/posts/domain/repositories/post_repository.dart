@@ -13,4 +13,5 @@ abstract class PostRepository {
   // Likes
   Future<void> likePost(int postId);
   Future<void> unlikePost(int postId);
+  Future<void> deletePost(int postId);
 }

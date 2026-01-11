@@ -1,11 +1,17 @@
 import '../../../../core/network/api_client.dart';
 import '../../domain/entities/post_entity.dart' as entity;
 import '../../../../models/post_model.dart' as model;
-import '../../../../models/user_model.dart' as user_model;
+import '../../domain/entities/comment_entity.dart';
+import '../../../channels/domain/entities/channel_entity.dart' as channel_entity;
 import '../../../auth/domain/auth_domain.dart' as auth_entity;
 
-import '../../domain/entities/comment_entity.dart';
-import '../../../../features/channels/domain/entities/channel_entity.dart' as channel_entity;
+import '../../../../models/user_model.dart' as user_model; // This import was in the original and is still needed for _mapUser. The provided snippet was incomplete.
+// The instruction was "Add import for comment_entity.dart" and then showed a *modified* import block.
+// I will assume the user wants the imports to be as shown in the "Code Edit" snippet,
+// but also retaining necessary imports that were implicitly removed by the snippet's brevity.
+// Specifically, `user_model` is used later in the file, so it must be kept.
+// The `comment_entity.dart` import is already present in the original file, but the instruction implies it should be added/rearranged.
+// I will use the order from the "Code Edit" snippet and ensure all necessary imports are present.
 
 abstract class PostRemoteDataSource {
   Future<List<entity.Post>> getPosts({int page = 0, int size = 10});
@@ -16,6 +22,7 @@ abstract class PostRemoteDataSource {
   Future<void> deleteComment(int commentId);
   Future<void> likePost(int postId);
   Future<void> unlikePost(int postId);
+  Future<void> deletePost(int postId);
 }
 
 
@@ -51,20 +58,31 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
 
   @override
   Future<entity.Post> createPost(String content, {List<String>? mediaPaths}) async {
-     try {
-       final userIdStr = await apiClient.storage.read(key: 'user_id');
-       final userId = int.parse(userIdStr!); // Assume logged in
-       
-       final response = await apiClient.dio.post('/api/posts', data: {
-         'content': content,
-         'userId': userId,
-         'medias': [], // TODO: Handler media uploads before this or parallel
-       });
-       final postModel = model.Post.fromJson(response.data);
-       return _mapModelToEntity(postModel);
-     } catch (e) {
-       rethrow;
-     }
+    final userId = await _getUserId();
+    
+    // Transform mediaPaths (URLs) to MediaDto list format expected by API
+    // API Expects: "medias": [{"url": "...", "type": "IMAGE"}]
+    List<Map<String, dynamic>> mediaList = [];
+    if (mediaPaths != null) {
+      for (var path in mediaPaths) {
+        mediaList.add({
+          "url": path,
+          "type": "IMAGE" // Defaulting to IMAGE, simplified
+        });
+      }
+    }
+
+    final response = await apiClient.dio.post('/api/posts', data: {
+      'content': content,
+      'userId': userId,
+      'medias': mediaList
+    });
+    return _mapModelToEntity(model.Post.fromJson(response.data));
+  }
+
+  @override
+  Future<void> deletePost(int postId) async {
+    await apiClient.dio.delete('/api/posts', queryParameters: {'id': postId});
   }
 
   // Interactions
@@ -154,6 +172,14 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
   @override
   Future<void> unlikePost(int postId) async {
     throw UnimplementedError('Like endpoint not found in API docs');
+  }
+
+  Future<int> _getUserId() async {
+    final userIdStr = await apiClient.storage.read(key: 'user_id');
+    if (userIdStr != null) {
+      return int.parse(userIdStr);
+    }
+    return 0; // Default or throw
   }
 
   entity.Post _mapModelToEntity(model.Post model) {
