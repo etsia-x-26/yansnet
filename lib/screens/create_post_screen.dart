@@ -136,19 +136,21 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
             ),
             
             // Rich Media Toolbar
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                border: Border(top: BorderSide(color: Colors.grey.shade100)),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  _buildMediaButton(Icons.image_outlined, 'Photo'),
-                  _buildMediaButton(Icons.videocam_outlined, 'Video'),
-                  _buildMediaButton(Icons.article_outlined, 'Document'),
-                  _buildMediaButton(Icons.more_horiz, 'More'),
-                ],
+            SafeArea(
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  border: Border(top: BorderSide(color: Colors.grey.shade100)),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    _buildMediaButton(Icons.image_outlined, 'Photo'),
+                    _buildMediaButton(Icons.videocam_outlined, 'Video'),
+                    _buildMediaButton(Icons.article_outlined, 'Document'),
+                    _buildMediaButton(Icons.more_horiz, 'More'),
+                  ],
+                ),
               ),
             ),
           ],

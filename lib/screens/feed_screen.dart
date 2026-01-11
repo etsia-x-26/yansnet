@@ -59,8 +59,13 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
                   onPressed: () {},
                 ),
                 IconButton(
-                  icon: const Icon(Icons.near_me_outlined, color: Colors.black, size: 28), // DM Icon vibe
-                  onPressed: () {},
+                  icon: const Icon(Icons.add_box_outlined, color: Colors.black, size: 28), // Changed to Add Icon
+                  onPressed: () {
+                     Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const CreatePostScreen()),
+                    );
+                  },
                 ),
               ],
               bottom: PreferredSize(
@@ -191,16 +196,6 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
             const Center(child: Text("Following Feed")),
           ],
         ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const CreatePostScreen()),
-          );
-        },
-        backgroundColor: const Color(0xFF1313EC),
-        child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
