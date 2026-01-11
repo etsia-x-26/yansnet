@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../features/posts/presentation/providers/feed_provider.dart';
 
 class CreatePostScreen extends StatefulWidget {
   const CreatePostScreen({super.key});
@@ -10,11 +12,35 @@ class CreatePostScreen extends StatefulWidget {
 
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final TextEditingController _textController = TextEditingController();
+  bool _isSubmitting = false;
 
   @override
   void dispose() {
     _textController.dispose();
     super.dispose();
+  }
+
+  Future<void> _submitPost() async {
+    final content = _textController.text.trim();
+    if (content.isEmpty) return;
+
+    setState(() => _isSubmitting = true);
+
+    final success = await context.read<FeedProvider>().createPost(content);
+    
+    if (mounted) {
+      setState(() => _isSubmitting = false);
+      if (success) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+           const SnackBar(content: Text('Post creating successfully!')),
+        );
+      } else {
+         ScaffoldMessenger.of(context).showSnackBar(
+           const SnackBar(content: Text('Failed to create post. Please try again.')),
+        );
+      }
+    }
   }
 
   @override
@@ -40,10 +66,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
             child: ElevatedButton(
-              onPressed: () {
-                // TODO: Implement post submission logic
-                Navigator.pop(context);
-              },
+              onPressed: _isSubmitting ? null : _submitPost,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF1313EC),
                 elevation: 0,
@@ -52,7 +75,9 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                 ),
                 padding: const EdgeInsets.symmetric(horizontal: 20),
               ),
-              child: Text(
+              child: _isSubmitting 
+                ? const SizedBox(height: 16, width: 16, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                : Text(
                 'Post',
                 style: GoogleFonts.plusJakartaSans(
                   fontWeight: FontWeight.w600,

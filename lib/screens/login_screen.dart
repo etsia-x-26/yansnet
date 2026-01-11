@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'main_scaffold.dart';
 
+import 'package:provider/provider.dart';
+import '../features/auth/presentation/providers/auth_provider.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -11,9 +14,48 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _obscurePassword = true;
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  void _handleLogin() async {
+    if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter both email and password')),
+      );
+      return;
+    }
+
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    await authProvider.login(
+      _emailController.text.trim(),
+      _passwordController.text.trim(),
+    );
+
+    if (mounted) {
+       if (authProvider.error != null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(authProvider.error!)),
+        );
+      } else {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainScaffold()),
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final isLoading = context.watch<AuthProvider>().isLoading;
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -63,8 +105,10 @@ class _LoginScreenState extends State<LoginScreen> {
               // Email
               _buildLabel('Email Address'),
               TextField(
+                controller: _emailController,
                 decoration: _inputDecoration('e.g. name@university.edu'),
                 style: GoogleFonts.plusJakartaSans(fontSize: 14),
+                keyboardType: TextInputType.emailAddress,
               ),
               
               const SizedBox(height: 24),
@@ -72,6 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // Password
               _buildLabel('Password'),
               TextField(
+                controller: _passwordController,
                 obscureText: _obscurePassword,
                 decoration: _inputDecoration('Enter your password').copyWith(
                   suffixIcon: IconButton(
@@ -109,19 +154,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 width: double.infinity,
                 height: 52,
                 child: ElevatedButton(
-                  onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const MainScaffold()),
-                    );
-                  },
+                  onPressed: isLoading ? null : _handleLogin,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black, // Modern black button
                     foregroundColor: Colors.white,
                     elevation: 0,
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                   ),
-                  child: Text(
+                  child: isLoading 
+                    ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                    : Text(
                     'Log In',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 15,

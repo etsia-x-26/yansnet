@@ -9,6 +9,9 @@ class StudentPostCard extends StatelessWidget {
   final List<String> imageUrls;
   final int likeCount;
   final int commentCount;
+  final VoidCallback? onLike;
+  final VoidCallback? onComment;
+  // TODO: Add isLiked boolean
 
   const StudentPostCard({
     super.key,
@@ -19,6 +22,8 @@ class StudentPostCard extends StatelessWidget {
     this.imageUrls = const [],
     required this.likeCount,
     required this.commentCount,
+    this.onLike,
+    this.onComment,
   });
 
   @override
@@ -33,10 +38,10 @@ class StudentPostCard extends StatelessWidget {
           // Left: Avatar
           Column(
             children: [
-              const CircleAvatar(
+               CircleAvatar(
                 radius: 24,
                 backgroundColor: Colors.grey,
-                backgroundImage: AssetImage('assets/images/onboarding_welcome.png'),
+                backgroundImage: avatarUrl.isNotEmpty ? NetworkImage(avatarUrl) : const AssetImage('assets/images/onboarding_welcome.png') as ImageProvider,
               ),
               // Thread line could go here if threaded
             ],
@@ -62,15 +67,16 @@ class StudentPostCard extends StatelessWidget {
                     const SizedBox(width: 4),
                     const Icon(Icons.verified, size: 12, color: Colors.blue), // Reduced icon
                     const SizedBox(width: 6),
-                    Text(
-                      headline, 
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 11, // Reduced to 11
-                        color: Colors.grey[500],
+                    Expanded(
+                      child: Text(
+                        headline, 
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 11, // Reduced to 11
+                          color: Colors.grey[500],
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
-                    const Spacer(),
                     const Icon(Icons.more_horiz, size: 18, color: Colors.grey),
                   ],
                 ),
@@ -113,9 +119,9 @@ class StudentPostCard extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    _IconAction(icon: Icons.chat_bubble_outline_rounded, label: '$commentCount'),
+                    _IconAction(icon: Icons.chat_bubble_outline_rounded, label: '$commentCount', onTap: onComment),
                     _IconAction(icon: Icons.cached_rounded, label: 'Repost'),
-                    _IconAction(icon: Icons.favorite_border_rounded, label: '$likeCount', color: Colors.pink),
+                    _IconAction(icon: Icons.favorite_border_rounded, label: '$likeCount', color: Colors.pink, onTap: onLike),
                     _IconAction(icon: Icons.share_outlined, label: ''),
                   ],
                 )
@@ -132,22 +138,29 @@ class _IconAction extends StatelessWidget {
   final IconData icon;
   final String label;
   final Color? color;
+  final VoidCallback? onTap;
 
-  const _IconAction({required this.icon, required this.label, this.color});
+  const _IconAction({required this.icon, required this.label, this.color, this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Icon(icon, size: 20, color: Colors.grey[600]), 
-        if (label.isNotEmpty) ...[
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: GoogleFonts.plusJakartaSans(fontSize: 12, color: Colors.grey[600]),
-          )
-        ]
-      ],
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4), // Hit area
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: Colors.grey[600]), 
+            if (label.isNotEmpty) ...[
+              const SizedBox(width: 6),
+              Text(
+                label,
+                style: GoogleFonts.plusJakartaSans(fontSize: 12, color: Colors.grey[600]),
+              )
+            ]
+          ],
+        ),
+      ),
     );
   }
 }

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../features/chat/presentation/providers/chat_provider.dart';
+import '../features/auth/presentation/providers/auth_provider.dart';
+import 'chat_detail_screen.dart';
 
 class MessagesScreen extends StatefulWidget {
   const MessagesScreen({super.key});
@@ -15,6 +19,9 @@ class _MessagesScreenState extends State<MessagesScreen> with SingleTickerProvid
   void initState() {
     super.initState();
     _tabController = TabController(length: 2, vsync: this);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<ChatProvider>().loadConversations();
+    });
   }
 
   @override
@@ -86,98 +93,96 @@ class _MessagesScreenState extends State<MessagesScreen> with SingleTickerProvid
   }
 
   Widget _buildDirectMessagesList() {
-    return ListView.separated(
-      itemCount: 12,
-      separatorBuilder: (c, i) => const Divider(height: 1, indent: 72, color: Color(0xFFEFF3F4)),
-      itemBuilder: (context, index) {
-        final bool isUnread = index < 2;
-        return InkWell(
-          onTap: () {},
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                Stack(
+    return Consumer<ChatProvider>(
+      builder: (context, provider, child) {
+        if (provider.isLoadingConversations && provider.conversations.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (provider.conversations.isEmpty) {
+          return const Center(child: Text("No conversations yet"));
+        }
+
+        return ListView.separated(
+          itemCount: provider.conversations.length,
+          separatorBuilder: (c, i) => const Divider(height: 1, indent: 72, color: Color(0xFFEFF3F4)),
+          itemBuilder: (context, index) {
+            final conversation = provider.conversations[index];
+            final currentUserId = Provider.of<AuthProvider>(context, listen: false).currentUser?.id;
+            final otherUser = conversation.getOtherUser(currentUserId ?? 0);
+            final lastMsg = conversation.lastMessage;
+
+            return InkWell(
+              onTap: () {
+                if (otherUser != null) {
+                  Navigator.push(context, MaterialPageRoute(builder: (_) => 
+                    ChatDetailScreen(conversationId: conversation.id, otherUserName: otherUser.name)
+                  ));
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
                   children: [
-                    const CircleAvatar(
+                    CircleAvatar(
                       radius: 24,
                       backgroundColor: Colors.grey,
-                      child: Icon(Icons.person, color: Colors.white),
+                      backgroundImage: otherUser?.profilePictureUrl != null 
+                        ? NetworkImage(otherUser!.profilePictureUrl!) as ImageProvider
+                        : const AssetImage('assets/images/onboarding_welcome.png'),
                     ),
-                    if (index % 3 == 0) // Online status simulation
-                      Positioned(
-                        right: 0,
-                        bottom: 0,
-                        child: Container(
-                          width: 12,
-                          height: 12,
-                          decoration: BoxDecoration(
-                            color: Colors.green,
-                            shape: BoxShape.circle,
-                            border: Border.all(color: Colors.white, width: 2),
-                          ),
-                        ),
-                      )
-                  ],
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'User Name $index',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontWeight: isUnread ? FontWeight.w800 : FontWeight.w600,
-                              fontSize: 14,
-                              color: Colors.black,
-                            ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                otherUser?.name ?? 'Unknown',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              if (lastMsg != null)
+                                Text(
+                                  _formatTime(lastMsg.createdAt),
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 11,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                            ],
                           ),
+                          const SizedBox(height: 2),
                           Text(
-                            '12:30 PM',
+                            lastMsg?.content ?? 'Start a conversation',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.plusJakartaSans(
-                              fontSize: 11,
-                              color: Colors.grey,
-                              fontWeight: isUnread ? FontWeight.bold : FontWeight.normal,
+                              color: Colors.grey[600],
+                              fontSize: 13,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        isUnread ? 'Did you get the notes from the lecture?' : 'See you tomorrow!',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: GoogleFonts.plusJakartaSans(
-                          color: isUnread ? Colors.black : Colors.grey[600],
-                          fontSize: 13,
-                          fontWeight: isUnread ? FontWeight.w600 : FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (isUnread)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8),
-                    child: Container(
-                      width: 8,
-                      height: 8,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF1313EC),
-                        shape: BoxShape.circle,
-                      ),
                     ),
-                  ),
-              ],
-            ),
-          ),
+                  ],
+                ),
+              ),
+            );
+          },
         );
       },
     );
+  }
+
+  String _formatTime(DateTime time) {
+    // Simple formatter, can use intl package
+    return "${time.hour}:${time.minute.toString().padLeft(2, '0')}";
   }
 
   Widget _buildChannelsList() {

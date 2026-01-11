@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'channels_screen.dart';
 
 class NetworkScreen extends StatelessWidget {
   const NetworkScreen({super.key});
@@ -101,9 +102,11 @@ class NetworkScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        _buildStatItem('Connections', '542'),
-                        _buildStatItem('Contacts', '1,203'),
-                        _buildStatItem('Groups', '12'),
+                        _buildStatItem(context, 'Connections', '542', () {}),
+                        _buildStatItem(context, 'Contacts', '1,203', () {}),
+                        _buildStatItem(context, 'Channels', '12', () {
+                          Navigator.push(context, MaterialPageRoute(builder: (_) => const ChannelsScreen()));
+                        }),
                       ],
                     ),
                   ],
@@ -213,12 +216,15 @@ class NetworkScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatItem(String label, String count) {
-    return Column(
-      children: [
-        Text(count, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold, fontSize: 14)),
-        Text(label, style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12)),
-      ],
+  Widget _buildStatItem(BuildContext context, String label, String count, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      child: Column(
+        children: [
+          Text(count, style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold, fontSize: 14)),
+          Text(label, style: GoogleFonts.plusJakartaSans(color: Colors.grey, fontSize: 12)),
+        ],
+      ),
     );
   }
 }

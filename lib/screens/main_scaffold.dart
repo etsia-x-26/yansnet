@@ -6,6 +6,8 @@ import 'events_screen.dart';
 import 'messages_screen.dart';
 import 'profile_screen.dart';
 
+import 'jobs_screen.dart';
+
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
 
@@ -19,6 +21,7 @@ class _MainScaffoldState extends State<MainScaffold> {
   final List<Widget> _screens = [
     const FeedScreen(),
     const NetworkScreen(),
+    const JobsScreen(), // Added Jobs
     const EventsScreen(),
     const MessagesScreen(),
     const ProfileScreen(),
@@ -63,8 +66,12 @@ class _MainScaffoldState extends State<MainScaffold> {
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.search),
+              icon: Icon(Icons.people_alt_outlined),
               label: 'Network',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.work_outline), // Jobs Icon
+              label: 'Jobs',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.calendar_today),
@@ -74,7 +81,11 @@ class _MainScaffoldState extends State<MainScaffold> {
               icon: Icon(Icons.mail_outline),
               label: 'Messages',
             ),
-            BottomNavigationBarItem(
+            // Profile is accessed via Avatar in AppBar usually, or we keep it here. 
+            // 6 items might be too many for labels. 
+            // Let's remove Profile from BottomBar if we have 6, or keep it.
+            // But _screens has 6 items now including Profile.
+             BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),
               label: 'Profile',
             ),

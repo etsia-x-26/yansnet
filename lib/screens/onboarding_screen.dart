@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import '../features/auth/presentation/providers/auth_provider.dart';
 import 'login_screen.dart';
+import 'main_scaffold.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -35,6 +38,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
+    _checkAutoLogin();
+  }
+
+  void _checkAutoLogin() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final isLoggedIn = await authProvider.tryAutoLogin();
+    if (isLoggedIn && mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const MainScaffold()),
+      );
+    }
   }
 
   @override
