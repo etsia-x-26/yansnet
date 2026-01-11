@@ -66,15 +66,23 @@ class AuthProvider extends ChangeNotifier {
     final token = await apiClient.storage.read(key: 'auth_token');
     final userIdStr = await apiClient.storage.read(key: 'user_id');
     
-    if (token != null && userIdStr != null) {
+    print('[AuthProvider] tryAutoLogin: token=${token != null ? "exists" : "null"}, userId=$userIdStr');
+    
+    if (token != null && token.isNotEmpty && userIdStr != null) {
       try {
         _currentUser = await getUserUseCase(int.parse(userIdStr));
+        print('[AuthProvider] Auto-login successful for user: ${_currentUser?.name}');
         notifyListeners();
         return true;
       } catch (e) {
+        print('[AuthProvider] Auto-login failed: $e');
+        // Token might be expired or invalid, clear it
+        await apiClient.storage.delete(key: 'auth_token');
+        await apiClient.storage.delete(key: 'user_id');
         return false;
       }
     }
+    print('[AuthProvider] No valid token found for auto-login');
     return false;
   }
 

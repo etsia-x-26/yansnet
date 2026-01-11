@@ -5,12 +5,16 @@ import '../../domain/usecases/get_conversations_usecase.dart';
 import '../../domain/usecases/get_messages_usecase.dart';
 import '../../domain/usecases/send_message_usecase.dart';
 import '../../domain/usecases/start_chat_usecase.dart';
+import '../../../../core/network/websocket_service.dart';
+import '../../../auth/domain/auth_domain.dart';
 
 class ChatProvider extends ChangeNotifier {
   final GetConversationsUseCase getConversationsUseCase;
   final GetMessagesUseCase getMessagesUseCase;
   final SendMessageUseCase sendMessageUseCase;
   final StartChatUseCase startChatUseCase;
+  final WebSocketService webSocketService;
+  User? _currentUser;
 
   List<Conversation> _conversations = [];
   Map<int, List<Message>> _messages = {}; // Cache messages by conversationId
@@ -23,7 +27,48 @@ class ChatProvider extends ChangeNotifier {
     required this.getMessagesUseCase,
     required this.sendMessageUseCase,
     required this.startChatUseCase,
-  });
+    required this.webSocketService,
+    User? currentUser,
+  }) : _currentUser = currentUser {
+    _initWebSocket();
+  }
+
+  User? get currentUser => _currentUser;
+
+  void updateUser(User? user) {
+    if (_currentUser?.id != user?.id) {
+      _currentUser = user;
+      // Re-connect if user changed
+      if (_currentUser != null) {
+        webSocketService.disconnect();
+        webSocketService.connect(_currentUser!.username ?? _currentUser!.email);
+      }
+      notifyListeners();
+    }
+  }
+
+  void _initWebSocket() {
+    webSocketService.onMessageReceived = (data) {
+      _handleRealTimeMessage(data);
+    };
+  }
+
+  void _handleRealTimeMessage(Map<String, dynamic> data) {
+    // According to guide: content, sender, type (CHAT, JOIN, LEAVE, TYPING), timestamp
+    final type = data['type'];
+    final content = data['content'];
+    final sender = data['sender'];
+
+    if (type == 'CHAT' && content != null) {
+      // In a real app, you'd match this to a conversation. 
+      // For public chat demonstration, we can just log it or add to a specific global conv.
+      print('[ChatProvider] Received real-time message from $sender: $content');
+      
+      // If we had a "Public Chat" conversation, we'd add it there.
+      // For now, let's notify listeners to let UI respond.
+      notifyListeners();
+    }
+  }
 
   List<Conversation> get conversations => _conversations;
   bool get isLoadingConversations => _isLoadingConversations;
@@ -41,6 +86,11 @@ class ChatProvider extends ChangeNotifier {
 
     try {
       _conversations = await getConversationsUseCase();
+      
+      // Connect to WebSocket if not already connected (redundant if updateUser handled it, but safe)
+      if (_currentUser != null) {
+        webSocketService.connect(_currentUser!.username ?? _currentUser!.email);
+      }
     } catch (e) {
       _error = e.toString();
     } finally {

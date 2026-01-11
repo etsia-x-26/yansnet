@@ -266,7 +266,12 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         ),
       ),
       bottomSheet: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        padding: EdgeInsets.only(
+          top: 12,
+          left: 16,
+          right: 16,
+          bottom: MediaQuery.of(context).viewPadding.bottom + 12,
+        ),
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border(top: BorderSide(color: Colors.grey[200]!)),

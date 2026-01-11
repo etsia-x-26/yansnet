@@ -43,6 +43,12 @@ import 'features/chat/domain/usecases/get_messages_usecase.dart';
 import 'features/chat/domain/usecases/send_message_usecase.dart';
 import 'features/chat/domain/usecases/start_chat_usecase.dart';
 import 'features/chat/presentation/providers/chat_provider.dart';
+import 'core/network/websocket_service.dart';
+import 'features/network/data/datasources/network_remote_data_source.dart';
+import 'features/network/data/repositories/network_repository_impl.dart';
+import 'features/network/domain/usecases/get_network_stats_usecase.dart';
+import 'features/network/domain/usecases/get_network_suggestions_usecase.dart';
+import 'features/network/presentation/providers/network_provider.dart';
 
 // ... other imports ...
 import 'screens/onboarding_screen.dart';
@@ -106,6 +112,13 @@ void main() {
   final sendMessageUseCase = SendMessageUseCase(chatRepository);
   final startChatUseCase = StartChatUseCase(chatRepository);
 
+  final networkDataSource = NetworkRemoteDataSourceImpl(apiClient);
+  final networkRepository = NetworkRepositoryImpl(networkDataSource);
+  final getNetworkStatsUseCase = GetNetworkStatsUseCase(networkRepository);
+  final getNetworkSuggestionsUseCase = GetNetworkSuggestionsUseCase(networkRepository);
+
+  final webSocketService = WebSocketService();
+
   runApp(
     MultiProvider(
       providers: [
@@ -139,11 +152,22 @@ void main() {
           getChannelsUseCase: getChannelsUseCase,
           createChannelUseCase: createChannelUseCase,
         )),
-        ChangeNotifierProvider(create: (_) => ChatProvider(
-          getConversationsUseCase: getConversationsUseCase,
-          getMessagesUseCase: getMessagesUseCase,
-          sendMessageUseCase: sendMessageUseCase,
-          startChatUseCase: startChatUseCase,
+        ChangeNotifierProxyProvider<AuthProvider, ChatProvider>(
+          create: (_) => ChatProvider(
+            getConversationsUseCase: getConversationsUseCase,
+            getMessagesUseCase: getMessagesUseCase,
+            sendMessageUseCase: sendMessageUseCase,
+            startChatUseCase: startChatUseCase,
+            webSocketService: webSocketService,
+          ),
+          update: (_, auth, chat) {
+            chat!.updateUser(auth.currentUser);
+            return chat;
+          },
+        ),
+        ChangeNotifierProvider(create: (_) => NetworkProvider(
+          getNetworkStatsUseCase: getNetworkStatsUseCase,
+          getNetworkSuggestionsUseCase: getNetworkSuggestionsUseCase,
         )),
       ],
       child: const MyApp(),

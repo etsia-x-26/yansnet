@@ -3,7 +3,11 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiClient {
   late Dio _dio;
-  final FlutterSecureStorage _storage = const FlutterSecureStorage();
+  final FlutterSecureStorage _storage = const FlutterSecureStorage(
+    aOptions: AndroidOptions(
+      encryptedSharedPreferences: true,
+    ),
+  );
   final String _baseUrl = 'https://yansnetapi.enlighteninnovation.com';
 
   ApiClient() {
