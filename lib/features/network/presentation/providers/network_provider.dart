@@ -42,4 +42,11 @@ class NetworkProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<bool> connectUser(String userId) async {
+    // TODO: Implement actual API call via UseCase
+    // For now, simulate network delay and success
+    await Future.delayed(const Duration(milliseconds: 500));
+    return true;
+  }
 }

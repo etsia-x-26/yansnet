@@ -5,6 +5,8 @@ import 'package:provider/provider.dart';
 import '../features/events/presentation/providers/events_provider.dart';
 import '../../features/events/domain/entities/event_entity.dart';
 import 'package:intl/intl.dart';
+import 'event_detail_screen.dart';
+import 'create_event_screen.dart';
 
 class EventsScreen extends StatefulWidget {
   const EventsScreen({super.key});
@@ -59,6 +61,13 @@ class _EventsScreenState extends State<EventsScreen> {
             ),
           ),
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (_) => const CreateEventScreen()));
+        },
+        backgroundColor: const Color(0xFF1313EC),
+        child: const Icon(Icons.add, color: Colors.white),
       ),
       body: RefreshIndicator(
         onRefresh: () => context.read<EventsProvider>().loadEvents(refresh: true),
@@ -151,7 +160,12 @@ class _EventsScreenState extends State<EventsScreen> {
                     itemBuilder: (context, index) {
                       final event = provider.events[index];
                       return InkWell(
-                        onTap: (){},
+                        onTap: (){
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => EventDetailScreen(event: event)),
+                          );
+                        },
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: Row(

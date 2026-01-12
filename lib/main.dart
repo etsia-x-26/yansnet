@@ -1,4 +1,5 @@
 import 'package:provider/provider.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'core/network/api_client.dart';
 import 'features/auth/data/datasources/auth_remote_data_source.dart';
 import 'features/auth/data/repositories/auth_repository_impl.dart';
@@ -21,6 +22,7 @@ import 'features/posts/presentation/providers/comments_provider.dart';
 import 'features/jobs/data/datasources/job_remote_data_source.dart';
 import 'features/jobs/data/repositories/job_repository_impl.dart';
 import 'features/jobs/domain/usecases/get_jobs_usecase.dart';
+import 'features/jobs/domain/usecases/create_job_usecase.dart';
 import 'features/jobs/presentation/providers/jobs_provider.dart';
 
 import 'features/events/data/datasources/event_remote_data_source.dart';
@@ -28,6 +30,7 @@ import 'features/events/data/repositories/event_repository_impl.dart';
 import 'features/events/domain/usecases/get_events_usecase.dart';
 import 'features/events/domain/usecases/rsvp_event_usecase.dart';
 import 'features/events/domain/usecases/cancel_rsvp_usecase.dart';
+import 'features/events/domain/usecases/create_event_usecase.dart';
 import 'features/events/presentation/providers/events_provider.dart';
 
 import 'features/channels/data/datasources/channel_remote_data_source.dart';
@@ -50,20 +53,45 @@ import 'features/network/domain/usecases/get_network_stats_usecase.dart';
 import 'features/network/domain/usecases/get_network_suggestions_usecase.dart';
 import 'features/network/presentation/providers/network_provider.dart';
 
-// ... other imports ...
 import 'screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'screens/login_screen.dart';
+import 'screens/main_scaffold.dart';
 
 import 'features/posts/domain/usecases/delete_post_usecase.dart';
 import 'features/media/data/datasources/media_remote_data_source.dart';
 import 'features/media/data/repositories/media_repository_impl.dart';
 import 'features/media/domain/usecases/upload_file_usecase.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
   final apiClient = ApiClient();
   
+  // Storage options for Android
+  const androidOptions = AndroidOptions(encryptedSharedPreferences: true);
+  
+  // Check startup status
+  final String? onboardingComplete = await apiClient.storage.read(
+    key: 'onboarding_complete',
+    aOptions: androidOptions, 
+  ).catchError((_) => null);
+  
+  final String? authToken = await apiClient.storage.read(
+    key: 'auth_token',
+    aOptions: androidOptions,
+  ).catchError((_) => null);
+
+  Widget initialScreen;
+  if (onboardingComplete != 'true') {
+     initialScreen = const OnboardingScreen();
+  } else if (authToken != null && authToken.isNotEmpty) {
+     initialScreen = const MainScaffold();
+  } else {
+     initialScreen = const LoginScreen();
+  }
+
   // Auth
   final authDataSource = AuthRemoteDataSourceImpl(apiClient);
   final authRepository = AuthRepositoryImpl(authDataSource, apiClient);
@@ -86,25 +114,28 @@ void main() {
   final addCommentUseCase = AddCommentUseCase(postRepository);
   final likePostUseCase = LikePostUseCase(postRepository);
   final deletePostUseCase = DeletePostUseCase(postRepository);
-  
-  // ... (rest of inits)
 
-  // ... (jobs, events, channels, chat inits same as before)
+  // Jobs
   final jobDataSource = JobRemoteDataSourceImpl(apiClient);
   final jobRepository = JobRepositoryImpl(jobDataSource);
   final getJobsUseCase = GetJobsUseCase(jobRepository);
+  final createJobUseCase = CreateJobUseCase(jobRepository);
 
+  // Events
   final eventDataSource = EventRemoteDataSourceImpl(apiClient);
   final eventRepository = EventRepositoryImpl(eventDataSource);
   final getEventsUseCase = GetEventsUseCase(eventRepository);
   final rsvpEventUseCase = RsvpEventUseCase(eventRepository);
   final cancelRsvpUseCase = CancelRsvpUseCase(eventRepository);
+  final createEventUseCase = CreateEventUseCase(eventRepository);
 
+  // Channels
   final channelDataSource = ChannelRemoteDataSourceImpl(apiClient);
   final channelRepository = ChannelRepositoryImpl(channelDataSource);
   final getChannelsUseCase = GetChannelsUseCase(channelRepository);
   final createChannelUseCase = CreateChannelUseCase(channelRepository);
 
+  // Chat
   final chatDataSource = ChatRemoteDataSourceImpl(apiClient);
   final chatRepository = ChatRepositoryImpl(chatDataSource);
   final getConversationsUseCase = GetConversationsUseCase(chatRepository);
@@ -112,6 +143,7 @@ void main() {
   final sendMessageUseCase = SendMessageUseCase(chatRepository);
   final startChatUseCase = StartChatUseCase(chatRepository);
 
+  // Network
   final networkDataSource = NetworkRemoteDataSourceImpl(apiClient);
   final networkRepository = NetworkRepositoryImpl(networkDataSource);
   final getNetworkStatsUseCase = GetNetworkStatsUseCase(networkRepository);
@@ -142,11 +174,13 @@ void main() {
         )),
         ChangeNotifierProvider(create: (_) => JobsProvider(
           getJobsUseCase: getJobsUseCase,
+          createJobUseCase: createJobUseCase,
         )),
         ChangeNotifierProvider(create: (_) => EventsProvider(
           getEventsUseCase: getEventsUseCase,
           rsvpEventUseCase: rsvpEventUseCase,
           cancelRsvpUseCase: cancelRsvpUseCase,
+          createEventUseCase: createEventUseCase,
         )),
         ChangeNotifierProvider(create: (_) => ChannelsProvider(
           getChannelsUseCase: getChannelsUseCase,
@@ -170,13 +204,15 @@ void main() {
           getNetworkSuggestionsUseCase: getNetworkSuggestionsUseCase,
         )),
       ],
-      child: const MyApp(),
+      child: MyApp(initialScreen: initialScreen),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final Widget initialScreen;
+  
+  const MyApp({super.key, required this.initialScreen});
 
   @override
   Widget build(BuildContext context) {
@@ -192,7 +228,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         textTheme: GoogleFonts.plusJakartaSansTextTheme(),
       ),
-      home: const OnboardingScreen(),
+      home: initialScreen,
     );
   }
 }

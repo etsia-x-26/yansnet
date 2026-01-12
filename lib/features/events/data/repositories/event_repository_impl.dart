@@ -21,4 +21,14 @@ class EventRepositoryImpl implements EventRepository {
   Future<void> cancelRsvp(int eventId) {
     return remoteDataSource.cancelRsvp(eventId);
   }
+
+  @override
+  Future<Event> createEvent(String title, DateTime eventDate, String location, String description) {
+     return remoteDataSource.createEvent({
+       'title': title,
+       'eventDate': eventDate.toIso8601String(),
+       'location': location,
+       'description': description,
+     });
+  }
 }

@@ -3,11 +3,13 @@ import '../../domain/entities/event_entity.dart';
 import '../../domain/usecases/get_events_usecase.dart';
 import '../../domain/usecases/rsvp_event_usecase.dart';
 import '../../domain/usecases/cancel_rsvp_usecase.dart';
+import '../../domain/usecases/create_event_usecase.dart';
 
 class EventsProvider extends ChangeNotifier {
   final GetEventsUseCase getEventsUseCase;
   final RsvpEventUseCase rsvpEventUseCase;
   final CancelRsvpUseCase cancelRsvpUseCase;
+  final CreateEventUseCase createEventUseCase;
 
   List<Event> _events = [];
   bool _isLoading = false;
@@ -17,6 +19,7 @@ class EventsProvider extends ChangeNotifier {
     required this.getEventsUseCase,
     required this.rsvpEventUseCase,
     required this.cancelRsvpUseCase,
+    required this.createEventUseCase,
   });
 
   List<Event> get events => _events;
@@ -73,6 +76,24 @@ class EventsProvider extends ChangeNotifier {
       // Revert if failed
       _events[index] = oldEvent;
       _error = "Failed to update RSVP";
+      notifyListeners();
+    }
+  }
+
+  Future<bool> createEvent(String title, DateTime eventDate, String location, String description) async {
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final newEvent = await createEventUseCase(title, eventDate, location, description);
+      _events.insert(0, newEvent);
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      return false;
+    } finally {
+      _isLoading = false;
       notifyListeners();
     }
   }

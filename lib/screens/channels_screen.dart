@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../features/channels/presentation/providers/channels_provider.dart';
+import 'create_channel_screen.dart';
 
 class ChannelsScreen extends StatefulWidget {
   const ChannelsScreen({super.key});
@@ -72,6 +73,14 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
       backgroundColor: const Color(0xFFF3F4F6),
       floatingActionButton: FloatingActionButton(
         onPressed: _showCreateChannelDialog,
+        backgroundColor: const Color(0xFF1313EC),
+        child: const Icon(Icons.add, color: Colors.white),
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+           Navigator.push(context, MaterialPageRoute(builder: (_) => const CreateChannelScreen()));
+        },
         backgroundColor: const Color(0xFF1313EC),
         child: const Icon(Icons.add, color: Colors.white),
       ),
@@ -158,7 +167,14 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                       ),
                       child: const Text('Join'),
-                    ),
+                      onPressed: () async {
+                         final success = await provider.joinChannel(channel.id.toString());
+                         if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(success ? 'Joined ${channel.title}' : 'Failed to join')),
+                            );
+                         }
+                      },
                   ],
                 ),
               );

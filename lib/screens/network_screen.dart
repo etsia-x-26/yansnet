@@ -196,15 +196,14 @@ class _NetworkScreenState extends State<NetworkScreen> {
                 ),
               ),
               ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF1313EC),
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                ),
+                onPressed: () async {
+                  final success = await provider.connectUser(suggestion.user.id.toString());
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(success ? 'Connection request sent to ${suggestion.user.name}' : 'Failed to send request')),
+                    );
+                  }
+                },
                 child: const Text('Connect'),
               ),
             ],

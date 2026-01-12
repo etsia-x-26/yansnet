@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../features/jobs/presentation/providers/jobs_provider.dart';
+import 'job_detail_screen.dart';
+import 'create_job_screen.dart';
 
 class JobsScreen extends StatefulWidget {
   const JobsScreen({super.key});
@@ -68,6 +70,13 @@ class _JobsScreenState extends State<JobsScreen> {
           ),
         ),
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const CreateJobScreen()));
+        },
+        backgroundColor: const Color(0xFF1313EC),
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
       body: RefreshIndicator(
         onRefresh: () => context.read<JobsProvider>().loadJobs(refresh: true),
         child: Consumer<JobsProvider>(
@@ -90,7 +99,12 @@ class _JobsScreenState extends State<JobsScreen> {
                 final job = provider.jobs[index];
                 return InkWell(
                   onTap: () {
-                    // Navigate to details
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => JobDetailScreen(job: job),
+                      ),
+                    );
                   },
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,

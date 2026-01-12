@@ -6,7 +6,7 @@ This guide describes how to connect to and use the WebSocket messaging system in
 
 The backend uses **STOMP** over **SockJS** for real-time communication.
 
-*   **Endpoint:** `https://yansnetapi.enlighteninnovation.com/ws` (or your production URL)
+*   **Endpoint:** `http://yansnetapi.enlighteninnovation.com/ws` (or your production URL)
 *   **Protocols supported:** WebSocket, SockJS fallback.
 *   **Heartbeats:** Enabled by default by the broker.
 

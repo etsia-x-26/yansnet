@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
-import '../features/auth/presentation/providers/auth_provider.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'login_screen.dart';
-import 'main_scaffold.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -38,16 +36,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   void initState() {
     super.initState();
     _pageController = PageController(initialPage: 0);
-    _checkAutoLogin();
   }
 
-  void _checkAutoLogin() async {
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final isLoggedIn = await authProvider.tryAutoLogin();
-    if (isLoggedIn && mounted) {
+  Future<void> _completeOnboarding() async {
+    const storage = FlutterSecureStorage(
+      aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    );
+    await storage.write(key: 'onboarding_complete', value: 'true');
+    
+    if (mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const MainScaffold()),
+        MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
     }
   }
@@ -71,12 +71,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: TextButton(
-                  onPressed: () {
-                     Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const LoginScreen()),
-                      );
-                  },
+                  onPressed: _completeOnboarding,
                   child: Text(
                     'Skip',
                     style: GoogleFonts.plusJakartaSans(
@@ -169,10 +164,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   ElevatedButton(
                     onPressed: () {
                       if (_pageIndex == _contents.length - 1) {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => const LoginScreen()),
-                        );
+                        _completeOnboarding();
                       } else {
                         _pageController.nextPage(
                           duration: const Duration(milliseconds: 300),

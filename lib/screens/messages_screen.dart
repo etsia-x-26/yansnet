@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../features/chat/presentation/providers/chat_provider.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
 import 'chat_detail_screen.dart';
+import '../features/channels/presentation/providers/channels_provider.dart';
 
 class MessagesScreen extends StatefulWidget {
   const MessagesScreen({super.key});
@@ -21,6 +22,7 @@ class _MessagesScreenState extends State<MessagesScreen> with SingleTickerProvid
     _tabController = TabController(length: 2, vsync: this);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<ChatProvider>().loadConversations();
+      context.read<ChannelsProvider>().loadChannels();
     });
   }
 
@@ -85,9 +87,22 @@ class _MessagesScreenState extends State<MessagesScreen> with SingleTickerProvid
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: _showNewChatDialog,
         backgroundColor: const Color(0xFF1313EC),
         child: const Icon(Icons.add_comment_outlined, color: Colors.white),
+      ),
+    );
+  }
+
+  void _showNewChatDialog() {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('New Message'),
+        content: const Text('Select a user to chat with from "My Network" tab for now.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))
+        ],
       ),
     );
   }
@@ -186,14 +201,16 @@ class _MessagesScreenState extends State<MessagesScreen> with SingleTickerProvid
   }
 
   Widget _buildChannelsList() {
-    final List<Map<String, String>> channels = [
-      {'name': 'General Announcements', 'members': '2.4k', 'tag': 'general'},
-      {'name': 'Computer Science 2024', 'members': '450', 'tag': 'cs24'},
-      {'name': 'Design Club', 'members': '128', 'tag': 'design'},
-      {'name': 'Internship Alerts', 'members': '890', 'tag': 'jobs'},
-      {'name': 'Study Group: Algorithms', 'members': '15', 'tag': 'algo'},
-      {'name': 'Campus Events', 'members': '1.2k', 'tag': 'events'},
-    ];
+    return Consumer<ChannelsProvider>(
+      builder: (context, provider, child) {
+        if (provider.isLoading && provider.channels.isEmpty) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (provider.channels.isEmpty) {
+           return const Center(child: Text('No channels joined yet.'));
+        }
+        
+        final channels = provider.channels;
 
     return ListView.separated(
       itemCount: channels.length,
@@ -231,7 +248,7 @@ class _MessagesScreenState extends State<MessagesScreen> with SingleTickerProvid
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '#${channel['tag']}',
+                        '#${channel.title}',
                         style: GoogleFonts.plusJakartaSans(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -240,7 +257,7 @@ class _MessagesScreenState extends State<MessagesScreen> with SingleTickerProvid
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        '${channel['name']} • ${channel['members']} members',
+                        '${channel.title} • ${channel.totalFollowers} members',
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           color: Colors.grey[600],
@@ -256,5 +273,7 @@ class _MessagesScreenState extends State<MessagesScreen> with SingleTickerProvid
         );
       },
     );
+      },
+    ); 
   }
 }

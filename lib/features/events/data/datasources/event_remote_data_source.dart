@@ -6,6 +6,7 @@ abstract class EventRemoteDataSource {
   Future<List<Event>> getEvents({int page = 0, int size = 10});
   Future<void> rsvpEvent(int eventId);
   Future<void> cancelRsvp(int eventId);
+  Future<Event> createEvent(Map<String, dynamic> eventData);
 }
 
 class EventRemoteDataSourceImpl implements EventRemoteDataSource {
@@ -40,5 +41,26 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
   @override
   Future<void> cancelRsvp(int eventId) async {
     await apiClient.dio.delete('/api/events/$eventId/rsvp');
+  }
+
+  @override
+  Future<Event> createEvent(Map<String, dynamic> eventData) async {
+    // TODO: Connect to real API
+    // final response = await apiClient.dio.post('/api/events', data: eventData);
+    // return EventDto.fromJson(response.data).toEntity();
+
+    // Simulating success
+    await Future.delayed(const Duration(seconds: 1));
+    return Event(
+      id: DateTime.now().millisecondsSinceEpoch,
+      title: eventData['title'],
+      description: eventData['description'],
+      location: eventData['location'],
+      eventDate: DateTime.parse(eventData['eventDate']),
+      organizer: 'You',
+      attendeesCount: 0,
+      bannerUrl: null,
+      isAttending: true,
+    );
   }
 }

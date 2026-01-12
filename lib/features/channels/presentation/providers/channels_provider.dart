@@ -52,4 +52,11 @@ class ChannelsProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<bool> joinChannel(String channelId) async {
+    // TODO: Implement actual API call
+    // For now, simulate network delay
+    await Future.delayed(const Duration(milliseconds: 500));
+    return true;
+  }
 }
