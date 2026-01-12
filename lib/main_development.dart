@@ -1,13 +1,19 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:yansnet/app/view/app_dev.dart';
 import 'package:yansnet/bootstrap.dart';
+import 'package:yansnet/core/di/injection.dart';
 import 'package:yansnet/publication/api/publication_client.dart';
 import 'package:yansnet/publication/cubit/publication_cubit.dart';
 
 void main() {
-  bootstrap(() => BlocProvider<PublicationCubit>(
-    create: (context) => PublicationCubit(PublicationClient(Dio())),
-    child: const AppDev(),
-  ),);
+  WidgetsFlutterBinding.ensureInitialized();
+  setupDependencies();
+  bootstrap(
+    () => BlocProvider<PublicationCubit>(
+      create: (context) => PublicationCubit(PublicationClient(Dio())),
+      child: const AppDev(),
+    ),
+  );
 }

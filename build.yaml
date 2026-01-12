@@ -1,0 +1,19 @@
+# build.yaml - Créer ce fichier à la racine du projet
+targets:
+  $default:
+    builders:
+      json_serializable:
+        enabled: true
+        options:
+          # Configuration pour json_serializable
+          explicit_to_json: true
+          field_rename: snake
+          checked: true
+          create_factory: true
+          create_to_json: true
+          any_map: false
+          ignore_unannotated: false
+
+      # Désactiver swagger_dart_code_generator si vous ne l'utilisez pas
+      swagger_dart_code_generator|swagger_dart_code_generator:
+        enabled: false

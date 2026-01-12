@@ -27,12 +27,8 @@ mixin _$PublicationResponse {
   int get totalPages => throw _privateConstructorUsedError;
   bool get last => throw _privateConstructorUsedError;
 
-  /// Serializes this PublicationResponse to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of PublicationResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $PublicationResponseCopyWith<PublicationResponse> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -62,8 +58,6 @@ class _$PublicationResponseCopyWithImpl<$Res, $Val extends PublicationResponse>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of PublicationResponse
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -128,8 +122,6 @@ class __$$PublicationResponseImplCopyWithImpl<$Res>
       $Res Function(_$PublicationResponseImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of PublicationResponse
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -225,7 +217,7 @@ class _$PublicationResponseImpl implements _PublicationResponse {
             (identical(other.last, last) || other.last == last));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -236,9 +228,7 @@ class _$PublicationResponseImpl implements _PublicationResponse {
       totalPages,
       last);
 
-  /// Create a copy of PublicationResponse
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$PublicationResponseImplCopyWith<_$PublicationResponseImpl> get copyWith =>
@@ -277,11 +267,8 @@ abstract class _PublicationResponse implements PublicationResponse {
   int get totalPages;
   @override
   bool get last;
-
-  /// Create a copy of PublicationResponse
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$PublicationResponseImplCopyWith<_$PublicationResponseImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -294,19 +281,15 @@ Publication _$PublicationFromJson(Map<String, dynamic> json) {
 mixin _$Publication {
   int get id => throw _privateConstructorUsedError;
   String get content => throw _privateConstructorUsedError;
-  DateTime? get deletedAt => throw _privateConstructorUsedError;
   DateTime get createdAt => throw _privateConstructorUsedError;
   User get user => throw _privateConstructorUsedError;
   Channel get channel => throw _privateConstructorUsedError;
+  DateTime? get deletedAt => throw _privateConstructorUsedError;
   int get totalLikes => throw _privateConstructorUsedError;
   int get totalComments => throw _privateConstructorUsedError;
 
-  /// Serializes this Publication to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of Publication
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $PublicationCopyWith<Publication> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -320,10 +303,10 @@ abstract class $PublicationCopyWith<$Res> {
   $Res call(
       {int id,
       String content,
-      DateTime? deletedAt,
       DateTime createdAt,
       User user,
       Channel channel,
+      DateTime? deletedAt,
       int totalLikes,
       int totalComments});
 
@@ -341,17 +324,15 @@ class _$PublicationCopyWithImpl<$Res, $Val extends Publication>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of Publication
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? id = null,
     Object? content = null,
-    Object? deletedAt = freezed,
     Object? createdAt = null,
     Object? user = null,
     Object? channel = null,
+    Object? deletedAt = freezed,
     Object? totalLikes = null,
     Object? totalComments = null,
   }) {
@@ -364,10 +345,6 @@ class _$PublicationCopyWithImpl<$Res, $Val extends Publication>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
-      deletedAt: freezed == deletedAt
-          ? _value.deletedAt
-          : deletedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -380,6 +357,10 @@ class _$PublicationCopyWithImpl<$Res, $Val extends Publication>
           ? _value.channel
           : channel // ignore: cast_nullable_to_non_nullable
               as Channel,
+      deletedAt: freezed == deletedAt
+          ? _value.deletedAt
+          : deletedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       totalLikes: null == totalLikes
           ? _value.totalLikes
           : totalLikes // ignore: cast_nullable_to_non_nullable
@@ -391,8 +372,6 @@ class _$PublicationCopyWithImpl<$Res, $Val extends Publication>
     ) as $Val);
   }
 
-  /// Create a copy of Publication
-  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $UserCopyWith<$Res> get user {
@@ -401,8 +380,6 @@ class _$PublicationCopyWithImpl<$Res, $Val extends Publication>
     });
   }
 
-  /// Create a copy of Publication
-  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
   $ChannelCopyWith<$Res> get channel {
@@ -423,10 +400,10 @@ abstract class _$$PublicationImplCopyWith<$Res>
   $Res call(
       {int id,
       String content,
-      DateTime? deletedAt,
       DateTime createdAt,
       User user,
       Channel channel,
+      DateTime? deletedAt,
       int totalLikes,
       int totalComments});
 
@@ -444,17 +421,15 @@ class __$$PublicationImplCopyWithImpl<$Res>
       _$PublicationImpl _value, $Res Function(_$PublicationImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of Publication
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? id = null,
     Object? content = null,
-    Object? deletedAt = freezed,
     Object? createdAt = null,
     Object? user = null,
     Object? channel = null,
+    Object? deletedAt = freezed,
     Object? totalLikes = null,
     Object? totalComments = null,
   }) {
@@ -467,10 +442,6 @@ class __$$PublicationImplCopyWithImpl<$Res>
           ? _value.content
           : content // ignore: cast_nullable_to_non_nullable
               as String,
-      deletedAt: freezed == deletedAt
-          ? _value.deletedAt
-          : deletedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
       createdAt: null == createdAt
           ? _value.createdAt
           : createdAt // ignore: cast_nullable_to_non_nullable
@@ -483,6 +454,10 @@ class __$$PublicationImplCopyWithImpl<$Res>
           ? _value.channel
           : channel // ignore: cast_nullable_to_non_nullable
               as Channel,
+      deletedAt: freezed == deletedAt
+          ? _value.deletedAt
+          : deletedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
       totalLikes: null == totalLikes
           ? _value.totalLikes
           : totalLikes // ignore: cast_nullable_to_non_nullable
@@ -501,10 +476,10 @@ class _$PublicationImpl implements _Publication {
   const _$PublicationImpl(
       {required this.id,
       required this.content,
-      this.deletedAt,
       required this.createdAt,
       required this.user,
       required this.channel,
+      this.deletedAt,
       this.totalLikes = 0,
       this.totalComments = 0});
 
@@ -516,13 +491,13 @@ class _$PublicationImpl implements _Publication {
   @override
   final String content;
   @override
-  final DateTime? deletedAt;
-  @override
   final DateTime createdAt;
   @override
   final User user;
   @override
   final Channel channel;
+  @override
+  final DateTime? deletedAt;
   @override
   @JsonKey()
   final int totalLikes;
@@ -532,7 +507,7 @@ class _$PublicationImpl implements _Publication {
 
   @override
   String toString() {
-    return 'Publication(id: $id, content: $content, deletedAt: $deletedAt, createdAt: $createdAt, user: $user, channel: $channel, totalLikes: $totalLikes, totalComments: $totalComments)';
+    return 'Publication(id: $id, content: $content, createdAt: $createdAt, user: $user, channel: $channel, deletedAt: $deletedAt, totalLikes: $totalLikes, totalComments: $totalComments)';
   }
 
   @override
@@ -542,26 +517,24 @@ class _$PublicationImpl implements _Publication {
             other is _$PublicationImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.content, content) || other.content == content) &&
-            (identical(other.deletedAt, deletedAt) ||
-                other.deletedAt == deletedAt) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.user, user) || other.user == user) &&
             (identical(other.channel, channel) || other.channel == channel) &&
+            (identical(other.deletedAt, deletedAt) ||
+                other.deletedAt == deletedAt) &&
             (identical(other.totalLikes, totalLikes) ||
                 other.totalLikes == totalLikes) &&
             (identical(other.totalComments, totalComments) ||
                 other.totalComments == totalComments));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, content, deletedAt,
-      createdAt, user, channel, totalLikes, totalComments);
+  int get hashCode => Object.hash(runtimeType, id, content, createdAt, user,
+      channel, deletedAt, totalLikes, totalComments);
 
-  /// Create a copy of Publication
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$PublicationImplCopyWith<_$PublicationImpl> get copyWith =>
@@ -579,10 +552,10 @@ abstract class _Publication implements Publication {
   const factory _Publication(
       {required final int id,
       required final String content,
-      final DateTime? deletedAt,
       required final DateTime createdAt,
       required final User user,
       required final Channel channel,
+      final DateTime? deletedAt,
       final int totalLikes,
       final int totalComments}) = _$PublicationImpl;
 
@@ -594,22 +567,19 @@ abstract class _Publication implements Publication {
   @override
   String get content;
   @override
-  DateTime? get deletedAt;
-  @override
   DateTime get createdAt;
   @override
   User get user;
   @override
   Channel get channel;
   @override
+  DateTime? get deletedAt;
+  @override
   int get totalLikes;
   @override
   int get totalComments;
-
-  /// Create a copy of Publication
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$PublicationImplCopyWith<_$PublicationImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -633,12 +603,8 @@ mixin _$User {
   int get totalFollowing => throw _privateConstructorUsedError;
   int get totalPosts => throw _privateConstructorUsedError;
 
-  /// Serializes this User to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of User
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $UserCopyWith<User> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -672,8 +638,6 @@ class _$UserCopyWithImpl<$Res, $Val extends User>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of User
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -772,8 +736,6 @@ class __$$UserImplCopyWithImpl<$Res>
   __$$UserImplCopyWithImpl(_$UserImpl _value, $Res Function(_$UserImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of User
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -924,7 +886,7 @@ class _$UserImpl implements _User {
                 other.totalPosts == totalPosts));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode => Object.hash(
       runtimeType,
@@ -941,9 +903,7 @@ class _$UserImpl implements _User {
       totalFollowing,
       totalPosts);
 
-  /// Create a copy of User
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$UserImplCopyWith<_$UserImpl> get copyWith =>
@@ -998,11 +958,8 @@ abstract class _User implements User {
   int get totalFollowing;
   @override
   int get totalPosts;
-
-  /// Create a copy of User
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$UserImplCopyWith<_$UserImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1018,12 +975,8 @@ mixin _$Channel {
   String? get description => throw _privateConstructorUsedError;
   int get totalFollowers => throw _privateConstructorUsedError;
 
-  /// Serializes this Channel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
-
-  /// Create a copy of Channel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   $ChannelCopyWith<Channel> get copyWith => throw _privateConstructorUsedError;
 }
 
@@ -1045,8 +998,6 @@ class _$ChannelCopyWithImpl<$Res, $Val extends Channel>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of Channel
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1094,8 +1045,6 @@ class __$$ChannelImplCopyWithImpl<$Res>
       _$ChannelImpl _value, $Res Function(_$ChannelImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of Channel
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1162,14 +1111,12 @@ class _$ChannelImpl implements _Channel {
                 other.totalFollowers == totalFollowers));
   }
 
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   int get hashCode =>
       Object.hash(runtimeType, id, title, description, totalFollowers);
 
-  /// Create a copy of Channel
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$ChannelImplCopyWith<_$ChannelImpl> get copyWith =>
@@ -1200,11 +1147,8 @@ abstract class _Channel implements Channel {
   String? get description;
   @override
   int get totalFollowers;
-
-  /// Create a copy of Channel
-  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$ChannelImplCopyWith<_$ChannelImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

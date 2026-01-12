@@ -102,9 +102,6 @@ class _$PublicationStateCopyWithImpl<$Res, $Val extends PublicationState>
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
-
-  /// Create a copy of PublicationState
-  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -121,9 +118,6 @@ class __$$InitialImplCopyWithImpl<$Res>
   __$$InitialImplCopyWithImpl(
       _$InitialImpl _value, $Res Function(_$InitialImpl) _then)
       : super(_value, _then);
-
-  /// Create a copy of PublicationState
-  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -256,9 +250,6 @@ class __$$LoadingImplCopyWithImpl<$Res>
   __$$LoadingImplCopyWithImpl(
       _$LoadingImpl _value, $Res Function(_$LoadingImpl) _then)
       : super(_value, _then);
-
-  /// Create a copy of PublicationState
-  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -391,9 +382,6 @@ class __$$SuccessImplCopyWithImpl<$Res>
   __$$SuccessImplCopyWithImpl(
       _$SuccessImpl _value, $Res Function(_$SuccessImpl) _then)
       : super(_value, _then);
-
-  /// Create a copy of PublicationState
-  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -526,9 +514,6 @@ class __$$FetchingMoreImplCopyWithImpl<$Res>
   __$$FetchingMoreImplCopyWithImpl(
       _$FetchingMoreImpl _value, $Res Function(_$FetchingMoreImpl) _then)
       : super(_value, _then);
-
-  /// Create a copy of PublicationState
-  /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
@@ -654,6 +639,8 @@ abstract class _$$LoadedImplCopyWith<$Res> {
       __$$LoadedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({PublicationResponse data});
+
+  $PublicationResponseCopyWith<$Res> get data;
 }
 
 /// @nodoc
@@ -664,19 +651,25 @@ class __$$LoadedImplCopyWithImpl<$Res>
       _$LoadedImpl _value, $Res Function(_$LoadedImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of PublicationState
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? data = freezed,
+    Object? data = null,
   }) {
     return _then(_$LoadedImpl(
-      freezed == data
+      null == data
           ? _value.data
           : data // ignore: cast_nullable_to_non_nullable
               as PublicationResponse,
     ));
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $PublicationResponseCopyWith<$Res> get data {
+    return $PublicationResponseCopyWith<$Res>(_value.data, (value) {
+      return _then(_value.copyWith(data: value));
+    });
   }
 }
 
@@ -698,16 +691,13 @@ class _$LoadedImpl implements _Loaded {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$LoadedImpl &&
-            const DeepCollectionEquality().equals(other.data, data));
+            (identical(other.data, data) || other.data == data));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(data));
+  int get hashCode => Object.hash(runtimeType, data);
 
-  /// Create a copy of PublicationState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
@@ -810,10 +800,7 @@ abstract class _Loaded implements PublicationState {
   const factory _Loaded(final PublicationResponse data) = _$LoadedImpl;
 
   PublicationResponse get data;
-
-  /// Create a copy of PublicationState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$LoadedImplCopyWith<_$LoadedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -825,6 +812,8 @@ abstract class _$$CreatedImplCopyWith<$Res> {
       __$$CreatedImplCopyWithImpl<$Res>;
   @useResult
   $Res call({Publication publication});
+
+  $PublicationCopyWith<$Res> get publication;
 }
 
 /// @nodoc
@@ -835,19 +824,25 @@ class __$$CreatedImplCopyWithImpl<$Res>
       _$CreatedImpl _value, $Res Function(_$CreatedImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of PublicationState
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? publication = freezed,
+    Object? publication = null,
   }) {
     return _then(_$CreatedImpl(
-      freezed == publication
+      null == publication
           ? _value.publication
           : publication // ignore: cast_nullable_to_non_nullable
               as Publication,
     ));
+  }
+
+  @override
+  @pragma('vm:prefer-inline')
+  $PublicationCopyWith<$Res> get publication {
+    return $PublicationCopyWith<$Res>(_value.publication, (value) {
+      return _then(_value.copyWith(publication: value));
+    });
   }
 }
 
@@ -869,17 +864,14 @@ class _$CreatedImpl implements _Created {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$CreatedImpl &&
-            const DeepCollectionEquality()
-                .equals(other.publication, publication));
+            (identical(other.publication, publication) ||
+                other.publication == publication));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, const DeepCollectionEquality().hash(publication));
+  int get hashCode => Object.hash(runtimeType, publication);
 
-  /// Create a copy of PublicationState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$CreatedImplCopyWith<_$CreatedImpl> get copyWith =>
@@ -982,10 +974,7 @@ abstract class _Created implements PublicationState {
   const factory _Created(final Publication publication) = _$CreatedImpl;
 
   Publication get publication;
-
-  /// Create a copy of PublicationState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$CreatedImplCopyWith<_$CreatedImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -1007,8 +996,6 @@ class __$$ErrorImplCopyWithImpl<$Res>
       _$ErrorImpl _value, $Res Function(_$ErrorImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of PublicationState
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -1047,9 +1034,7 @@ class _$ErrorImpl implements _Error {
   @override
   int get hashCode => Object.hash(runtimeType, message);
 
-  /// Create a copy of PublicationState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
   _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
@@ -1152,10 +1137,7 @@ abstract class _Error implements PublicationState {
   const factory _Error(final String message) = _$ErrorImpl;
 
   String get message;
-
-  /// Create a copy of PublicationState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
+  @JsonKey(ignore: true)
   _$$ErrorImplCopyWith<_$ErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

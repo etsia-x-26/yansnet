@@ -14,8 +14,8 @@ class AppRoutes {
 
   // Message Routes
   static const String messagesRoute = '/messages';
-  static const String emptyMessagesRoute = '/empty';
-  static const String connectionErrorRoute = '/error';
+  static const String emptyMessagesRoute = 'empty'; // Ne doit pas commencer par '/'
+  static const String connectionErrorRoute = 'error'; // Ne doit pas commencer par '/'
 
   // Chat Routes
   static const String chatRoute = '/chat';
@@ -23,8 +23,8 @@ class AppRoutes {
 
   // Group Routes
   static const String groupChatRoute = '/group';
-  static const String groupInfoRoute = '/:groupName';
-  static const String createGroup = '/create';
+  static const String groupInfoRoute = ':groupName'; // Ne doit pas commencer par '/'
+  static const String createGroup = 'create'; // Ne doit pas commencer par '/'
 
   // Profile Routes
   static const String profileRoute = '/profile/:username';

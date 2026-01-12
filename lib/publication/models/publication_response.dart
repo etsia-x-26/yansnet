@@ -1,4 +1,3 @@
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 part 'publication_response.freezed.dart';
@@ -24,7 +23,10 @@ class Publication with _$Publication {
   const factory Publication({
     required int id,
     required String content,
-    required DateTime createdAt, required User user, required Channel channel, DateTime? deletedAt,
+    required DateTime createdAt,
+    required User user,
+    required Channel channel,
+    DateTime? deletedAt,
     @Default(0) int totalLikes,
     @Default(0) int totalComments,
   }) = _Publication;

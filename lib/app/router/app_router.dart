@@ -92,12 +92,12 @@ class AppRouter {
           routes: [
             GoRoute(
               name: 'empty_messages',
-              path: AppRoutes.emptyMessagesRoute,
+              path: 'empty',
               builder: (ctx, state) => const MessagesEmptyPage(),
             ),
             GoRoute(
               name: 'connection_error',
-              path: AppRoutes.connectionErrorRoute,
+              path: 'error',
               builder: (ctx, state) => const MessagesNoConnectionPage(),
             ),
           ],

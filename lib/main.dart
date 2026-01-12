@@ -1,160 +1,98 @@
-// import 'package:flutter/material.dart';
-// // Importez votre page de messages
-// import 'package:yansnet/conversation/views/messages_list_page.dart';
-//
-// void main() {
-//   runApp(const MyApp());
-// }
-//
-// class MyApp extends StatelessWidget {
-//   const MyApp({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       debugShowCheckedModeBanner: false,
-//       title: 'Yansnet',
-//       theme: ThemeData(
-//         primaryColor: const Color(0xFF5D1A1A),
-//         colorScheme: ColorScheme.fromSeed(
-//           seedColor: const Color(0xFF5D1A1A),
-//         ),
-//         useMaterial3: true,
-//       ),
-//       // Option 1: Afficher directement MessagesListPage
-//       home: const MessagesListPage(),
-//
-//       // Option 2: Ou créer une page d'accueil avec un bouton
-//       // home: const HomePage(),
-//     );
-//   }
-// }
-//
-// // Option 2: Page d'accueil avec navigation (si vous préférez)
-// class HomePage extends StatelessWidget {
-//   const HomePage({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.grey[50],
-//       appBar: AppBar(
-//         title: const Text(
-//           "Yansnet 🚀",
-//           style: TextStyle(fontWeight: FontWeight.bold),
-//         ),
-//         backgroundColor: const Color(0xFF5D1A1A),
-//         foregroundColor: Colors.white,
-//         elevation: 0,
-//       ),
-//       body: Center(
-//         child: Column(
-//           mainAxisAlignment: MainAxisAlignment.center,
-//           children: [
-//             // Logo ou image
-//             Container(
-//               padding: const EdgeInsets.all(24),
-//               decoration: BoxDecoration(
-//                 color: const Color(0xFF5D1A1A).withOpacity(0.1),
-//                 shape: BoxShape.circle,
-//               ),
-//               child: const Icon(
-//                 Icons.chat_bubble_rounded,
-//                 size: 80,
-//                 color: Color(0xFF5D1A1A),
-//               ),
-//             ),
-//             const SizedBox(height: 32),
-//             const Text(
-//               "Bienvenue sur Yansnet",
-//               style: TextStyle(
-//                 fontSize: 24,
-//                 fontWeight: FontWeight.bold,
-//                 color: Colors.black87,
-//               ),
-//             ),
-//             const SizedBox(height: 8),
-//             Text(
-//               "Restez connecté avec vos amis",
-//               style: TextStyle(
-//                 fontSize: 16,
-//                 color: Colors.grey[600],
-//               ),
-//             ),
-//             const SizedBox(height: 48),
-//             // Bouton Messages
-//             ElevatedButton.icon(
-//               onPressed: () {
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(
-//                     builder: (context) => const MessagesListPage(),
-//                   ),
-//                 );
-//               },
-//               icon: const Icon(Icons.message),
-//               label: const Text(
-//                 "Voir mes messages",
-//                 style: TextStyle(fontSize: 16),
-//               ),
-//               style: ElevatedButton.styleFrom(
-//                 backgroundColor: const Color(0xFF5D1A1A),
-//                 foregroundColor: Colors.white,
-//                 padding: const EdgeInsets.symmetric(
-//                   horizontal: 32,
-//                   vertical: 16,
-//                 ),
-//                 shape: RoundedRectangleBorder(
-//                   borderRadius: BorderRadius.circular(12),
-//                 ),
-//               ),
-//             ),
-//             const SizedBox(height: 16),
-//             // Bouton direct vers Groupes
-//             OutlinedButton.icon(
-//               onPressed: () {
-//                 // Import nécessaire pour GroupsListPage
-//                 // import 'package:yansnet/conversation/views/groups_list_page.dart';
-//                 // Décommentez cette ligne après avoir créé GroupsListPage
-//                 /*
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(
-//                     builder: (context) => const GroupsListPage(),
-//                   ),
-//                 );
-//                 */
-//                 // Pour l'instant, naviguer vers Messages
-//                 Navigator.push(
-//                   context,
-//                   MaterialPageRoute(
-//                     builder: (context) => const MessagesListPage(),
-//                   ),
-//                 );
-//               },
-//               icon: const Icon(Icons.groups),
-//               label: const Text(
-//                 "Voir mes groupes",
-//                 style: TextStyle(fontSize: 16),
-//               ),
-//               style: OutlinedButton.styleFrom(
-//                 foregroundColor: const Color(0xFF5D1A1A),
-//                 side: const BorderSide(
-//                   color: Color(0xFF5D1A1A),
-//                   width: 2,
-//                 ),
-//                 padding: const EdgeInsets.symmetric(
-//                   horizontal: 32,
-//                   vertical: 16,
-//                 ),
-//                 shape: RoundedRectangleBorder(
-//                   borderRadius: BorderRadius.circular(12),
-//                 ),
-//               ),
-//             ),
-//           ],
-//         ),
-//       ),
-//     );
-//   }
-// }
+// lib/main.dart
+import 'package:flutter/material.dart';
+import 'core/di/injection.dart';
+import 'conversation/views/channels_page.dart';
+
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Setup dependencies
+  setupDependencies();
+
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'YansNet',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF075E54)),
+        useMaterial3: true,
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF075E54),
+          foregroundColor: Colors.white,
+          elevation: 0,
+        ),
+      ),
+      home: const HomePage(),
+    );
+  }
+}
+
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _pages = [
+    const Center(child: Text('Chats')),
+    const Center(child: Text('Groupes')),
+    const ChannelsPage(), // Votre page channels
+    const Center(child: Text('Profil')),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('YansNet'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {},
+          ),
+          IconButton(
+            icon: const Icon(Icons.more_vert),
+            onPressed: () {},
+          ),
+        ],
+      ),
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        onTap: (index) => setState(() => _selectedIndex = index),
+        type: BottomNavigationBarType.fixed,
+        selectedItemColor: const Color(0xFF075E54),
+        unselectedItemColor: Colors.grey,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.chat_bubble_outline),
+            label: 'Chats',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.group_outlined),
+            label: 'Groupes',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.campaign_outlined),
+            label: 'Channels',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person_outline),
+            label: 'Profil',
+          ),
+        ],
+      ),
+    );
+  }
+}
