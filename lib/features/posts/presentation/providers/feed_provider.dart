@@ -8,8 +8,11 @@ import '../../domain/usecases/delete_post_usecase.dart';
 import '../../../media/domain/usecases/upload_file_usecase.dart';
 import '../../domain/usecases/like_post_usecase.dart';
 
+import '../../domain/usecases/get_user_posts_usecase.dart';
+
 class FeedProvider extends ChangeNotifier {
   final GetPostsUseCase getPostsUseCase;
+  final GetUserPostsUseCase getUserPostsUseCase;
   final CreatePostUseCase createPostUseCase;
   final LikePostUseCase likePostUseCase;
   final DeletePostUseCase deletePostUseCase;
@@ -21,6 +24,7 @@ class FeedProvider extends ChangeNotifier {
 
   FeedProvider({
     required this.getPostsUseCase,
+    required this.getUserPostsUseCase,
     required this.createPostUseCase,
     required this.likePostUseCase,
     required this.deletePostUseCase,
@@ -102,6 +106,15 @@ class FeedProvider extends ChangeNotifier {
       print('Liked post $postId');
     } catch (e) {
       print('Like error: $e');
+    }
+  }
+
+  Future<List<Post>> getUserPosts(int userId) async {
+    try {
+      return await getUserPostsUseCase(userId);
+    } catch (e) {
+      print('Error fetching user posts: $e');
+      return [];
     }
   }
 }

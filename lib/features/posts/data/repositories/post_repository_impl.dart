@@ -15,6 +15,11 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
+  Future<List<Post>> getPostsByUser(int userId, {int page = 0, int size = 10}) {
+    return remoteDataSource.getPostsByUser(userId, page: page, size: size);
+  }
+
+  @override
   Future<Post> createPost(String content, {List<String>? mediaPaths}) {
     return remoteDataSource.createPost(content, mediaPaths: mediaPaths);
   }

@@ -80,13 +80,13 @@ class EventsProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> createEvent(String title, DateTime eventDate, String location, String description) async {
+  Future<bool> createEvent(String title, DateTime eventDate, String location, String description, String category, int maxParticipants, String? imageUrl, int organizerId, String organizerName) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      final newEvent = await createEventUseCase(title, eventDate, location, description);
+      final newEvent = await createEventUseCase(title, eventDate, location, description, category, maxParticipants, imageUrl, organizerId, organizerName);
       _events.insert(0, newEvent);
       return true;
     } catch (e) {

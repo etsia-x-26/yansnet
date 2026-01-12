@@ -5,6 +5,7 @@ import '../features/chat/presentation/providers/chat_provider.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
 import 'chat_detail_screen.dart';
 import '../features/channels/presentation/providers/channels_provider.dart';
+import 'search_screen.dart';
 
 class MessagesScreen extends StatefulWidget {
   const MessagesScreen({super.key});
@@ -50,7 +51,9 @@ class _MessagesScreenState extends State<MessagesScreen> with SingleTickerProvid
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+               Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchScreen()));
+            },
             icon: const Icon(Icons.search, color: Colors.black),
           ),
           IconButton(

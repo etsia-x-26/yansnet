@@ -3,6 +3,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../features/network/presentation/providers/network_provider.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
+import '../core/error/error_handler.dart';
+import '../core/utils/dialog_utils.dart';
 
 class NetworkScreen extends StatefulWidget {
   const NetworkScreen({super.key});
@@ -197,11 +199,19 @@ class _NetworkScreenState extends State<NetworkScreen> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  final success = await provider.connectUser(suggestion.user.id.toString());
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(success ? 'Connection request sent to ${suggestion.user.name}' : 'Failed to send request')),
-                    );
+                  try {
+                    final success = await provider.connectUser(suggestion.user.id.toString());
+                    if (context.mounted) {
+                      if (success) {
+                        DialogUtils.showSuccess(context, 'Connection request sent to ${suggestion.user.name}');
+                      } else {
+                        DialogUtils.showError(context, 'Failed to send request');
+                      }
+                    }
+                  } catch (e) {
+                    if (context.mounted) {
+                       DialogUtils.showError(context, ErrorHandler.getErrorMessage(e));
+                    }
                   }
                 },
                 child: const Text('Connect'),

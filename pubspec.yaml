@@ -41,6 +41,9 @@ dependencies:
   intl: ^0.19.0
   image_picker: ^1.0.7
   stomp_dart_client: ^2.0.0
+  flutter_image_compress: ^2.4.0
+  video_compress: ^3.1.4
+  cached_network_image: ^3.3.1
 
 dev_dependencies:
   flutter_test:

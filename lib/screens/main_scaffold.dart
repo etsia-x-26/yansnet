@@ -7,6 +7,8 @@ import 'messages_screen.dart';
 import 'profile_screen.dart';
 
 import 'jobs_screen.dart';
+import 'package:provider/provider.dart';
+import '../features/auth/presentation/providers/auth_provider.dart';
 
 class MainScaffold extends StatefulWidget {
   const MainScaffold({super.key});
@@ -17,6 +19,15 @@ class MainScaffold extends StatefulWidget {
 
 class _MainScaffoldState extends State<MainScaffold> {
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Ensure AuthProvider loads the user profile if a token exists
+      Provider.of<AuthProvider>(context, listen: false).tryAutoLogin();
+    });
+  }
 
   final List<Widget> _screens = [
     const FeedScreen(),

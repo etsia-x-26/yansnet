@@ -30,7 +30,7 @@ class AuthProvider extends ChangeNotifier {
   String? get error => _error;
   bool get isAuthenticated => _currentUser != null;
 
-  Future<void> login(String email, String password) async {
+  Future<bool> login(String email, String password) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
@@ -39,8 +39,10 @@ class AuthProvider extends ChangeNotifier {
       final authResponse = await loginUseCase(email, password);
       // Fetch user details
       _currentUser = await getUserUseCase(authResponse.userId);
+      return true;
     } catch (e) {
       _error = e.toString();
+      return false;
     } finally {
       _isLoading = false;
       notifyListeners();

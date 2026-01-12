@@ -20,63 +20,12 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
     });
   }
 
-  void _showCreateChannelDialog() {
-    final titleController = TextEditingController();
-    final descriptionController = TextEditingController();
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Create Channel', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold)),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: titleController,
-              decoration: const InputDecoration(labelText: 'Channel Title', border: OutlineInputBorder()),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: descriptionController,
-              decoration: const InputDecoration(labelText: 'Description', border: OutlineInputBorder()),
-              maxLines: 3,
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('Cancel'),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              if (titleController.text.isNotEmpty) {
-                 final success = await context.read<ChannelsProvider>().createChannel(
-                   titleController.text,
-                   descriptionController.text,
-                 );
-                 if (mounted && success) {
-                   Navigator.pop(context);
-                 }
-              }
-            },
-            child: const Text('Create'),
-          ),
-        ],
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF3F4F6),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _showCreateChannelDialog,
-        backgroundColor: const Color(0xFF1313EC),
-        child: const Icon(Icons.add, color: Colors.white),
-        ),
-      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
            Navigator.push(context, MaterialPageRoute(builder: (_) => const CreateChannelScreen()));
@@ -159,22 +108,22 @@ class _ChannelsScreenState extends State<ChannelsScreen> {
                         ],
                       ),
                     ),
-                    ElevatedButton(
-                      onPressed: () {}, // TODO: Implement Follow/Unfollow
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF1313EC),
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1313EC),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        ),
+                        onPressed: () async {
+                           final success = await provider.joinChannel(channel.id.toString());
+                           if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(success ? 'Joined ${channel.title}' : 'Failed to join')),
+                              );
+                           }
+                        },
+                        child: const Text('Join'),
                       ),
-                      child: const Text('Join'),
-                      onPressed: () async {
-                         final success = await provider.joinChannel(channel.id.toString());
-                         if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(success ? 'Joined ${channel.title}' : 'Failed to join')),
-                            );
-                         }
-                      },
                   ],
                 ),
               );

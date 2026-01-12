@@ -4,7 +4,9 @@ import '../widgets/feed/student_post_card.dart';
 
 import 'package:provider/provider.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
+import '../features/posts/presentation/providers/feed_provider.dart';
 import 'edit_profile_screen.dart';
+import 'search_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -105,7 +107,12 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                     ),
                   ),
                   actions: [
-                    IconButton(icon: const Icon(Icons.search, color: Colors.black), onPressed: () {}),
+                    IconButton(
+                      icon: const Icon(Icons.search, color: Colors.black),
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchScreen()));
+                      },
+                    ),
                     IconButton(icon: const Icon(Icons.more_vert, color: Colors.black), onPressed: () {}),
                   ],
                   flexibleSpace: FlexibleSpaceBar(
@@ -235,8 +242,8 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
             body: TabBarView(
               controller: _tabController,
               children: [
-                // Posts (Placeholder using FeedProvider later? or User's posts)
-                const Center(child: Text("User Posts here")),
+                // Posts
+                _UserPostsTab(userId: user.id),
                 // Replies
                 const Center(child: Text("No replies yet")),
                  // Media
@@ -269,4 +276,82 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
   }
   @override
   bool shouldRebuild(_SliverAppBarDelegate oldDelegate) => false;
+}
+
+class _UserPostsTab extends StatefulWidget {
+  final int userId;
+  const _UserPostsTab({required this.userId});
+
+  @override
+  State<_UserPostsTab> createState() => _UserPostsTabState();
+}
+
+class _UserPostsTabState extends State<_UserPostsTab> {
+  late Future<List<dynamic>> _postsFuture; // List<Post> usually
+
+  @override
+  void initState() {
+    super.initState();
+    _postsFuture = context.read<FeedProvider>().getUserPosts(widget.userId);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<dynamic>>(
+      future: _postsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+        final posts = snapshot.data ?? [];
+        if (posts.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  "No posts yet",
+                  style: GoogleFonts.plusJakartaSans(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "When you post, it'll show up here.",
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return ListView.builder(
+          padding: EdgeInsets.zero,
+          itemCount: posts.length,
+          itemBuilder: (context, index) {
+            final post = posts[index];
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 8.0),
+              child: StudentPostCard(
+                avatarUrl: post.user?.profilePictureUrl ?? '',
+                name: post.user?.name ?? 'Unknown User',
+                headline: post.user?.username != null ? '@${post.user!.username}' : '',
+                content: post.content,
+                imageUrls: post.media.map((m) => m.url).toList().cast<String>(),
+                likeCount: post.totalLikes,
+                commentCount: post.totalComments,
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 }

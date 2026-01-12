@@ -2,12 +2,14 @@ class AuthResponse {
   final int userId;
   final String email;
   final String accessToken;
+  final String refreshToken;
   final String tokenType;
 
   AuthResponse({
     required this.userId,
     required this.email,
     required this.accessToken,
+    required this.refreshToken,
     required this.tokenType,
   });
 
@@ -16,6 +18,7 @@ class AuthResponse {
       userId: json['userId'] ?? 0,
       email: json['email'] ?? '',
       accessToken: json['accessToken'] ?? '',
+      refreshToken: json['refreshToken'] ?? '',
       tokenType: json['tokenType'] ?? 'Bearer',
     );
   }

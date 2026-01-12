@@ -44,17 +44,26 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
 
   @override
   Future<Job> createJob(Map<String, dynamic> jobData) async {
-    // Simulating success
-    await Future.delayed(const Duration(seconds: 1));
-    return Job(
-      id: DateTime.now().millisecondsSinceEpoch,
-      title: jobData['title'],
-      companyName: jobData['companyName'],
-      location: jobData['location'],
-      type: jobData['type'],
-      description: jobData['description'],
-      postedAt: DateTime.now(),
-      bannerUrl: null,
-    );
+    try {
+      final body = {
+        "title": jobData['title'],
+        "description": jobData['description'],
+        "type": jobData['type'].toString().toUpperCase().replaceAll(' ', '_'),
+        "location": jobData['location'],
+        "salary": jobData['salary'],
+        "deadline": jobData['deadline'],
+        "applicationUrl": jobData['applicationUrl'],
+        "companyName": jobData['companyName'],
+        "publisher": {
+          "id": jobData['publisherId']
+        }
+      };
+
+      final response = await apiClient.dio.post('/api/jobs', data: body);
+      return JobDto.fromJson(response.data).toEntity();
+    } catch (e) {
+      print('Error creating job: $e');
+      rethrow;
+    }
   }
 }

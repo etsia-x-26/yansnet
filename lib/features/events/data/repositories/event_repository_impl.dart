@@ -23,12 +23,17 @@ class EventRepositoryImpl implements EventRepository {
   }
 
   @override
-  Future<Event> createEvent(String title, DateTime eventDate, String location, String description) {
+  Future<Event> createEvent(String title, DateTime eventDate, String location, String description, String category, int maxParticipants, String? imageUrl, int organizerId, String organizerName) {
      return remoteDataSource.createEvent({
        'title': title,
        'eventDate': eventDate.toIso8601String(),
        'location': location,
        'description': description,
+       'category': category,
+       'maxParticipants': maxParticipants,
+       'imageUrl': imageUrl,
+       'organizerId': organizerId,
+       'organizerName': organizerName,
      });
   }
 }

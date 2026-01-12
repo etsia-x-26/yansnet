@@ -91,6 +91,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       userId: json['userId'] ?? 0,
       email: json['email'] ?? '',
       accessToken: json['accessToken'] ?? '',
+      refreshToken: json['refreshToken'] ?? '',
       tokenType: json['tokenType'] ?? 'Bearer',
     );
   }

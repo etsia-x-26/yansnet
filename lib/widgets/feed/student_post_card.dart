@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class StudentPostCard extends StatelessWidget {
   final String avatarUrl;
@@ -125,18 +126,29 @@ class StudentPostCard extends StatelessWidget {
                 // Images
                 if (imageUrls.isNotEmpty)
                   ClipRRect(
-                    borderRadius: BorderRadius.circular(16), // Rounded corners
-                    child: Container(
-                       constraints: const BoxConstraints(maxHeight: 300),
-                       width: double.infinity,
-                       decoration: BoxDecoration(
-                         borderRadius: BorderRadius.circular(16),
-                         border: Border.all(color: Colors.grey.withOpacity(0.2)),
-                         image: const DecorationImage(
-                           image: AssetImage('assets/images/onboarding_collaborate.png'),
-                           fit: BoxFit.cover,
-                         ),
-                       ),
+                    borderRadius: BorderRadius.circular(16),
+                    child: CachedNetworkImage(
+                      imageUrl: imageUrls.first,
+                      height: 300,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        height: 300,
+                        color: Colors.grey[100],
+                        child: const Center(child: CircularProgressIndicator()),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        height: 300,
+                        color: Colors.grey[200],
+                        child: const Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.broken_image_rounded, color: Colors.grey, size: 40),
+                            SizedBox(height: 8),
+                            Text("Image could not be loaded", style: TextStyle(color: Colors.grey)),
+                          ],
+                        ),
+                      ),
                     ),
                   ),
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'main_scaffold.dart';
+import '../core/error/error_handler.dart';
+import '../core/utils/dialog_utils.dart';
 
 import 'package:provider/provider.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
@@ -26,28 +28,30 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void _handleLogin() async {
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please enter both email and password')),
-      );
+      DialogUtils.showError(context, 'Please enter both email and password');
       return;
     }
 
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    await authProvider.login(
-      _emailController.text.trim(),
-      _passwordController.text.trim(),
-    );
+    try {
+      final success = await authProvider.login(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
+      );
 
-    if (mounted) {
-       if (authProvider.error != null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(authProvider.error!)),
-        );
-      } else {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const MainScaffold()),
-        );
+      if (mounted) {
+         if (success) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const MainScaffold()),
+          );
+        } else {
+          DialogUtils.showError(context, ErrorHandler.getErrorMessage(authProvider.error));
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        DialogUtils.showError(context, ErrorHandler.getErrorMessage(e));
       }
     }
   }

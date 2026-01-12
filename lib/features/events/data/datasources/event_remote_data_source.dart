@@ -45,22 +45,25 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
 
   @override
   Future<Event> createEvent(Map<String, dynamic> eventData) async {
-    // TODO: Connect to real API
-    // final response = await apiClient.dio.post('/api/events', data: eventData);
-    // return EventDto.fromJson(response.data).toEntity();
+    try {
+      // Constructing body based on user requirements
+      final body = {
+        "title": eventData['title'],
+        "description": eventData['description'],
+        "category": eventData['category'],
+        "eventDate": eventData['eventDate'],
+        "location": eventData['location'],
+        "maxParticipants": eventData['maxParticipants'],
+        "imageUrl": eventData['imageUrl'] ?? "",
+        "organizerId": eventData['organizerId'],
+        "organizerName": eventData['organizerName'],
+      };
 
-    // Simulating success
-    await Future.delayed(const Duration(seconds: 1));
-    return Event(
-      id: DateTime.now().millisecondsSinceEpoch,
-      title: eventData['title'],
-      description: eventData['description'],
-      location: eventData['location'],
-      eventDate: DateTime.parse(eventData['eventDate']),
-      organizer: 'You',
-      attendeesCount: 0,
-      bannerUrl: null,
-      isAttending: true,
-    );
+      final response = await apiClient.dio.post('/api/events', data: body);
+      return EventDto.fromJson(response.data).toEntity();
+    } catch (e) {
+      print('Error creating event: $e');
+      rethrow;
+    }
   }
 }

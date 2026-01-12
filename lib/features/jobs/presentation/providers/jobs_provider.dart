@@ -41,13 +41,13 @@ class JobsProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> createJob(String title, String companyName, String location, String type, String description) async {
+  Future<bool> createJob(String title, String companyName, String location, String type, String description, String salary, DateTime deadline, String applicationUrl, int publisherId) async {
     _isLoading = true;
     _error = null;
     notifyListeners();
 
     try {
-      final newJob = await createJobUseCase(title, companyName, location, type, description);
+      final newJob = await createJobUseCase(title, companyName, location, type, description, salary, deadline, applicationUrl, publisherId);
       _jobs.insert(0, newJob);
       return true;
     } catch (e) {

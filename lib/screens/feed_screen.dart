@@ -149,7 +149,7 @@ class _FeedScreenState extends State<FeedScreen> with SingleTickerProviderStateM
                                   name: user?.name ?? 'Unknown User',
                                   headline: user?.bio ?? 'Student', // Fallback
                                   content: post.content,
-                                  imageUrls: post.media.where((m) => m.type == 'IMAGE').map((m) => m.url).toList(),
+                                  imageUrls: post.media.where((m) => m.type == 'IMAGE').map((m) => m.url).toList().cast<String>(),
                                   likeCount: post.totalLikes,
                                   commentCount: post.totalComments,
                                   showDelete: (context.read<AuthProvider>().currentUser != null && post.user?.id == context.read<AuthProvider>().currentUser!.id),

@@ -11,6 +11,8 @@ import 'features/auth/domain/usecases/update_user_usecase.dart';
 
 import 'features/posts/data/datasources/post_remote_data_source.dart';
 import 'features/posts/data/repositories/post_repository_impl.dart';
+import 'features/posts/domain/usecases/get_user_posts_usecase.dart';
+
 import 'features/posts/domain/usecases/get_posts_usecase.dart';
 import 'features/posts/domain/usecases/create_post_usecase.dart';
 import 'features/posts/domain/usecases/get_comments_usecase.dart';
@@ -52,6 +54,10 @@ import 'features/network/data/repositories/network_repository_impl.dart';
 import 'features/network/domain/usecases/get_network_stats_usecase.dart';
 import 'features/network/domain/usecases/get_network_suggestions_usecase.dart';
 import 'features/network/presentation/providers/network_provider.dart';
+
+import 'features/search/data/datasources/search_remote_data_source.dart';
+import 'features/search/data/repositories/search_repository_impl.dart';
+import 'features/search/presentation/providers/search_provider.dart';
 
 import 'screens/onboarding_screen.dart';
 import 'package:flutter/material.dart';
@@ -109,6 +115,7 @@ void main() async {
   final postDataSource = PostRemoteDataSourceImpl(apiClient);
   final postRepository = PostRepositoryImpl(postDataSource);
   final getPostsUseCase = GetPostsUseCase(postRepository);
+  final getUserPostsUseCase = GetUserPostsUseCase(postRepository);
   final createPostUseCase = CreatePostUseCase(postRepository);
   final getCommentsUseCase = GetCommentsUseCase(postRepository);
   final addCommentUseCase = AddCommentUseCase(postRepository);
@@ -149,7 +156,20 @@ void main() async {
   final getNetworkStatsUseCase = GetNetworkStatsUseCase(networkRepository);
   final getNetworkSuggestionsUseCase = GetNetworkSuggestionsUseCase(networkRepository);
 
+  // Search
+  final searchDataSource = SearchRemoteDataSourceImpl(apiClient);
+  final searchRepository = SearchRepositoryImpl(searchDataSource);
+
   final webSocketService = WebSocketService();
+
+  // Listen for token expiration
+  apiClient.tokenExpirationStream.listen((_) {
+    // Navigate to login screen
+    navigatorKey.currentState?.pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const LoginScreen()),
+      (route) => false,
+    );
+  });
 
   runApp(
     MultiProvider(
@@ -163,6 +183,7 @@ void main() async {
         )),
         ChangeNotifierProvider(create: (_) => FeedProvider(
           getPostsUseCase: getPostsUseCase,
+          getUserPostsUseCase: getUserPostsUseCase,
           createPostUseCase: createPostUseCase,
           likePostUseCase: likePostUseCase,
           deletePostUseCase: deletePostUseCase,
@@ -203,11 +224,16 @@ void main() async {
           getNetworkStatsUseCase: getNetworkStatsUseCase,
           getNetworkSuggestionsUseCase: getNetworkSuggestionsUseCase,
         )),
+        ChangeNotifierProvider(create: (_) => SearchProvider(
+          searchRepository: searchRepository,
+        )),
       ],
       child: MyApp(initialScreen: initialScreen),
     ),
   );
 }
+
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   final Widget initialScreen;
@@ -217,6 +243,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       title: 'YansNet',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(

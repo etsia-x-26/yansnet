@@ -6,7 +6,7 @@ class CreateJobUseCase {
 
   CreateJobUseCase(this.repository);
 
-  Future<Job> call(String title, String companyName, String location, String type, String description) {
-    return repository.createJob(title, companyName, location, type, description);
+  Future<Job> call(String title, String companyName, String location, String type, String description, String salary, DateTime deadline, String applicationUrl, int publisherId) {
+    return repository.createJob(title, companyName, location, type, description, salary, deadline, applicationUrl, publisherId);
   }
 }

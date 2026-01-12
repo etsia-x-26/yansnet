@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
+import '../core/error/error_handler.dart';
+import '../core/utils/dialog_utils.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -35,19 +37,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   Future<void> _save() async {
     if (_formKey.currentState!.validate()) {
-      final success = await context.read<AuthProvider>().updateProfile(
-        name: _nameController.text.trim(),
-        bio: _bioController.text.trim(),
-        profilePictureUrl: _pictureController.text.trim().isEmpty ? null : _pictureController.text.trim(),
-      );
+      try {
+        final success = await context.read<AuthProvider>().updateProfile(
+          name: _nameController.text.trim(),
+          bio: _bioController.text.trim(),
+          profilePictureUrl: _pictureController.text.trim().isEmpty ? null : _pictureController.text.trim(),
+        );
 
-      if (mounted) {
-        if (success) {
-          Navigator.pop(context);
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Update failed: ${context.read<AuthProvider>().error}')),
-          );
+        if (mounted) {
+          if (success) {
+            DialogUtils.showSuccess(context, 'Profile updated successfully!', onPressed: () => Navigator.pop(context));
+          } else {
+            DialogUtils.showError(context, ErrorHandler.getErrorMessage(context.read<AuthProvider>().error));
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          DialogUtils.showError(context, ErrorHandler.getErrorMessage(e));
         }
       }
     }

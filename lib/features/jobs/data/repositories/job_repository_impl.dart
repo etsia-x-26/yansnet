@@ -18,13 +18,17 @@ class JobRepositoryImpl implements JobRepository {
   }
 
   @override
-  Future<Job> createJob(String title, String companyName, String location, String type, String description) {
+  Future<Job> createJob(String title, String companyName, String location, String type, String description, String salary, DateTime deadline, String applicationUrl, int publisherId) {
     return remoteDataSource.createJob({
       'title': title,
       'companyName': companyName,
       'location': location,
       'type': type,
       'description': description,
+      'salary': salary,
+      'deadline': deadline.toIso8601String(),
+      'applicationUrl': applicationUrl,
+      'publisherId': publisherId,
     });
   }
 }

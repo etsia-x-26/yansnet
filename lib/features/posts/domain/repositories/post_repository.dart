@@ -3,6 +3,7 @@ import '../entities/comment_entity.dart';
 
 abstract class PostRepository {
   Future<List<Post>> getPosts({int page = 0, int size = 10});
+  Future<List<Post>> getPostsByUser(int userId, {int page = 0, int size = 10});
   Future<Post> createPost(String content, {List<String>? mediaPaths});
 
   // Interactions

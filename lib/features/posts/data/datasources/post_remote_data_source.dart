@@ -15,6 +15,7 @@ import '../../../../models/user_model.dart' as user_model; // This import was in
 
 abstract class PostRemoteDataSource {
   Future<List<entity.Post>> getPosts({int page = 0, int size = 10});
+  Future<List<entity.Post>> getPostsByUser(int userId, {int page = 0, int size = 10});
   Future<entity.Post> createPost(String content, {List<String>? mediaPaths});
   
   Future<List<Comment>> getComments(int postId, {int page = 0, int size = 10});
@@ -53,6 +54,28 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     } catch (e) {
       print('Error posts: $e');
       return []; // Or rethrow
+    }
+  }
+
+  @override
+  Future<List<entity.Post>> getPostsByUser(int userId, {int page = 0, int size = 10}) async {
+    try {
+      final response = await apiClient.dio.get('/api/posts/user/$userId', queryParameters: {
+        'page': page,
+        'size': size,
+      });
+
+      final data = response.data;
+      if (data != null && data['content'] != null) {
+        return (data['content'] as List).map((e) {
+          final postModel = model.Post.fromJson(e);
+          return _mapModelToEntity(postModel);
+        }).toList();
+      }
+      return [];
+    } catch (e) {
+      print('Error user posts: $e');
+      return []; 
     }
   }
 

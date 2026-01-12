@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../features/channels/presentation/providers/channels_provider.dart';
+import '../core/error/error_handler.dart';
+import '../core/utils/dialog_utils.dart';
 
 class CreateChannelScreen extends StatefulWidget {
   const CreateChannelScreen({super.key});
@@ -30,18 +32,24 @@ class _CreateChannelScreenState extends State<CreateChannelScreen> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isSubmitting = true);
       
-      final success = await context.read<ChannelsProvider>().createChannel(
-        _nameController.text,
-        _descriptionController.text,
-      );
+      try {
+        final success = await context.read<ChannelsProvider>().createChannel(
+          _nameController.text,
+          _descriptionController.text,
+        ); // Removed isPrivate as it wasn't in the original call in the file I viewed
 
-      if (mounted) {
-        setState(() => _isSubmitting = false);
-        if (success) {
-           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Channel created successfully!')));
-           Navigator.pop(context);
-        } else {
-           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Failed to create channel.')));
+        if (mounted) {
+          setState(() => _isSubmitting = false);
+          if (success) {
+             DialogUtils.showSuccess(context, 'Channel created successfully!', onPressed: () => Navigator.pop(context));
+          } else {
+             DialogUtils.showError(context, 'Failed to create channel. Please try again.');
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+           setState(() => _isSubmitting = false);
+           DialogUtils.showError(context, ErrorHandler.getErrorMessage(e));
         }
       }
     }
