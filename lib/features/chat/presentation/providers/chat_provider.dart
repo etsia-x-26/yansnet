@@ -17,7 +17,8 @@ class ChatProvider extends ChangeNotifier {
   User? _currentUser;
 
   List<Conversation> _conversations = [];
-  Map<int, List<Message>> _messages = {}; // Cache messages by conversationId
+  final Map<int, List<Message>> _messages =
+  {}; // Cache messages by conversationId
   bool _isLoadingConversations = false;
   bool _isLoadingMessages = false;
   String? _error;
@@ -60,10 +61,10 @@ class ChatProvider extends ChangeNotifier {
     final sender = data['sender'];
 
     if (type == 'CHAT' && content != null) {
-      // In a real app, you'd match this to a conversation. 
+      // In a real app, you'd match this to a conversation.
       // For public chat demonstration, we can just log it or add to a specific global conv.
       print('[ChatProvider] Received real-time message from $sender: $content');
-      
+
       // If we had a "Public Chat" conversation, we'd add it there.
       // For now, let's notify listeners to let UI respond.
       notifyListeners();
@@ -86,7 +87,7 @@ class ChatProvider extends ChangeNotifier {
 
     try {
       _conversations = await getConversationsUseCase();
-      
+
       // Connect to WebSocket if not already connected (redundant if updateUser handled it, but safe)
       if (_currentUser != null) {
         webSocketService.connect(_currentUser!.username ?? _currentUser!.email);
@@ -116,47 +117,89 @@ class ChatProvider extends ChangeNotifier {
   }
 
   Future<void> sendMessage(int conversationId, String content) async {
+    print('📤 ChatProvider.sendMessage called');
+    print('📤 Conversation ID: $conversationId');
+    print('📤 Content: $content');
+
     // Optimistic reading locally could be complex with IDs, so we wait for server
     try {
       final newMessage = await sendMessageUseCase(conversationId, content);
-      
+      print('✅ Message sent, received: ${newMessage.id}');
+
       // Add to message list
       final currentList = _messages[conversationId] ?? [];
       _messages[conversationId] = [...currentList, newMessage]; // Append
-      
+
       // Update last message in conversation list if exists
       final index = _conversations.indexWhere((c) => c.id == conversationId);
       if (index != -1) {
         final oldConv = _conversations[index];
         _conversations[index] = Conversation(
-           id: oldConv.id,
-           participants: oldConv.participants,
-           lastMessage: newMessage,
-           unreadCount: 0, // Reset unread since we sent it
+          id: oldConv.id,
+          participants: oldConv.participants,
+          lastMessage: newMessage,
+          unreadCount: 0, // Reset unread since we sent it
         );
       }
-      
+
       notifyListeners();
     } catch (e) {
+      print('❌ Error in ChatProvider.sendMessage: $e');
       _error = e.toString();
       notifyListeners();
+      rethrow;
     }
   }
 
   Future<Conversation?> startChat(int otherUserId) async {
+    print('🆕 ChatProvider.startChat called with userId: $otherUserId');
     try {
       final conversation = await startChatUseCase(otherUserId);
-      
+      print('✅ Conversation created: ${conversation.id}');
+
       // Check if already exists in list
       if (!_conversations.any((c) => c.id == conversation.id)) {
         _conversations.insert(0, conversation);
+        print('✅ Added conversation to list');
+      } else {
+        print('ℹ️ Conversation already in list');
       }
       notifyListeners();
       return conversation;
     } catch (e) {
+      print('❌ Error in ChatProvider.startChat: $e');
+      _error = e.toString();
+      notifyListeners();
+      return null;
+    }
+  }
+
+  Future<Conversation?> startGroupChat(List<int> participantIds, String groupName) async {
+    print('🆕 ChatProvider.startGroupChat called');
+    print('🆕 Participants: $participantIds');
+    print('🆕 Group name: $groupName');
+
+    try {
+      // Pour l'instant, on utilise startChatUseCase avec le premier participant
+      // TODO: Créer un vrai use case pour les groupes quand le backend sera prêt
+      final conversation = await startChatUseCase(participantIds.first);
+      print('✅ Group conversation created: ${conversation.id}');
+
+      // Check if already exists in list
+      if (!_conversations.any((c) => c.id == conversation.id)) {
+        _conversations.insert(0, conversation);
+        print('✅ Added group conversation to list');
+      } else {
+        print('ℹ️ Group conversation already in list');
+      }
+      notifyListeners();
+      return conversation;
+    } catch (e) {
+      print('❌ Error in ChatProvider.startGroupChat: $e');
       _error = e.toString();
       notifyListeners();
       return null;
     }
   }
 }
+

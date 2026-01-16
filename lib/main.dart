@@ -53,6 +53,7 @@ import 'features/network/data/datasources/network_remote_data_source.dart';
 import 'features/network/data/repositories/network_repository_impl.dart';
 import 'features/network/domain/usecases/get_network_stats_usecase.dart';
 import 'features/network/domain/usecases/get_network_suggestions_usecase.dart';
+import 'features/network/domain/usecases/send_connection_request_usecase.dart';
 import 'features/network/presentation/providers/network_provider.dart';
 
 import 'features/search/data/datasources/search_remote_data_source.dart';
@@ -72,30 +73,28 @@ import 'features/media/domain/usecases/upload_file_usecase.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   final apiClient = ApiClient();
-  
+
   // Storage options for Android
   const androidOptions = AndroidOptions(encryptedSharedPreferences: true);
-  
+
   // Check startup status
-  final String? onboardingComplete = await apiClient.storage.read(
-    key: 'onboarding_complete',
-    aOptions: androidOptions, 
-  ).catchError((_) => null);
-  
-  final String? authToken = await apiClient.storage.read(
-    key: 'auth_token',
-    aOptions: androidOptions,
-  ).catchError((_) => null);
+  final String? onboardingComplete = await apiClient.storage
+      .read(key: 'onboarding_complete', aOptions: androidOptions)
+      .catchError((_) => null);
+
+  final String? authToken = await apiClient.storage
+      .read(key: 'auth_token', aOptions: androidOptions)
+      .catchError((_) => null);
 
   Widget initialScreen;
   if (onboardingComplete != 'true') {
-     initialScreen = const OnboardingScreen();
+    initialScreen = const OnboardingScreen();
   } else if (authToken != null && authToken.isNotEmpty) {
-     initialScreen = const MainScaffold();
+    initialScreen = const MainScaffold();
   } else {
-     initialScreen = const LoginScreen();
+    initialScreen = const LoginScreen();
   }
 
   // Auth
@@ -108,7 +107,9 @@ void main() async {
 
   // Media
   final mediaDataSource = MediaRemoteDataSourceImpl(apiClient);
-  final mediaRepository = MediaRepositoryImpl(remoteDataSource: mediaDataSource);
+  final mediaRepository = MediaRepositoryImpl(
+    remoteDataSource: mediaDataSource,
+  );
   final uploadFileUseCase = UploadFileUseCase(mediaRepository);
 
   // Posts
@@ -154,7 +155,12 @@ void main() async {
   final networkDataSource = NetworkRemoteDataSourceImpl(apiClient);
   final networkRepository = NetworkRepositoryImpl(networkDataSource);
   final getNetworkStatsUseCase = GetNetworkStatsUseCase(networkRepository);
-  final getNetworkSuggestionsUseCase = GetNetworkSuggestionsUseCase(networkRepository);
+  final getNetworkSuggestionsUseCase = GetNetworkSuggestionsUseCase(
+    networkRepository,
+  );
+  final sendConnectionRequestUseCase = SendConnectionRequestUseCase(
+    networkRepository,
+  );
 
   // Search
   final searchDataSource = SearchRemoteDataSourceImpl(apiClient);
@@ -174,39 +180,52 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider(
-          loginUseCase: loginUseCase,
-          registerUseCase: registerUseCase,
-          getUserUseCase: getUserUseCase,
-          updateUserUseCase: updateUserUseCase,
-          apiClient: apiClient,
-        )),
-        ChangeNotifierProvider(create: (_) => FeedProvider(
-          getPostsUseCase: getPostsUseCase,
-          getUserPostsUseCase: getUserPostsUseCase,
-          createPostUseCase: createPostUseCase,
-          likePostUseCase: likePostUseCase,
-          deletePostUseCase: deletePostUseCase,
-          uploadFileUseCase: uploadFileUseCase,
-        )),
-        ChangeNotifierProvider(create: (_) => CommentsProvider(
-          getCommentsUseCase: getCommentsUseCase,
-          addCommentUseCase: addCommentUseCase,
-        )),
-        ChangeNotifierProvider(create: (_) => JobsProvider(
-          getJobsUseCase: getJobsUseCase,
-          createJobUseCase: createJobUseCase,
-        )),
-        ChangeNotifierProvider(create: (_) => EventsProvider(
-          getEventsUseCase: getEventsUseCase,
-          rsvpEventUseCase: rsvpEventUseCase,
-          cancelRsvpUseCase: cancelRsvpUseCase,
-          createEventUseCase: createEventUseCase,
-        )),
-        ChangeNotifierProvider(create: (_) => ChannelsProvider(
-          getChannelsUseCase: getChannelsUseCase,
-          createChannelUseCase: createChannelUseCase,
-        )),
+        ChangeNotifierProvider(
+          create: (_) => AuthProvider(
+            loginUseCase: loginUseCase,
+            registerUseCase: registerUseCase,
+            getUserUseCase: getUserUseCase,
+            updateUserUseCase: updateUserUseCase,
+            apiClient: apiClient,
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => FeedProvider(
+            getPostsUseCase: getPostsUseCase,
+            getUserPostsUseCase: getUserPostsUseCase,
+            createPostUseCase: createPostUseCase,
+            likePostUseCase: likePostUseCase,
+            deletePostUseCase: deletePostUseCase,
+            uploadFileUseCase: uploadFileUseCase,
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => CommentsProvider(
+            getCommentsUseCase: getCommentsUseCase,
+            addCommentUseCase: addCommentUseCase,
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => JobsProvider(
+            getJobsUseCase: getJobsUseCase,
+            createJobUseCase: createJobUseCase,
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => EventsProvider(
+            getEventsUseCase: getEventsUseCase,
+            rsvpEventUseCase: rsvpEventUseCase,
+            cancelRsvpUseCase: cancelRsvpUseCase,
+            createEventUseCase: createEventUseCase,
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => ChannelsProvider(
+            getChannelsUseCase: getChannelsUseCase,
+            createChannelUseCase: createChannelUseCase,
+            channelRepository: channelRepository,
+          ),
+        ),
         ChangeNotifierProxyProvider<AuthProvider, ChatProvider>(
           create: (_) => ChatProvider(
             getConversationsUseCase: getConversationsUseCase,
@@ -220,13 +239,16 @@ void main() async {
             return chat;
           },
         ),
-        ChangeNotifierProvider(create: (_) => NetworkProvider(
-          getNetworkStatsUseCase: getNetworkStatsUseCase,
-          getNetworkSuggestionsUseCase: getNetworkSuggestionsUseCase,
-        )),
-        ChangeNotifierProvider(create: (_) => SearchProvider(
-          searchRepository: searchRepository,
-        )),
+        ChangeNotifierProvider(
+          create: (_) => NetworkProvider(
+            getNetworkStatsUseCase: getNetworkStatsUseCase,
+            getNetworkSuggestionsUseCase: getNetworkSuggestionsUseCase,
+            sendConnectionRequestUseCase: sendConnectionRequestUseCase,
+          ),
+        ),
+        ChangeNotifierProvider(
+          create: (_) => SearchProvider(searchRepository: searchRepository),
+        ),
       ],
       child: MyApp(initialScreen: initialScreen),
     ),
@@ -237,7 +259,7 @@ final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
 class MyApp extends StatelessWidget {
   final Widget initialScreen;
-  
+
   const MyApp({super.key, required this.initialScreen});
 
   @override
@@ -249,9 +271,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xFF1313EC),
-        ).copyWith(
-          primary: const Color(0xFF1313EC),
-        ),
+        ).copyWith(primary: const Color(0xFF1313EC)),
         useMaterial3: true,
         textTheme: GoogleFonts.plusJakartaSansTextTheme(),
       ),

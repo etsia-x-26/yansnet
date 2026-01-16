@@ -63,8 +63,6 @@ class _NetworkScreenState extends State<NetworkScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildStatsSection(provider),
-                  const SizedBox(height: 24),
                   Text(
                     'People you may know',
                     style: GoogleFonts.plusJakartaSans(
@@ -80,56 +78,6 @@ class _NetworkScreenState extends State<NetworkScreen> {
           );
         },
       ),
-    );
-  }
-
-  Widget _buildStatsSection(NetworkProvider provider) {
-    if (provider.stats == null) return const SizedBox.shrink();
-
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          _buildStatItem('Connections', provider.stats!.connectionsCount.toString()),
-          _buildStatItem('Contacts', provider.stats!.contactsCount.toString()),
-          _buildStatItem('Channels', provider.stats!.channelsCount.toString()),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildStatItem(String label, String value) {
-    return Column(
-      children: [
-        Text(
-          value,
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF1313EC),
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          label,
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
-        ),
-      ],
     );
   }
 
@@ -165,7 +113,8 @@ class _NetworkScreenState extends State<NetworkScreen> {
                 radius: 28,
                 backgroundImage: suggestion.user.profilePictureUrl != null
                     ? NetworkImage(suggestion.user.profilePictureUrl!)
-                    : const AssetImage('assets/images/onboarding_welcome.png') as ImageProvider,
+                    : const AssetImage('assets/images/onboarding_welcome.png')
+                          as ImageProvider,
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -199,22 +148,83 @@ class _NetworkScreenState extends State<NetworkScreen> {
               ),
               ElevatedButton(
                 onPressed: () async {
-                  try {
-                    final success = await provider.connectUser(suggestion.user.id.toString());
+                  final currentUserId = context
+                      .read<AuthProvider>()
+                      .currentUser
+                      ?.id;
+                  if (currentUserId == null) {
                     if (context.mounted) {
-                      if (success) {
-                        DialogUtils.showSuccess(context, 'Connection request sent to ${suggestion.user.name}');
-                      } else {
-                        DialogUtils.showError(context, 'Failed to send request');
+                      DialogUtils.showError(
+                        context,
+                        'Please login to connect with users',
+                      );
+                    }
+                    return;
+                  }
+
+                  try {
+                    final isConnected = provider.isUserConnected(
+                      suggestion.user.id,
+                    );
+
+                    if (isConnected) {
+                      // Disconnect
+                      final success = await provider.disconnectUser(
+                        currentUserId,
+                        suggestion.user.id,
+                      );
+                      if (context.mounted) {
+                        if (success) {
+                          DialogUtils.showSuccess(
+                            context,
+                            'Disconnected from ${suggestion.user.name}',
+                          );
+                        } else {
+                          DialogUtils.showError(
+                            context,
+                            'Failed to disconnect',
+                          );
+                        }
+                      }
+                    } else {
+                      // Connect
+                      final success = await provider.connectUser(
+                        currentUserId,
+                        suggestion.user.id,
+                      );
+                      if (context.mounted) {
+                        if (success) {
+                          DialogUtils.showSuccess(
+                            context,
+                            'Connected to ${suggestion.user.name}',
+                          );
+                        } else {
+                          DialogUtils.showError(context, 'Failed to connect');
+                        }
                       }
                     }
                   } catch (e) {
                     if (context.mounted) {
-                       DialogUtils.showError(context, ErrorHandler.getErrorMessage(e));
+                      DialogUtils.showError(
+                        context,
+                        ErrorHandler.getErrorMessage(e),
+                      );
                     }
                   }
                 },
-                child: const Text('Connect'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: provider.isUserConnected(suggestion.user.id)
+                      ? Colors.grey[300]
+                      : const Color(0xFF1313EC),
+                  foregroundColor: provider.isUserConnected(suggestion.user.id)
+                      ? Colors.grey[700]
+                      : Colors.white,
+                ),
+                child: Text(
+                  provider.isUserConnected(suggestion.user.id)
+                      ? 'Disconnect'
+                      : 'Connect',
+                ),
               ),
             ],
           ),

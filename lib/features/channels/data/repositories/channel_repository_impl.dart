@@ -16,4 +16,19 @@ class ChannelRepositoryImpl implements ChannelRepository {
   Future<Channel> createChannel(String title, String description) {
     return remoteDataSource.createChannel(title, description);
   }
+
+  @override
+  Future<Channel> getChannel(int channelId) {
+    return remoteDataSource.getChannel(channelId);
+  }
+
+  @override
+  Future<void> followChannel(int channelId, int followerId) {
+    return remoteDataSource.followChannel(channelId, followerId);
+  }
+
+  @override
+  Future<void> unfollowChannel(int channelId, int followerId) {
+    return remoteDataSource.unfollowChannel(channelId, followerId);
+  }
 }

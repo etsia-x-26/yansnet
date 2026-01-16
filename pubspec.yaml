@@ -44,6 +44,7 @@ dependencies:
   flutter_image_compress: ^2.4.0
   video_compress: ^3.1.4
   cached_network_image: ^3.3.1
+  shared_preferences: ^2.2.2
 
 dev_dependencies:
   flutter_test:

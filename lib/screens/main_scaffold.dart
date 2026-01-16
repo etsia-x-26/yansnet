@@ -48,16 +48,11 @@ class _MainScaffoldState extends State<MainScaffold> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF6F6F8),
-      body: IndexedStack(
-        index: _currentIndex,
-        children: _screens,
-      ),
+      body: IndexedStack(index: _currentIndex, children: _screens),
       bottomNavigationBar: Container(
         decoration: BoxDecoration(
           color: Colors.white,
-          border: Border(
-            top: BorderSide(color: Colors.grey[200]!, width: 1),
-          ),
+          border: Border(top: BorderSide(color: Colors.grey[200]!, width: 1)),
         ),
         child: BottomNavigationBar(
           currentIndex: _currentIndex,
@@ -67,13 +62,19 @@ class _MainScaffoldState extends State<MainScaffold> {
           elevation: 0,
           selectedItemColor: Colors.black,
           unselectedItemColor: Colors.grey[400],
-          selectedLabelStyle: GoogleFonts.plusJakartaSans(fontSize: 10, fontWeight: FontWeight.bold),
-          unselectedLabelStyle: GoogleFonts.plusJakartaSans(fontSize: 10, fontWeight: FontWeight.w500),
+          selectedLabelStyle: GoogleFonts.plusJakartaSans(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+          ),
+          unselectedLabelStyle: GoogleFonts.plusJakartaSans(
+            fontSize: 10,
+            fontWeight: FontWeight.w500,
+          ),
           showSelectedLabels: true,
           showUnselectedLabels: true,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_filled), 
+              icon: Icon(Icons.home_filled),
               label: 'Home',
             ),
             BottomNavigationBarItem(
@@ -92,11 +93,11 @@ class _MainScaffoldState extends State<MainScaffold> {
               icon: Icon(Icons.mail_outline),
               label: 'Messages',
             ),
-            // Profile is accessed via Avatar in AppBar usually, or we keep it here. 
-            // 6 items might be too many for labels. 
+            // Profile is accessed via Avatar in AppBar usually, or we keep it here.
+            // 6 items might be too many for labels.
             // Let's remove Profile from BottomBar if we have 6, or keep it.
             // But _screens has 6 items now including Profile.
-             BottomNavigationBarItem(
+            BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),
               label: 'Profile',
             ),
