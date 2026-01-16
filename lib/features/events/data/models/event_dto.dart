@@ -32,7 +32,7 @@ class EventDto {
       eventDate: json['eventDate'] ?? DateTime.now().toIso8601String(),
       organizer: json['organizer'] is Map ? (json['organizer']['name'] ?? 'Organizer') : (json['organizer'] ?? 'Organizer'),
       attendeesCount: json['attendeesCount'] ?? 0,
-      bannerUrl: json['bannerUrl'],
+      bannerUrl: json['imageUrl'] ?? json['bannerUrl'],
       isAttending: json['isAttending'] ?? false,
     );
   }

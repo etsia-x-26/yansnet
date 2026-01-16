@@ -42,14 +42,17 @@ class MediaRemoteDataSourceImpl implements MediaRemoteDataSource {
       // I will assume it returns a map and I'll return the first value if I can't find 'url', or 'url' specifically.
 
       final data = response.data;
+      if (data is Map && data.containsKey('url')) {
+        return data['url'];
+      } else if (data is Map && data.containsKey('fileName')) { // Fallback just in case
+        // Construct url if needed or return fileName? spec says url is returned
+        return data.values.first.toString(); 
+      }
+      
+      // If the response matches UploadResponse schema: {url: string, filename: string, size: int}
       if (data is Map) {
-         if (data.containsKey('url')) {
-           return data['url'];
-         } else if (data.isNotEmpty) {
-           return data.values.first.toString();
-         }
-      } else if (data is String) {
-        return data; // Maybe it returns the URL directly stringified
+         // Prefer 'url'
+         if (data['url'] != null) return data['url'];
       }
 
       throw Exception("Unexpected response format from upload: $data");

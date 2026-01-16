@@ -10,6 +10,7 @@ class Post {
   final List<Media> media;
   final int totalLikes;
   final int totalComments;
+  final bool isLiked;
 
   Post({
     required this.id,
@@ -20,6 +21,7 @@ class Post {
     this.media = const [],
     this.totalLikes = 0,
     this.totalComments = 0,
+    this.isLiked = false,
   });
 }
 

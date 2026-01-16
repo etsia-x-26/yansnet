@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../features/jobs/domain/entities/job_entity.dart';
+import '../features/jobs/presentation/providers/jobs_provider.dart';
 
-class JobDetailScreen extends StatelessWidget {
+class JobDetailScreen extends StatefulWidget {
   final Job job;
 
   const JobDetailScreen({super.key, required this.job});
+
+  @override
+  State<JobDetailScreen> createState() => _JobDetailScreenState();
+}
+
+class _JobDetailScreenState extends State<JobDetailScreen> {
+  bool _isApplying = false;
 
   @override
   Widget build(BuildContext context) {
@@ -42,24 +51,22 @@ class JobDetailScreen extends StatelessWidget {
               color: Colors.grey[50],
               child: Column(
                 children: [
-                  Container(
+                   Container(
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
                       boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10)],
-                      image: job.bannerUrl != null 
-                         ? DecorationImage(image: NetworkImage(job.bannerUrl!), fit: BoxFit.cover)
-                         : null,
+                      image: DecorationImage(
+                        image: NetworkImage(widget.job.bannerUrl ?? 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=200&h=200'),
+                        fit: BoxFit.cover
+                      ),
                     ),
-                    child: job.bannerUrl == null 
-                      ? Center(child: Text(job.companyName[0], style: GoogleFonts.plusJakartaSans(fontSize: 32, fontWeight: FontWeight.bold, color: const Color(0xFF1313EC))))
-                      : null,
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    job.title,
+                    widget.job.title,
                     textAlign: TextAlign.center,
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 20,
@@ -69,7 +76,7 @@ class JobDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    job.companyName,
+                    widget.job.companyName,
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 16,
                       color: Colors.grey[700],
@@ -77,12 +84,15 @@ class JobDetailScreen extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    spacing: 8,
+                    runSpacing: 8,
                     children: [
-                      _buildTag(job.type),
-                      const SizedBox(width: 8),
-                      _buildTag(job.location, icon: Icons.location_on_outlined),
+                      _buildTag(widget.job.type),
+                      _buildTag(widget.job.location, icon: Icons.location_on_outlined),
+                      if (widget.job.salary != null && widget.job.salary!.isNotEmpty)
+                        _buildTag(widget.job.salary!, icon: Icons.payments_outlined),
                     ],
                   ),
                 ],
@@ -94,6 +104,23 @@ class JobDetailScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  if (widget.job.deadline != null) ...[
+                    Row(
+                      children: [
+                        const Icon(Icons.timer_outlined, size: 16, color: Colors.orange),
+                        const SizedBox(width: 8),
+                        Text(
+                          'Deadline: ${DateFormat.yMMMd().format(widget.job.deadline!)}',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.orange[800],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 16),
+                  ],
                   Text(
                     'Description',
                     style: GoogleFonts.plusJakartaSans(
@@ -103,7 +130,7 @@ class JobDetailScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    job.description,
+                    widget.job.description,
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 14,
                       color: Colors.grey[600],
@@ -113,7 +140,7 @@ class JobDetailScreen extends StatelessWidget {
                   const SizedBox(height: 24),
                   
                   Text(
-                    'Posted on ${DateFormat.yMMMd().format(job.postedAt)}',
+                    'Posted on ${DateFormat.yMMMd().format(widget.job.postedAt)}',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       color: Colors.grey[400],
@@ -132,10 +159,22 @@ class JobDetailScreen extends StatelessWidget {
           border: Border(top: BorderSide(color: Colors.grey[200]!)),
         ),
         child: ElevatedButton(
-          onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Application submitted successfully!')),
-            );
+          onPressed: _isApplying ? null : () async {
+            setState(() {
+              _isApplying = true;
+            });
+            
+            final success = await context.read<JobsProvider>().applyJob(widget.job.id);
+            
+            setState(() {
+              _isApplying = false;
+            });
+
+            if (mounted) {
+               ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(success ? 'Application submitted successfully!' : 'Failed to apply. Please try again.')),
+              );
+            }
           },
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF1313EC),
@@ -143,7 +182,9 @@ class JobDetailScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 16),
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
           ),
-          child: const Text('Apply Now', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+          child: _isApplying 
+            ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) 
+            : const Text('Apply Now', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
         ),
       ),
     );

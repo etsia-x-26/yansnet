@@ -1,4 +1,5 @@
 import 'package:provider/provider.dart';
+import 'package:yansnet/features/auth/domain/usecases/logout_usecase.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'core/network/api_client.dart';
 import 'features/auth/data/datasources/auth_remote_data_source.dart';
@@ -8,6 +9,7 @@ import 'features/auth/domain/usecases/register_usecase.dart';
 import 'features/auth/presentation/providers/auth_provider.dart';
 import 'features/auth/domain/usecases/get_user_usecase.dart';
 import 'features/auth/domain/usecases/update_user_usecase.dart';
+import 'features/posts/domain/usecases/update_post_usecase.dart';
 
 import 'features/posts/data/datasources/post_remote_data_source.dart';
 import 'features/posts/data/repositories/post_repository_impl.dart';
@@ -18,13 +20,16 @@ import 'features/posts/domain/usecases/create_post_usecase.dart';
 import 'features/posts/domain/usecases/get_comments_usecase.dart';
 import 'features/posts/domain/usecases/add_comment_usecase.dart';
 import 'features/posts/domain/usecases/like_post_usecase.dart';
+import 'features/posts/domain/usecases/unlike_post_usecase.dart';
 import 'features/posts/presentation/providers/feed_provider.dart';
+import 'features/posts/domain/usecases/get_following_feed_usecase.dart';
 import 'features/posts/presentation/providers/comments_provider.dart';
 
 import 'features/jobs/data/datasources/job_remote_data_source.dart';
 import 'features/jobs/data/repositories/job_repository_impl.dart';
 import 'features/jobs/domain/usecases/get_jobs_usecase.dart';
 import 'features/jobs/domain/usecases/create_job_usecase.dart';
+import 'features/jobs/domain/usecases/apply_job_usecase.dart';
 import 'features/jobs/presentation/providers/jobs_provider.dart';
 
 import 'features/events/data/datasources/event_remote_data_source.dart';
@@ -47,14 +52,15 @@ import 'features/chat/domain/usecases/get_conversations_usecase.dart';
 import 'features/chat/domain/usecases/get_messages_usecase.dart';
 import 'features/chat/domain/usecases/send_message_usecase.dart';
 import 'features/chat/domain/usecases/start_chat_usecase.dart';
+import 'features/chat/domain/usecases/create_group_conversation_usecase.dart';
 import 'features/chat/presentation/providers/chat_provider.dart';
 import 'core/network/websocket_service.dart';
 import 'features/network/data/datasources/network_remote_data_source.dart';
 import 'features/network/data/repositories/network_repository_impl.dart';
 import 'features/network/domain/usecases/get_network_stats_usecase.dart';
 import 'features/network/domain/usecases/get_network_suggestions_usecase.dart';
+import 'features/network/domain/usecases/follow_user_usecase.dart';
 import 'features/network/presentation/providers/network_provider.dart';
-
 import 'features/search/data/datasources/search_remote_data_source.dart';
 import 'features/search/data/repositories/search_repository_impl.dart';
 import 'features/search/presentation/providers/search_provider.dart';
@@ -105,11 +111,20 @@ void main() async {
   final registerUseCase = RegisterUseCase(authRepository);
   final getUserUseCase = GetUserUseCase(authRepository);
   final updateUserUseCase = UpdateUserUseCase(authRepository);
+  final logoutUseCase = LogoutUseCase(authRepository);
 
   // Media
   final mediaDataSource = MediaRemoteDataSourceImpl(apiClient);
   final mediaRepository = MediaRepositoryImpl(remoteDataSource: mediaDataSource);
   final uploadFileUseCase = UploadFileUseCase(mediaRepository);
+
+
+
+  // Jobs
+  final jobDataSource = JobRemoteDataSourceImpl(apiClient);
+  final jobRepository = JobRepositoryImpl(jobDataSource);
+  final getJobsUseCase = GetJobsUseCase(jobRepository);
+  final createJobUseCase = CreateJobUseCase(jobRepository);
 
   // Posts
   final postDataSource = PostRemoteDataSourceImpl(apiClient);
@@ -117,16 +132,13 @@ void main() async {
   final getPostsUseCase = GetPostsUseCase(postRepository);
   final getUserPostsUseCase = GetUserPostsUseCase(postRepository);
   final createPostUseCase = CreatePostUseCase(postRepository);
+  final updatePostUseCase = UpdatePostUseCase(postRepository);
   final getCommentsUseCase = GetCommentsUseCase(postRepository);
   final addCommentUseCase = AddCommentUseCase(postRepository);
   final likePostUseCase = LikePostUseCase(postRepository);
+  final unlikePostUseCase = UnlikePostUseCase(postRepository);
   final deletePostUseCase = DeletePostUseCase(postRepository);
-
-  // Jobs
-  final jobDataSource = JobRemoteDataSourceImpl(apiClient);
-  final jobRepository = JobRepositoryImpl(jobDataSource);
-  final getJobsUseCase = GetJobsUseCase(jobRepository);
-  final createJobUseCase = CreateJobUseCase(jobRepository);
+  final getFollowingFeedUseCase = GetFollowingFeedUseCase(postRepository);
 
   // Events
   final eventDataSource = EventRemoteDataSourceImpl(apiClient);
@@ -149,12 +161,14 @@ void main() async {
   final getMessagesUseCase = GetMessagesUseCase(chatRepository);
   final sendMessageUseCase = SendMessageUseCase(chatRepository);
   final startChatUseCase = StartChatUseCase(chatRepository);
+  final createGroupConversationUseCase = CreateGroupConversationUseCase(chatRepository);
 
   // Network
   final networkDataSource = NetworkRemoteDataSourceImpl(apiClient);
   final networkRepository = NetworkRepositoryImpl(networkDataSource);
   final getNetworkStatsUseCase = GetNetworkStatsUseCase(networkRepository);
   final getNetworkSuggestionsUseCase = GetNetworkSuggestionsUseCase(networkRepository);
+  final followUserUseCase = FollowUserUseCase(networkRepository);
 
   // Search
   final searchDataSource = SearchRemoteDataSourceImpl(apiClient);
@@ -179,13 +193,18 @@ void main() async {
           registerUseCase: registerUseCase,
           getUserUseCase: getUserUseCase,
           updateUserUseCase: updateUserUseCase,
+          logoutUseCase: logoutUseCase,
+          uploadFileUseCase: uploadFileUseCase,
           apiClient: apiClient,
         )),
         ChangeNotifierProvider(create: (_) => FeedProvider(
           getPostsUseCase: getPostsUseCase,
+          getFollowingFeedUseCase: getFollowingFeedUseCase,
           getUserPostsUseCase: getUserPostsUseCase,
           createPostUseCase: createPostUseCase,
+          updatePostUseCase: updatePostUseCase,
           likePostUseCase: likePostUseCase,
+          unlikePostUseCase: unlikePostUseCase,
           deletePostUseCase: deletePostUseCase,
           uploadFileUseCase: uploadFileUseCase,
         )),
@@ -196,12 +215,15 @@ void main() async {
         ChangeNotifierProvider(create: (_) => JobsProvider(
           getJobsUseCase: getJobsUseCase,
           createJobUseCase: createJobUseCase,
+          applyJobUseCase: ApplyJobUseCase(JobRepositoryImpl(JobRemoteDataSourceImpl(apiClient))),
+          searchRepository: searchRepository,
         )),
         ChangeNotifierProvider(create: (_) => EventsProvider(
           getEventsUseCase: getEventsUseCase,
           rsvpEventUseCase: rsvpEventUseCase,
           cancelRsvpUseCase: cancelRsvpUseCase,
           createEventUseCase: createEventUseCase,
+          searchRepository: searchRepository,
         )),
         ChangeNotifierProvider(create: (_) => ChannelsProvider(
           getChannelsUseCase: getChannelsUseCase,
@@ -213,7 +235,9 @@ void main() async {
             getMessagesUseCase: getMessagesUseCase,
             sendMessageUseCase: sendMessageUseCase,
             startChatUseCase: startChatUseCase,
+            createGroupConversationUseCase: createGroupConversationUseCase,
             webSocketService: webSocketService,
+            uploadFileUseCase: uploadFileUseCase,
           ),
           update: (_, auth, chat) {
             chat!.updateUser(auth.currentUser);
@@ -223,6 +247,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => NetworkProvider(
           getNetworkStatsUseCase: getNetworkStatsUseCase,
           getNetworkSuggestionsUseCase: getNetworkSuggestionsUseCase,
+          followUserUseCase: followUserUseCase,
         )),
         ChangeNotifierProvider(create: (_) => SearchProvider(
           searchRepository: searchRepository,

@@ -3,14 +3,19 @@ import '../../domain/auth_domain.dart';
 import '../../domain/usecases/login_usecase.dart';
 import '../../domain/usecases/register_usecase.dart';
 import '../../domain/usecases/get_user_usecase.dart';
+import '../../domain/usecases/logout_usecase.dart';
 import '../../domain/usecases/update_user_usecase.dart';
+import '../../../media/domain/usecases/upload_file_usecase.dart';
 import '../../../../core/network/api_client.dart';
+import 'dart:io';
 
 class AuthProvider extends ChangeNotifier {
   final LoginUseCase loginUseCase;
   final RegisterUseCase registerUseCase;
   final GetUserUseCase getUserUseCase;
   final UpdateUserUseCase updateUserUseCase;
+  final LogoutUseCase logoutUseCase;
+  final UploadFileUseCase uploadFileUseCase;
   final ApiClient apiClient;
 
   User? _currentUser;
@@ -22,6 +27,8 @@ class AuthProvider extends ChangeNotifier {
     required this.registerUseCase,
     required this.getUserUseCase,
     required this.updateUserUseCase,
+    required this.logoutUseCase,
+    required this.uploadFileUseCase,
     required this.apiClient,
   });
 
@@ -108,6 +115,28 @@ class AuthProvider extends ChangeNotifier {
       return false;
     } finally {
       _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<String?> uploadMedia(File file) async {
+    try {
+      return await uploadFileUseCase(file);
+    } catch (e) {
+      print("Upload failed: $e");
+      return null;
+    }
+  }
+  Future<void> logout() async {
+    if (_currentUser == null) return;
+    try {
+      await logoutUseCase(_currentUser!.id);
+      _currentUser = null;
+      notifyListeners();
+    } catch (e) {
+      print("Logout error: $e");
+      // Force logout locally even if API fails
+      _currentUser = null;
       notifyListeners();
     }
   }

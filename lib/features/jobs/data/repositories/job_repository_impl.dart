@@ -31,4 +31,8 @@ class JobRepositoryImpl implements JobRepository {
       'publisherId': publisherId,
     });
   }
+  @override
+  Future<void> applyJob(int jobId) {
+    return remoteDataSource.applyJob(jobId);
+  }
 }

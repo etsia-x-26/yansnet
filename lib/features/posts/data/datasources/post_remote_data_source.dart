@@ -15,6 +15,7 @@ import '../../../../models/user_model.dart' as user_model; // This import was in
 
 abstract class PostRemoteDataSource {
   Future<List<entity.Post>> getPosts({int page = 0, int size = 10});
+  Future<List<entity.Post>> getFollowingFeed({int page = 0, int size = 10});
   Future<List<entity.Post>> getPostsByUser(int userId, {int page = 0, int size = 10});
   Future<entity.Post> createPost(String content, {List<String>? mediaPaths});
   
@@ -24,6 +25,7 @@ abstract class PostRemoteDataSource {
   Future<void> likePost(int postId);
   Future<void> unlikePost(int postId);
   Future<void> deletePost(int postId);
+  Future<entity.Post> updatePost(int postId, String content);
 }
 
 
@@ -54,6 +56,30 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
     } catch (e) {
       print('Error posts: $e');
       return []; // Or rethrow
+    }
+  }
+
+  @override
+  Future<List<entity.Post>> getFollowingFeed({int page = 0, int size = 10}) async {
+    try {
+      final userId = await _getUserId();
+      final response = await apiClient.dio.get('/api/posts/feed', queryParameters: {
+        'user': userId,
+        'page': page,
+        'size': size,
+      });
+
+      final data = response.data;
+      if (data != null && data['content'] != null) {
+        return (data['content'] as List).map((e) {
+          final postModel = model.Post.fromJson(e);
+          return _mapModelToEntity(postModel);
+        }).toList();
+      }
+      return [];
+    } catch (e) {
+      print('Error feed: $e');
+      return [];
     }
   }
 
@@ -105,28 +131,38 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
 
   @override
   Future<void> deletePost(int postId) async {
-    await apiClient.dio.delete('/api/posts', queryParameters: {'id': postId});
+    await apiClient.dio.delete('/api/posts/$postId');
   }
 
-  // Interactions
+  @override
+  Future<entity.Post> updatePost(int postId, String content) async {
+    final userId = await _getUserId();
+    final response = await apiClient.dio.patch('/api/posts', data: {
+      'id': postId,
+      'content': content,
+      'user': {'id': userId},
+    });
+    return _mapModelToEntity(model.Post.fromJson(response.data));
+  }
+
   @override
   Future<List<Comment>> getComments(int postId, {int page = 0, int size = 10}) async {
     try {
       final response = await apiClient.dio.get('/api/comments', queryParameters: {
         'postId': postId,
-        'page': page,
+        'page': page, // ...
         'size': size,
         'sortBy': 'createdAt',
         'direction': 'asc',
       });
+      // ... same implementation ...
       final data = response.data;
        if (data != null && data['content'] != null) {
          return (data['content'] as List).map((e) {
-            // Mapping manually or create DTO
             return Comment(
-              id: e['id'], 
-              content: e['content'], 
-              createdAt: DateTime.parse(e['createdAt']),
+              id: e['id'] ?? 0, 
+              content: e['content'] ?? '', 
+              createdAt: e['createdAt'] != null ? DateTime.parse(e['createdAt']) : DateTime.now(),
               totalLikes: e['totalLikes'] ?? 0,
               user: e['user'] != null ? _mapUser(user_model.User.fromJson(e['user'])) : null,
             );
@@ -152,9 +188,9 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
      
      final e = response.data;
      return Comment(
-        id: e['id'], 
-        content: e['content'], 
-        createdAt: DateTime.parse(e['createdAt']),
+        id: e['id'] ?? 0, 
+        content: e['content'] ?? '', 
+        createdAt: e['createdAt'] != null ? DateTime.parse(e['createdAt']) : DateTime.now(),
         totalLikes: e['totalLikes'] ?? 0,
         user: e['user'] != null ? _mapUser(user_model.User.fromJson(e['user'])) : null,
      );
@@ -167,34 +203,14 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
 
   @override
   Future<void> likePost(int postId) async {
-    // There is no dedicated /api/posts/like endpoint in the visible docs?
-    // Looking at docs: /follow/{followerId}/{followedId}, /channelFollow...
-    // But usually likes are interactions.
-    // Wait, the docs didn't explicitly show /like endpoint for posts.
-    // The previous summary said "Likes/Follows (/follow endpoints)".
-    // Let me check if there is a like controller not tagged 'Post Management'?
-    // I will assume for now it might be missing or I should check implementation.
-    // However, I need to implement SOMETHING.
-    // I will assume it follows a pattern or leave it as TODO if strictly backend driven.
-    // Let's check `api/events/{id}/rsvp`.
-    // Maybe `POST /api/posts/{id}/like`?
-    // Let's implement stubs or standard guesses if not in docs, but actually I see `totalLikes` in Post.
-    // I'll leave the implementation empty or assume a standard path for now, but mark it with TODO.
-    // Actually, I'll try `POST /api/likes/post/{id}`.
-    // Or wait, the user asked if I implemented every feature. I identified Likes as MISSING.
-    // So writing client code for a missing backend endpoint is risky.
-    // BUT the prompt was "Did you implement every backend feature provided by the backend docs".
-    // I found NO `like` endpoint for posts in the docs provided.
-    // Comments ARE in the docs (`/api/comments`).
-    // So I will implement Comments fully, and omit Likes implementation or just stub it.
-    
-    // Stubbing Like for now until backend is confirmed, BUT I added it to Repo.
-    throw UnimplementedError('Like endpoint not found in API docs');
+    final userId = await _getUserId();
+    await apiClient.dio.post('/api/interactions/posts/$postId/like', queryParameters: {'user': userId});
   }
 
   @override
   Future<void> unlikePost(int postId) async {
-    throw UnimplementedError('Like endpoint not found in API docs');
+    final userId = await _getUserId();
+    await apiClient.dio.delete('/api/interactions/posts/$postId/unlike', queryParameters: {'user': userId});
   }
 
   Future<int> _getUserId() async {
@@ -215,6 +231,7 @@ class PostRemoteDataSourceImpl implements PostRemoteDataSource {
       user: model.user != null ? _mapUser(model.user!) : null,
       channel: model.channel != null ? _mapChannel(model.channel!) : null, 
       media: model.media.map((m) => entity.Media(id: m.id, url: m.url, type: m.type)).toList(),
+      isLiked: model.isLiked,
     );
   }
 

@@ -1,20 +1,19 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:yansnet/core/network/api_client.dart';
 import 'package:yansnet/features/auth/domain/auth_domain.dart';
-import 'package:yansnet/features/auth/presentation/providers/auth_provider.dart';
 import 'package:yansnet/features/auth/domain/usecases/login_usecase.dart';
 import 'package:yansnet/features/posts/presentation/providers/feed_provider.dart';
 import 'package:yansnet/features/posts/domain/usecases/get_posts_usecase.dart';
 import 'package:yansnet/features/posts/domain/usecases/create_post_usecase.dart';
 import 'package:yansnet/features/posts/domain/usecases/like_post_usecase.dart';
-import 'package:yansnet/features/posts/domain/entities/post_entity.dart';
 import 'package:yansnet/features/events/presentation/providers/events_provider.dart';
 import 'package:yansnet/features/events/domain/usecases/get_events_usecase.dart';
 import 'package:yansnet/features/events/domain/usecases/rsvp_event_usecase.dart';
 import 'package:yansnet/features/events/domain/usecases/cancel_rsvp_usecase.dart';
+import 'package:yansnet/features/events/domain/usecases/create_event_usecase.dart';
 import 'package:yansnet/features/events/domain/entities/event_entity.dart';
+import 'package:yansnet/features/chat/domain/usecases/create_group_conversation_usecase.dart';
 import 'package:yansnet/features/chat/presentation/providers/chat_provider.dart';
 import 'package:yansnet/features/chat/domain/usecases/get_conversations_usecase.dart';
 import 'package:yansnet/features/chat/domain/usecases/get_messages_usecase.dart';
@@ -22,8 +21,17 @@ import 'package:yansnet/features/chat/domain/usecases/send_message_usecase.dart'
 import 'package:yansnet/features/chat/domain/usecases/start_chat_usecase.dart';
 import 'package:yansnet/features/chat/domain/entities/conversation_entity.dart';
 import 'package:yansnet/features/chat/domain/entities/message_entity.dart';
+import 'package:yansnet/core/network/websocket_service.dart';
 
 import 'feature_verification_test.mocks.dart';
+
+// Manual mocks to avoid running build_runner
+class MockCreateEventUseCase extends Mock implements CreateEventUseCase {}
+class MockCreateGroupConversationUseCase extends Mock implements CreateGroupConversationUseCase {}
+class MockWebSocketService extends Mock implements WebSocketService {
+    @override
+    set onMessageReceived(Function(Map<String, dynamic>)? callback) {}
+}
 
 @GenerateMocks([
   LoginUseCase,
@@ -54,6 +62,7 @@ void main() {
     late MockGetEventsUseCase mockGetEventsUseCase;
     late MockRsvpEventUseCase mockRsvpEventUseCase;
     late MockCancelRsvpUseCase mockCancelRsvpUseCase;
+    late MockCreateEventUseCase mockCreateEventUseCase;
     late EventsProvider eventsProvider;
 
     // Chat
@@ -61,6 +70,8 @@ void main() {
     late MockGetMessagesUseCase mockGetMessagesUseCase;
     late MockSendMessageUseCase mockSendMessageUseCase;
     late MockStartChatUseCase mockStartChatUseCase;
+    late MockCreateGroupConversationUseCase mockCreateGroupConversationUseCase;
+    late MockWebSocketService mockWebSocketService;
     late ChatProvider chatProvider;
 
     setUp(() {
@@ -78,21 +89,27 @@ void main() {
       mockGetEventsUseCase = MockGetEventsUseCase();
       mockRsvpEventUseCase = MockRsvpEventUseCase();
       mockCancelRsvpUseCase = MockCancelRsvpUseCase();
+      mockCreateEventUseCase = MockCreateEventUseCase();
       eventsProvider = EventsProvider(
         getEventsUseCase: mockGetEventsUseCase,
         rsvpEventUseCase: mockRsvpEventUseCase,
         cancelRsvpUseCase: mockCancelRsvpUseCase,
+        createEventUseCase: mockCreateEventUseCase,
       );
 
       mockGetConversationsUseCase = MockGetConversationsUseCase();
       mockGetMessagesUseCase = MockGetMessagesUseCase();
       mockSendMessageUseCase = MockSendMessageUseCase();
       mockStartChatUseCase = MockStartChatUseCase();
+      mockCreateGroupConversationUseCase = MockCreateGroupConversationUseCase();
+      mockWebSocketService = MockWebSocketService();
       chatProvider = ChatProvider(
         getConversationsUseCase: mockGetConversationsUseCase,
         getMessagesUseCase: mockGetMessagesUseCase,
         sendMessageUseCase: mockSendMessageUseCase,
         startChatUseCase: mockStartChatUseCase,
+        createGroupConversationUseCase: mockCreateGroupConversationUseCase,
+        webSocketService: mockWebSocketService,
       );
     });
 

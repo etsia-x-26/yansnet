@@ -21,10 +21,13 @@ class ChannelRemoteDataSourceImpl implements ChannelRemoteDataSource {
 
   @override
   Future<Channel> createChannel(String title, String description) async {
-    final response = await apiClient.dio.post('/api/channels', data: {
-      'title': title,
+    final response = await apiClient.dio.post('/channel', data: {
+      'name': title,
       'description': description,
     });
+    // The API might return an object compatible with ChannelDto, need to verify or assume
+    // Based on schema `ChannelDto`, it fits `Channel` entity.
+    // The API response schema is just "object", assuming it returns the created channel.
     return ChannelDto.fromJson(response.data).toEntity();
   }
 }

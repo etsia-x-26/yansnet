@@ -6,12 +6,28 @@ abstract class JobRemoteDataSource {
   Future<List<Job>> getJobs({int page = 0, int size = 10});
   Future<Job> getJobDetails(int id);
   Future<Job> createJob(Map<String, dynamic> jobData);
+  Future<void> applyJob(int jobId);
 }
 
 class JobRemoteDataSourceImpl implements JobRemoteDataSource {
   final ApiClient apiClient;
 
   JobRemoteDataSourceImpl(this.apiClient);
+
+  @override
+  Future<void> applyJob(int jobId) async {
+    try {
+      final userIdStr = await apiClient.storage.read(key: 'user_id');
+      final userId = userIdStr != null ? int.parse(userIdStr) : 0;
+      await apiClient.dio.post(
+        '/api/jobs/$jobId/apply',
+        queryParameters: {'userId': userId},
+      );
+    } catch (e) {
+      print('Error applying to job: $e');
+      rethrow;
+    }
+  }
 
   @override
   Future<List<Job>> getJobs({int page = 0, int size = 10}) async {
@@ -53,10 +69,9 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
         "salary": jobData['salary'],
         "deadline": jobData['deadline'],
         "applicationUrl": jobData['applicationUrl'],
-        "companyName": jobData['companyName'],
-        "publisher": {
-          "id": jobData['publisherId']
-        }
+        // "companyName": jobData['companyName'], // Not in API docs
+        "publisherId": jobData['publisherId'],
+        "userId": jobData['publisherId'] // Assuming user is the one posting
       };
 
       final response = await apiClient.dio.post('/api/jobs', data: body);

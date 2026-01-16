@@ -7,6 +7,9 @@ class Job {
   final String type; // FULL_TIME, INTERNSHIP, etc.
   final DateTime postedAt;
   final String? bannerUrl;
+  final String? applicationUrl;
+  final String? salary;
+  final DateTime? deadline;
 
   Job({
     required this.id,
@@ -17,5 +20,8 @@ class Job {
     required this.type,
     required this.postedAt,
     this.bannerUrl,
+    this.applicationUrl,
+    this.salary,
+    this.deadline,
   });
 }

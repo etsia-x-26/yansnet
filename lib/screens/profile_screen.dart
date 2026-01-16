@@ -4,12 +4,18 @@ import '../widgets/feed/student_post_card.dart';
 
 import 'package:provider/provider.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
+import '../features/auth/domain/auth_domain.dart';
 import '../features/posts/presentation/providers/feed_provider.dart';
 import 'edit_profile_screen.dart';
-import 'search_screen.dart';
+import '../features/network/presentation/providers/network_provider.dart';
+import 'login_screen.dart';
+import '../core/utils/custom_dialogs.dart';
+import '../features/chat/presentation/providers/chat_provider.dart';
+import 'chat_detail_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+  final int? userId; // If null, shows current user (My Profile)
+  const ProfileScreen({super.key, this.userId});
 
   @override
   State<ProfileScreen> createState() => _ProfileScreenState();
@@ -20,6 +26,10 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
   final ScrollController _scrollController = ScrollController();
   
   bool _showTitle = false;
+  User? _otherUser; // Stores data if viewing another user
+  bool _isLoadingOtherUser = false;
+
+  bool get isCurrentUser => widget.userId == null;
 
   @override
   void initState() {
@@ -35,9 +45,31 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
       }
     });
 
-    // Ensure we have the user data loaded if not already
-    // context.read<AuthProvider>().tryAutoLogin(); // Or reload
+    if (!isCurrentUser) {
+      _loadOtherUserProfile();
+    }
+    
   }
+
+  Future<void> _loadOtherUserProfile() async {
+    setState(() => _isLoadingOtherUser = true);
+    try {
+      // Assuming AuthProvider or a UserProvider has a method to get public user details
+      // Since we don't have a dedicated public profile endpoint yet in the snippets,
+      // we will rely on what we have or add a GetUserUseCase call here.
+      // For now, let's assume we can fetch it via AuthProvider's user cache or similar.
+      // Ideally: context.read<NetworkProvider>()... but Network provider does stats.
+      // Let's use AuthProvider.getUserUseCase directly if possible or expose a method.
+      // Wait, AuthProvider has `getUserUseCase`. We can use that!
+      final user = await context.read<AuthProvider>().getUserUseCase(widget.userId!);
+      setState(() => _otherUser = user);
+    } catch (e) {
+      print('Failed to load profile: $e');
+    } finally {
+      setState(() => _isLoadingOtherUser = false);
+    }
+  }
+
 
   @override
   void dispose() {
@@ -71,12 +103,16 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthProvider>(
-      builder: (context, authProvider, child) {
-        final user = authProvider.currentUser;
+    return Consumer2<AuthProvider, NetworkProvider>(
+      builder: (context, authProvider, networkProvider, child) {
+        final user = isCurrentUser ? authProvider.currentUser : _otherUser;
+
+        if (_isLoadingOtherUser) {
+           return const Scaffold(body: Center(child: CircularProgressIndicator()));
+        }
 
         if (user == null) {
-           return const Scaffold(body: Center(child: Text("Not logged in")));
+           return const Scaffold(body: Center(child: Text("User not found or not logged in")));
         }
 
         return Scaffold(
@@ -92,7 +128,7 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                   elevation: 0,
                   leading: IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.black),
-                    onPressed: () {}, // TODO: Navigation pop
+                    onPressed: () => Navigator.pop(context),
                   ),
                   title: AnimatedOpacity(
                     duration: const Duration(milliseconds: 200),
@@ -107,13 +143,50 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                     ),
                   ),
                   actions: [
-                    IconButton(
-                      icon: const Icon(Icons.search, color: Colors.black),
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchScreen()));
-                      },
-                    ),
-                    IconButton(icon: const Icon(Icons.more_vert, color: Colors.black), onPressed: () {}),
+                    if (!isCurrentUser)
+                       IconButton(
+                         icon: const Icon(Icons.message_outlined, color: Colors.black),
+                         onPressed: () async {
+                           final conversation = await context.read<ChatProvider>().startChat(user.id);
+                           if (conversation != null && mounted) {
+                             Navigator.push(
+                               context,
+                               MaterialPageRoute(
+                                 builder: (_) => ChatDetailScreen(
+                                   conversation: conversation,
+                                   otherUser: user,
+                                 ),
+                               ),
+                             );
+                           }
+                                                  },
+                       ),
+                    if (isCurrentUser)
+                       IconButton(
+                         icon: const Icon(Icons.logout, color: Colors.red),
+                         onPressed: () async {
+                           final shouldLogout = await showDialog<bool>(
+                             context: context,
+                             builder: (context) => AlertDialog(
+                               title: const Text('Logout'),
+                               content: const Text('Are you sure you want to logout?'),
+                               actions: [
+                                 TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+                                 TextButton(onPressed: () => Navigator.pop(context, true), child: const Text('Logout', style: TextStyle(color: Colors.red))),
+                               ],
+                             ),
+                           );
+                           
+                           if (shouldLogout == true) {
+                             await context.read<AuthProvider>().logout();
+                             Navigator.of(context).pushAndRemoveUntil(
+                               MaterialPageRoute(builder: (_) => const LoginScreen()),
+                               (route) => false,
+                             );
+                           }
+                         },
+                       ),
+                    // IconButton(icon: const Icon(Icons.more_vert, color: Colors.black), onPressed: () {}),
                   ],
                   flexibleSpace: FlexibleSpaceBar(
                     background: Stack(
@@ -149,23 +222,41 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                           ),
                         ),
 
-                        // 3. Edit Profile Button
+                        // 3. Action Button (Edit Profile or Follow)
                         Positioned(
                           top: 138,
                           right: 16,
-                          child: OutlinedButton(
-                             onPressed: (){
-                               Navigator.push(context, MaterialPageRoute(builder: (_) => const EditProfileScreen()));
-                             },
-                             style: OutlinedButton.styleFrom(
-                               side: BorderSide(color: Colors.grey[300]!),
-                               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                               foregroundColor: Colors.black,
-                               padding: const EdgeInsets.symmetric(horizontal: 16),
-                               backgroundColor: Colors.white,
-                             ),
-                             child: Text('Edit Profile', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 13)),
-                           ),
+                          child: isCurrentUser 
+                            ? OutlinedButton(
+                               onPressed: (){
+                                 Navigator.push(context, MaterialPageRoute(builder: (_) => const EditProfileScreen()));
+                               },
+                               style: OutlinedButton.styleFrom(
+                                 side: BorderSide(color: Colors.grey[300]!),
+                                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                 foregroundColor: Colors.black,
+                                 padding: const EdgeInsets.symmetric(horizontal: 16),
+                                 backgroundColor: Colors.white,
+                               ),
+                               child: Text('Edit Profile', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 13)),
+                             )
+                            : ElevatedButton(
+                                onPressed: () async {
+                                  if (authProvider.currentUser != null) {
+                                    await networkProvider.followUser(authProvider.currentUser!.id, user.id);
+                                    // Update UI or show snackbar
+                                    if (context.mounted) {
+                                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Followed ${user.name}')));
+                                    }
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black,
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                                ),
+                                child: Text('Follow', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold, fontSize: 13)),
+                              ),
                         ),
 
                         // 4. Content Body (Text)
@@ -206,9 +297,9 @@ class _ProfileScreenState extends State<ProfileScreen> with SingleTickerProvider
                                const SizedBox(height: 12),
                                Row(
                                  children: [
-                                   _buildStat(0, 'Following'),
+                                   _buildStat(user.totalFollowing, 'Following'),
                                    const SizedBox(width: 16),
-                                   _buildStat(0, 'Followers'),
+                                   _buildStat(user.totalFollowers, 'Followers'),
                                  ],
                                ),
                              ],
@@ -287,69 +378,156 @@ class _UserPostsTab extends StatefulWidget {
 }
 
 class _UserPostsTabState extends State<_UserPostsTab> {
-  late Future<List<dynamic>> _postsFuture; // List<Post> usually
+  List<dynamic> _posts = [];
+  bool _isLoading = true;
+  String? _error;
 
   @override
   void initState() {
     super.initState();
-    _postsFuture = context.read<FeedProvider>().getUserPosts(widget.userId);
+    _loadPosts();
+  }
+
+  Future<void> _loadPosts() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+    try {
+      final posts = await context.read<FeedProvider>().getUserPosts(widget.userId);
+      if (mounted) {
+        setState(() {
+          _posts = posts;
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _error = e.toString();
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _deletePost(int postId) async {
+    final confirmed = await CustomDialogs.showConfirmation(
+      context: context,
+      title: 'Delete Post',
+      message: 'Are you sure you want to delete this post? This action cannot be undone.',
+      confirmText: 'Delete',
+      confirmColor: Colors.red,
+    );
+
+    if (confirmed == true) {
+      final success = await context.read<FeedProvider>().deletePost(postId);
+      if (success && mounted) {
+        setState(() {
+          _posts.removeWhere((p) => p.id == postId);
+        });
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Post deleted')));
+      }
+    }
+  }
+
+  Future<void> _editPost(dynamic post) async {
+    final controller = TextEditingController(text: post.content);
+    final newContent = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Edit Post'),
+        content: TextField(
+          controller: controller,
+          maxLines: 5,
+          decoration: const InputDecoration(border: OutlineInputBorder(), hintText: 'What\'s on your mind?'),
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, controller.text),
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+
+    if (newContent != null && newContent.isNotEmpty && newContent != post.content) {
+      final success = await context.read<FeedProvider>().updatePost(post.id, newContent);
+      if (success && mounted) {
+        setState(() {
+          final index = _posts.indexWhere((p) => p.id == post.id);
+          if (index != -1) {
+            // Manually update the specific field locally to reflect change instantly
+            // assuming Post is immutable, we might need to rely on the provider re-fetch
+            // or if we trust the success, we re-load.
+            // But better: construct new object if possible or just reload.
+            // Reloading is safer for consistency.
+             _loadPosts(); // Reload to get fresh data
+          }
+        });
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Post updated')));
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<dynamic>>(
-      future: _postsFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
-        if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
-        final posts = snapshot.data ?? [];
-        if (posts.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  "No posts yet",
-                  style: GoogleFonts.plusJakartaSans(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "When you post, it'll show up here.",
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
-          );
-        }
-
-        return ListView.builder(
-          padding: EdgeInsets.zero,
-          itemCount: posts.length,
-          itemBuilder: (context, index) {
-            final post = posts[index];
-            return Padding(
-              padding: const EdgeInsets.only(bottom: 8.0),
-              child: StudentPostCard(
-                avatarUrl: post.user?.profilePictureUrl ?? '',
-                name: post.user?.name ?? 'Unknown User',
-                headline: post.user?.username != null ? '@${post.user!.username}' : '',
-                content: post.content,
-                imageUrls: post.media.map((m) => m.url).toList().cast<String>(),
-                likeCount: post.totalLikes,
-                commentCount: post.totalComments,
+    if (_isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+    if (_error != null) {
+      return Center(child: Text('Error: $_error'));
+    }
+    if (_posts.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "No posts yet",
+              style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
               ),
-            );
-          },
+            ),
+            const SizedBox(height: 8),
+            Text(
+              "When you post, it'll show up here.",
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 14,
+                color: Colors.grey,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final currentUserId = context.read<AuthProvider>().currentUser?.id;
+
+    return ListView.builder(
+      padding: EdgeInsets.zero,
+      itemCount: _posts.length,
+      itemBuilder: (context, index) {
+        final post = _posts[index];
+        final isOwner = post.user?.id == currentUserId;
+
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 8.0),
+          child: StudentPostCard(
+            userId: post.user?.id ?? 0,
+            avatarUrl: post.user?.profilePictureUrl ?? '',
+            name: post.user?.name ?? 'Unknown User',
+            headline: post.user?.username != null ? '@${post.user!.username}' : '',
+            content: post.content,
+            imageUrls: post.media.map((m) => m.url).toList().cast<String>(),
+            likeCount: post.totalLikes,
+            commentCount: post.totalComments,
+            showDelete: isOwner,
+            onDelete: isOwner ? () => _deletePost(post.id) : null,
+            onEdit: isOwner ? () => _editPost(post) : null,
+          ),
         );
       },
     );

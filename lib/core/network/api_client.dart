@@ -14,6 +14,9 @@ class ApiClient {
 
   final _tokenExpirationController = StreamController<void>.broadcast();
   Stream<void> get tokenExpirationStream => _tokenExpirationController.stream;
+  
+  bool _isRefreshing = false;
+  Completer<String?> _refreshCompleter = Completer<String?>();
 
   ApiClient() {
     _dio = Dio(BaseOptions(
@@ -35,10 +38,6 @@ class ApiClient {
         return handler.next(options);
       },
       onError: (DioException e, handler) async {
-        // Log the error
-        // print('DioError: ${e.message}');
-        
-        // Handle 401 Unauthorized
         if (e.response?.statusCode == 401) {
           // If the failed request was already for refresh, don't retry -> logout
           if (e.requestOptions.path.contains('/auth/refresh')) {
@@ -46,12 +45,34 @@ class ApiClient {
              return handler.next(e);
           }
 
-          // Try to refresh token
-          final refreshToken = await _storage.read(key: 'refresh_token');
-          
-          if (refreshToken != null) {
+          // If a refresh is already in progress, wait for it to complete
+          if (_isRefreshing) {
             try {
-              // Create a temporary Dio instance to avoid interceptor loops
+              final newToken = await _refreshCompleter.future;
+              if (newToken != null) {
+                final opts = e.requestOptions;
+                opts.headers['Authorization'] = 'Bearer $newToken';
+                try {
+                  final retryResponse = await _dio.fetch(opts);
+                  return handler.resolve(retryResponse);
+                } catch (retryError) {
+                  return handler.next(retryError as DioException);
+                }
+              }
+            } catch (_) {
+              // If refresh failed, fall through to logout
+            }
+             await _performLogout();
+             _tokenExpirationController.add(null);
+             return handler.next(e);
+          }
+
+          _isRefreshing = true;
+          _refreshCompleter = Completer<String?>();
+
+          try {
+            final refreshToken = await _storage.read(key: 'refresh_token');
+            if (refreshToken != null) {
               final dioRefresh = Dio(BaseOptions(
                 baseUrl: _baseUrl,
                 headers: {'Content-Type': 'application/json'},
@@ -71,11 +92,13 @@ class ApiClient {
                 if (newRefreshToken != null) {
                    await _storage.write(key: 'refresh_token', value: newRefreshToken);
                 }
+                
+                _refreshCompleter.complete(newAccessToken);
+                _isRefreshing = false;
 
-                // Retry the original request with new token
+                // Retry original request
                 final opts = e.requestOptions;
                 opts.headers['Authorization'] = 'Bearer $newAccessToken';
-                
                 try {
                   final retryResponse = await _dio.fetch(opts);
                   return handler.resolve(retryResponse);
@@ -83,20 +106,23 @@ class ApiClient {
                   return handler.next(retryError as DioException);
                 }
               }
-            } catch (refreshError) {
-              // Refresh failed
-              print('Token refresh failed: $refreshError');
             }
+          } catch (refreshError) {
+            print('Token refresh failed: $refreshError');
+            _refreshCompleter.completeError(refreshError);
+          } finally {
+            _isRefreshing = false;
+             if (!_refreshCompleter.isCompleted) {
+                 _refreshCompleter.complete(null);
+             }
           }
-          
-          // If we reach here, refresh failed or no token -> Logout
+
+          // If we reach here, refresh failed -> Logout
           await _performLogout();
           _tokenExpirationController.add(null);
         }
 
-        // Use ErrorHandler to get a user-friendly message for other errors
         final errorMessage = ErrorHandler.getErrorMessage(e);
-
         return handler.next(
           DioException(
             requestOptions: e.requestOptions,

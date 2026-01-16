@@ -9,6 +9,9 @@ class User {
   final String? profilePictureUrl;
   final bool isMentor;
   final UserType userType;
+  final int totalFollowers;
+  final int totalFollowing;
+  final int totalPosts;
 
   User({
     required this.id,
@@ -19,6 +22,9 @@ class User {
     this.profilePictureUrl,
     this.isMentor = false,
     this.userType = UserType.individual,
+    this.totalFollowers = 0,
+    this.totalFollowing = 0,
+    this.totalPosts = 0,
   });
 }
 
@@ -41,7 +47,7 @@ class AuthResponse {
 abstract class AuthRepository {
   Future<AuthResponse> login(String email, String password);
   Future<AuthResponse> register(String name, String username, String email, String password);
-  Future<void> logout();
+  Future<void> logout(int userId);
   Future<User> getUser(int id);
   Future<User> updateUser(int id, {String? name, String? bio, String? profilePictureUrl});
 }

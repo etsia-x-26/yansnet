@@ -6,7 +6,7 @@ class UploadFileUseCase {
 
   UploadFileUseCase(this.repository);
 
-  Future<String> call(File file) async {
-    return await repository.uploadFile(file);
+  Future<String> call(File file, {String? folder}) async {
+    return await repository.uploadFile(file); // Repository might ignoring folder for now, but signature needs to match call site
   }
 }

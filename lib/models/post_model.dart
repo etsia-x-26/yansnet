@@ -9,6 +9,7 @@ class Post {
   final List<Media> media;
   final int totalLikes;
   final int totalComments;
+  final bool isLiked;
 
   Post({
     required this.id,
@@ -19,9 +20,30 @@ class Post {
     this.media = const [],
     this.totalLikes = 0,
     this.totalComments = 0,
+    this.isLiked = false,
   });
 
   factory Post.fromJson(Map<String, dynamic> json) {
+    // Helper to safely parse int
+    int parseInt(dynamic value) {
+      if (value is int) return value;
+      if (value is String) return int.tryParse(value) ?? 0;
+      return 0;
+    }
+
+    int commentsCount = 0;
+    if (json['comments'] is List) {
+      commentsCount = (json['comments'] as List).length;
+    } else if (json['comments'] is Map && json['comments']['totalElements'] != null) {
+      commentsCount = parseInt(json['comments']['totalElements']);
+    } else {
+      // Check various common keys
+      commentsCount = parseInt(json['totalComments']);
+      if (commentsCount == 0) commentsCount = parseInt(json['commentsCount']);
+      if (commentsCount == 0) commentsCount = parseInt(json['commentCount']);
+      if (commentsCount == 0) commentsCount = parseInt(json['replyCount']);
+    }
+
     return Post(
       id: json['id'] ?? 0,
       content: json['content'] ?? '',
@@ -33,7 +55,8 @@ class Post {
               .toList() ??
           [],
       totalLikes: json['totalLikes'] ?? 0,
-      totalComments: json['totalComments'] ?? 0,
+      totalComments: commentsCount,
+      isLiked: json['isLiked'] ?? json['liked'] ?? false,
     );
   }
 }

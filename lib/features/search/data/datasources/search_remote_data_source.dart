@@ -1,14 +1,16 @@
 import '../../../../core/network/api_client.dart';
-import '../../../../models/user_model.dart';
-import '../../../../models/post_model.dart';
 import '../../../auth/domain/auth_domain.dart' as auth;
 import '../../../posts/domain/entities/post_entity.dart' as post_entity;
-import '../../../channels/domain/entities/channel_entity.dart'; // For mapping in post if needed
+import '../../../jobs/domain/entities/job_entity.dart';
+import '../../../events/domain/entities/event_entity.dart';
+import '../models/search_dto.dart';
 
 abstract class SearchRemoteDataSource {
+  Future<SearchResultDto> searchCombined(String query, {String? type});
   Future<List<auth.User>> searchUsers(String query);
   Future<List<post_entity.Post>> searchPosts(String query);
-  // Add other types like Jobs, Events if needed
+  Future<List<Job>> searchJobs(String query);
+  Future<List<Event>> searchEvents(String query);
 }
 
 class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
@@ -17,62 +19,49 @@ class SearchRemoteDataSourceImpl implements SearchRemoteDataSource {
   SearchRemoteDataSourceImpl(this.apiClient);
 
   @override
-  Future<List<auth.User>> searchUsers(String query) async {
+  Future<SearchResultDto> searchCombined(String query, {String? type}) async {
     try {
-      final response = await apiClient.dio.get('/api/search/users', queryParameters: {'q': query});
-      // Assuming response is List or Page
-      final data = response.data;
-      if (data is List) {
-        return data.map((e) => _mapUser(User.fromJson(e))).toList();
-      } else if (data['content'] != null) {
-        return (data['content'] as List).map((e) => _mapUser(User.fromJson(e))).toList();
+      final queryParams = {'q': query};
+      if (type != null) {
+        queryParams['type'] = type;
       }
-      return [];
+      final response = await apiClient.dio.get('/search', queryParameters: queryParams);
+      return SearchResultDto.fromJson(response.data);
     } catch (e) {
-      print('Search Users Error: $e');
-      return [];
+      print('Combined Search Error: $e');
+      return SearchResultDto(
+        users: [],
+        posts: [],
+        events: [],
+        jobs: [],
+        totalResults: 0,
+        query: query,
+      );
     }
   }
 
   @override
+  Future<List<auth.User>> searchUsers(String query) async {
+    final result = await searchCombined(query, type: 'USER');
+    return result.users.map((e) => e.toUserEntity()).toList();
+  }
+
+  @override
   Future<List<post_entity.Post>> searchPosts(String query) async {
-    try {
-      final response = await apiClient.dio.get('/api/search/posts', queryParameters: {'q': query});
-      final data = response.data;
-      if (data is List) {
-        return data.map((e) => _mapPost(Post.fromJson(e))).toList();
-      } else if (data['content'] != null) {
-         return (data['content'] as List).map((e) => _mapPost(Post.fromJson(e))).toList();
-      }
-      return [];
-    } catch (e) {
-      print('Search Posts Error: $e');
-      return [];
-    }
+    final result = await searchCombined(query, type: 'POST');
+    return result.posts.map((e) => e.toPostEntity()).toList();
   }
 
-  auth.User _mapUser(User u) {
-    return auth.User(
-      id: u.id,
-      email: u.email,
-      name: u.name,
-      username: u.username,
-      bio: u.bio,
-      profilePictureUrl: u.profilePictureUrl, // Fix: Ensure User model has this field or map correctly
-      isMentor: u.isMentor ?? false,
-    );
+  @override
+  Future<List<Job>> searchJobs(String query) async {
+    final result = await searchCombined(query, type: 'JOB');
+    return result.jobs.map((e) => e.toJobEntity()).toList();
   }
 
-  post_entity.Post _mapPost(Post p) {
-     return post_entity.Post(
-      id: p.id,
-      content: p.content,
-      createdAt: p.createdAt,
-      totalLikes: p.totalLikes,
-      totalComments: p.totalComments,
-      user: p.user != null ? _mapUser(p.user!) : null,
-      channel: null, // Simplified for search
-      media: p.media.map((m) => post_entity.Media(id: m.id, url: m.url, type: m.type)).toList(),
-    );
+  @override
+  Future<List<Event>> searchEvents(String query) async {
+    final result = await searchCombined(query, type: 'EVENT');
+    return result.events.map((e) => e.toEventEntity()).toList();
   }
 }
+

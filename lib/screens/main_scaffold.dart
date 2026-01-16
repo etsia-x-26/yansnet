@@ -4,7 +4,6 @@ import 'feed_screen.dart';
 import 'network_screen.dart';
 import 'events_screen.dart';
 import 'messages_screen.dart';
-import 'profile_screen.dart';
 
 import 'jobs_screen.dart';
 import 'package:provider/provider.dart';
@@ -35,7 +34,6 @@ class _MainScaffoldState extends State<MainScaffold> {
     const JobsScreen(), // Added Jobs
     const EventsScreen(),
     const MessagesScreen(),
-    const ProfileScreen(),
   ];
 
   void _onTabTapped(int index) {
@@ -69,36 +67,33 @@ class _MainScaffoldState extends State<MainScaffold> {
           unselectedItemColor: Colors.grey[400],
           selectedLabelStyle: GoogleFonts.plusJakartaSans(fontSize: 10, fontWeight: FontWeight.bold),
           unselectedLabelStyle: GoogleFonts.plusJakartaSans(fontSize: 10, fontWeight: FontWeight.w500),
-          showSelectedLabels: true,
-          showUnselectedLabels: true,
+          showSelectedLabels: false,
+          showUnselectedLabels: false,
           items: const [
             BottomNavigationBarItem(
-              icon: Icon(Icons.home_filled), 
+              icon: Icon(Icons.home_outlined, size: 28), 
+              activeIcon: Icon(Icons.home_filled, size: 28),
               label: 'Home',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.people_alt_outlined),
+              icon: Icon(Icons.people_outline, size: 28),
+              activeIcon: Icon(Icons.people_alt, size: 28),
               label: 'Network',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.work_outline), // Jobs Icon
+              icon: Icon(Icons.work_outline, size: 28), // Jobs Icon
+              activeIcon: Icon(Icons.work, size: 28),
               label: 'Jobs',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.calendar_today),
+              icon: Icon(Icons.calendar_today_outlined, size: 28),
+              activeIcon: Icon(Icons.calendar_month, size: 28),
               label: 'Events',
             ),
             BottomNavigationBarItem(
-              icon: Icon(Icons.mail_outline),
+              icon: Icon(Icons.send_outlined, size: 28),
+              activeIcon: Icon(Icons.send, size: 28),
               label: 'Messages',
-            ),
-            // Profile is accessed via Avatar in AppBar usually, or we keep it here. 
-            // 6 items might be too many for labels. 
-            // Let's remove Profile from BottomBar if we have 6, or keep it.
-            // But _screens has 6 items now including Profile.
-             BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-              label: 'Profile',
             ),
           ],
         ),

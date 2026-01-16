@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:stomp_dart_client/stomp_dart_client.dart';
 
 class WebSocketService {
-  final String _url = 'ws://yansnetapi.enlighteninnovation.com/ws';
+  final String _url = 'wss://yansnetapi.enlighteninnovation.com/ws';
   StompClient? _client;
   
   void Function(Map<String, dynamic>)? onMessageReceived;

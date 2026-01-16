@@ -15,6 +15,11 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
+  Future<List<Post>> getFollowingFeed({int page = 0, int size = 10}) {
+    return remoteDataSource.getFollowingFeed(page: page, size: size);
+  }
+
+  @override
   Future<List<Post>> getPostsByUser(int userId, {int page = 0, int size = 10}) {
     return remoteDataSource.getPostsByUser(userId, page: page, size: size);
   }
@@ -52,5 +57,10 @@ class PostRepositoryImpl implements PostRepository {
   @override
   Future<void> deletePost(int postId) async {
     await remoteDataSource.deletePost(postId);
+  }
+
+  @override
+  Future<Post> updatePost(int postId, String content) {
+    return remoteDataSource.updatePost(postId, content);
   }
 }

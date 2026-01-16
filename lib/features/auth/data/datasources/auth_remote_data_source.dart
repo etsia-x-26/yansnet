@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import '../../../../core/network/api_client.dart';
 import '../../domain/auth_domain.dart';
 import '../../../../models/user_model.dart' as u_model; 
@@ -6,7 +5,7 @@ import '../../../../models/user_model.dart' as u_model;
 abstract class AuthRemoteDataSource {
   Future<AuthResponse> login(String email, String password);
   Future<AuthResponse> register(String name, String username, String email, String password);
-  Future<void> logout();
+  Future<void> logout(int userId);
   Future<User> getUser(int id);
   Future<User> updateUser(int id, {String? name, String? bio, String? profilePictureUrl});
 }
@@ -45,11 +44,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<void> logout() async {
-    final userId = await apiClient.storage.read(key: 'user_id');
-    if (userId != null) {
-      await apiClient.dio.post('/auth/logout', data: {'userId': int.tryParse(userId)});
-    }
+  Future<void> logout(int userId) async {
+    await apiClient.dio.post('/auth/logout', data: {'userId': userId});
   }
 
   @override
@@ -63,7 +59,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<User> updateUser(int id, {String? name, String? bio, String? profilePictureUrl}) async {
      // Assuming id usage or just current user context
      final data = <String, dynamic>{
-       'userId': id, // Some APIs need explicit Id in body
+       'id': id, // Changed from userId to id to match UserUpdateDto
      };
      if (name != null) data['name'] = name;
      if (bio != null) data['bio'] = bio;
@@ -83,6 +79,9 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       bio: userModel.bio,
       profilePictureUrl: userModel.profilePictureUrl,
       isMentor: userModel.isMentor,
+      totalFollowers: userModel.totalFollowers,
+      totalFollowing: userModel.totalFollowing,
+      totalPosts: userModel.totalPosts,
     );
   }
 

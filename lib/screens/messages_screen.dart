@@ -5,7 +5,8 @@ import '../features/chat/presentation/providers/chat_provider.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
 import 'chat_detail_screen.dart';
 import '../features/channels/presentation/providers/channels_provider.dart';
-import 'search_screen.dart';
+import '../features/chat/presentation/screens/new_chat_screen.dart';
+import 'user_search_screen.dart';
 
 class MessagesScreen extends StatefulWidget {
   const MessagesScreen({super.key});
@@ -36,48 +37,60 @@ class _MessagesScreenState extends State<MessagesScreen> with SingleTickerProvid
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xFFF8F9FA), // Off-white background
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: false,
         title: Text(
           'Messages',
           style: GoogleFonts.plusJakartaSans(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
+            color: const Color(0xFF1A1D1E),
+            fontWeight: FontWeight.w800,
+            fontSize: 24,
           ),
         ),
         actions: [
           IconButton(
             onPressed: () {
-               Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchScreen()));
+               Navigator.push(context, MaterialPageRoute(builder: (_) => const UserSearchScreen()));
             },
-            icon: const Icon(Icons.search, color: Colors.black),
+            icon: const Icon(Icons.search, color: Colors.black, size: 24),
           ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.more_vert, color: Colors.black),
-          ),
+          const SizedBox(width: 8),
         ],
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(48),
+          preferredSize: const Size.fromHeight(56),
           child: Container(
-            decoration: const BoxDecoration(
-              border: Border(bottom: BorderSide(color: Color(0xFFEFF3F4))),
-            ),
-            child: TabBar(
-              controller: _tabController,
-              labelColor: Colors.black,
-              unselectedLabelColor: Colors.grey,
-              indicatorColor: const Color(0xFF1313EC),
-              indicatorSize: TabBarIndicatorSize.label,
-              labelStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold, fontSize: 14),
-              tabs: const [
-                Tab(text: 'Direct'),
-                Tab(text: 'Channels'),
-              ],
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: Container(
+              height: 40,
+              decoration: BoxDecoration(
+                color: const Color(0xFFEFF3F4),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: TabBar(
+                controller: _tabController,
+                indicator: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(color: Colors.black.withOpacity(0.08), blurRadius: 4, offset: const Offset(0, 2)),
+                  ]
+                ),
+                labelColor: const Color(0xFF1A1D1E),
+                unselectedLabelColor: Colors.grey[600],
+                labelStyle: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.bold, fontSize: 13),
+                dividerColor: Colors.transparent,
+                indicatorSize: TabBarIndicatorSize.tab,
+                padding: const EdgeInsets.all(4),
+                tabs: const [
+                  Tab(text: 'Direct'),
+                  Tab(text: 'Channels'),
+                ],
+              ),
             ),
           ),
         ),
@@ -90,22 +103,12 @@ class _MessagesScreenState extends State<MessagesScreen> with SingleTickerProvid
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showNewChatDialog,
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (_) => const NewChatScreen()));
+        },
         backgroundColor: const Color(0xFF1313EC),
-        child: const Icon(Icons.add_comment_outlined, color: Colors.white),
-      ),
-    );
-  }
-
-  void _showNewChatDialog() {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('New Message'),
-        content: const Text('Select a user to chat with from "My Network" tab for now.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('OK'))
-        ],
+        elevation: 4,
+        child: const Icon(Icons.edit_note_rounded, color: Colors.white, size: 28),
       ),
     );
   }
@@ -114,42 +117,73 @@ class _MessagesScreenState extends State<MessagesScreen> with SingleTickerProvid
     return Consumer<ChatProvider>(
       builder: (context, provider, child) {
         if (provider.isLoadingConversations && provider.conversations.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(color: Color(0xFF1313EC)));
         }
 
         if (provider.conversations.isEmpty) {
-          return const Center(child: Text("No conversations yet"));
+          return Center(
+             child: Column(
+               mainAxisAlignment: MainAxisAlignment.center,
+               children: [
+                 Icon(Icons.chat_bubble_outline_rounded, size: 60, color: Colors.grey[300]),
+                 const SizedBox(height: 16),
+                 Text("No messages yet", style: GoogleFonts.plusJakartaSans(color: Colors.grey[500], fontWeight: FontWeight.bold, fontSize: 18)),
+                 const SizedBox(height: 8),
+                 Container(
+                   margin: const EdgeInsets.symmetric(horizontal: 40),
+                   child: Text(
+                     "Start a new chat by tapping the button below.", 
+                     textAlign: TextAlign.center,
+                     style: GoogleFonts.plusJakartaSans(color: Colors.grey[400], fontSize: 14)
+                  ),
+                 ),
+               ],
+             )
+          );
         }
 
-        return ListView.separated(
+        return ListView.builder(
           itemCount: provider.conversations.length,
-          separatorBuilder: (c, i) => const Divider(height: 1, indent: 72, color: Color(0xFFEFF3F4)),
+          padding: const EdgeInsets.symmetric(vertical: 0),
           itemBuilder: (context, index) {
             final conversation = provider.conversations[index];
-            final currentUserId = Provider.of<AuthProvider>(context, listen: false).currentUser?.id;
+            final currentUserId = context.watch<AuthProvider>().currentUser?.id;
             final otherUser = conversation.getOtherUser(currentUserId ?? 0);
             final lastMsg = conversation.lastMessage;
+            
+            // Determine Title and Image
+            final title = conversation.type == 'GROUP' 
+                ? (conversation.title ?? "Group Chat") 
+                : (otherUser?.name ?? "Unknown");
+            final imageUrl = conversation.type == 'GROUP' ? null : otherUser?.profilePictureUrl;
 
             return InkWell(
               onTap: () {
-                if (otherUser != null) {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => 
-                    ChatDetailScreen(conversationId: conversation.id, otherUserName: otherUser.name)
-                  ));
-                }
+                Navigator.push(context, MaterialPageRoute(builder: (_) => 
+                  ChatDetailScreen(
+                    conversation: conversation,
+                    otherUser: otherUser,
+                  )
+                ));
               },
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                 child: Row(
                   children: [
                     CircleAvatar(
-                      radius: 24,
-                      backgroundColor: Colors.grey,
-                      backgroundImage: otherUser?.profilePictureUrl != null 
-                        ? NetworkImage(otherUser!.profilePictureUrl!) as ImageProvider
-                        : const AssetImage('assets/images/onboarding_welcome.png'),
+                      radius: 26,
+                      backgroundColor: Colors.grey[200],
+                      backgroundImage: imageUrl != null && imageUrl.isNotEmpty
+                        ? NetworkImage(imageUrl)
+                        : null,
+                      child: (imageUrl == null || imageUrl.isEmpty)
+                        ? (conversation.type == 'GROUP' 
+                            ? const Icon(Icons.group, color: Colors.grey)
+                            : Text(title.isNotEmpty ? title[0].toUpperCase() : '?', 
+                                style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.grey, fontSize: 18)))
+                        : null,
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(width: 16),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -157,33 +191,78 @@ class _MessagesScreenState extends State<MessagesScreen> with SingleTickerProvid
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                otherUser?.name ?? 'Unknown',
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  color: Colors.black,
+                              Expanded(
+                                child: Text(
+                                  title,
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontWeight: conversation.unreadCount > 0 ? FontWeight.bold : FontWeight.w600,
+                                    fontSize: 16,
+                                    color: const Color(0xFF1A1D1E),
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
-                              if (lastMsg != null)
-                                Text(
-                                  _formatTime(lastMsg.createdAt),
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 11,
-                                    color: Colors.grey,
+                                if (lastMsg != null)
+                                  Text(
+                                    _formatTime(lastMsg.createdAt),
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 12,
+                                      color: conversation.unreadCount > 0 ? const Color(0xFF1313EC) : Colors.grey[500],
+                                      fontWeight: conversation.unreadCount > 0 ? FontWeight.bold : FontWeight.w500,
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      if (lastMsg?.senderId == currentUserId)
+                                        Padding(
+                                          padding: const EdgeInsets.only(right: 4.0),
+                                          child: Icon(Icons.done_all, size: 16, color: Colors.grey[400]), // Static double check
+                                        ),
+                                      Expanded(
+                                        child: Text(
+                                          lastMsg?.type == 'IMAGE' 
+                                              ? "📷 Photo" 
+                                              : (lastMsg?.content ?? 'Start a conversation'),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: GoogleFonts.plusJakartaSans(
+                                            color: Colors.grey[600],
+                                            fontSize: 14,
+                                            fontWeight: conversation.unreadCount > 0 ? FontWeight.w600 : FontWeight.w400,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (conversation.unreadCount > 0)
+                                  Container(
+                                    margin: const EdgeInsets.only(left: 8),
+                                    padding: const EdgeInsets.all(6),
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF1313EC),
+                                      shape: BoxShape.circle,
+                                    ),
+                                  constraints: const BoxConstraints(minWidth: 22, minHeight: 22),
+                                  child: Center(
+                                    child: Text(
+                                      conversation.unreadCount.toString(),
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
                                   ),
                                 ),
                             ],
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            lastMsg?.content ?? 'Start a conversation',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.plusJakartaSans(
-                              color: Colors.grey[600],
-                              fontSize: 13,
-                            ),
                           ),
                         ],
                       ),
@@ -199,83 +278,88 @@ class _MessagesScreenState extends State<MessagesScreen> with SingleTickerProvid
   }
 
   String _formatTime(DateTime time) {
-    // Simple formatter, can use intl package
-    return "${time.hour}:${time.minute.toString().padLeft(2, '0')}";
+    // Simple formatter, typically '12:30 PM' or 'Yesterday'
+    // For now, HH:MM
+    final now = DateTime.now();
+    if (now.day == time.day && now.year == time.year && now.month == time.month) {
+       return "${time.hour}:${time.minute.toString().padLeft(2, '0')}";
+    }
+    return "${time.day}/${time.month}";
   }
 
   Widget _buildChannelsList() {
     return Consumer<ChannelsProvider>(
       builder: (context, provider, child) {
         if (provider.isLoading && provider.channels.isEmpty) {
-          return const Center(child: CircularProgressIndicator());
+          return const Center(child: CircularProgressIndicator(color: Color(0xFF1313EC)));
         }
         if (provider.channels.isEmpty) {
-           return const Center(child: Text('No channels joined yet.'));
+           return Center(child: Text('No channels joined yet.', style: GoogleFonts.plusJakartaSans(color: Colors.grey)));
         }
         
         final channels = provider.channels;
 
-    return ListView.separated(
-      itemCount: channels.length,
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      separatorBuilder: (c, i) => const Divider(height: 1, indent: 72, color: Color(0xFFEFF3F4)),
-      itemBuilder: (context, index) {
-        final channel = channels[index];
-        return InkWell(
-          onTap: () {},
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF1313EC).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12), // Squircle for channels
-                  ),
-                  child: Center(
-                    child: Text(
-                      '#',
-                      style: GoogleFonts.plusJakartaSans(
-                        color: const Color(0xFF1313EC),
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
+        return ListView.separated(
+          itemCount: channels.length,
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          separatorBuilder: (c, i) => const SizedBox(height: 0),
+          itemBuilder: (context, index) {
+            final channel = channels[index];
+            return InkWell(
+              onTap: () {},
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEFF3F4),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Center(
+                        child: Text(
+                          '#',
+                          style: GoogleFonts.plusJakartaSans(
+                            color: const Color(0xFF1313EC),
+                            fontSize: 24,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '#${channel.title}',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                          color: Colors.black,
-                        ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            channel.title,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: const Color(0xFF1A1D1E),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            '${channel.totalFollowers} members',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 13,
+                              color: Colors.grey[500],
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '${channel.title} • ${channel.totalFollowers} members',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                    Icon(Icons.arrow_forward_ios_rounded, size: 16, color: Colors.grey[300]),
+                  ],
                 ),
-                const Icon(Icons.arrow_forward_ios, size: 14, color: Colors.grey),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
-      },
-    );
       },
     ); 
   }

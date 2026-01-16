@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
+import 'package:video_compress/video_compress.dart'; 
 import '../features/posts/presentation/providers/feed_provider.dart';
 import '../features/auth/presentation/providers/auth_provider.dart';
 import '../core/error/error_handler.dart';
@@ -18,16 +19,8 @@ class CreatePostScreen extends StatefulWidget {
 class _CreatePostScreenState extends State<CreatePostScreen> {
   final TextEditingController _contentController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
-  List<XFile> _selectedMedia = [];
+  final List<PickedMedia> _selectedMedia = [];
   bool _isPosting = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _contentController.addListener(() {
-      setState(() {});
-    });
-  }
 
   @override
   void dispose() {
@@ -38,24 +31,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   Future<void> _pickImage() async {
     try {
       final List<XFile> images = await _picker.pickMultiImage(
-        imageQuality: 70, // Basic compression
         maxWidth: 1920,
         maxHeight: 1920,
       );
 
       if (images.isNotEmpty) {
-        List<XFile> compressedImages = [];
-        for (var image in images) {
-          // Further compression if needed, but image_picker quality is usually consistent.
-          // We'll rely on image_picker's quality param for now to avoid complexity with
-          // async loops and temporary files, which is cleaner. 
-          // However, user specifically asked for "compress/minimise", so let's check file size if possible.
-          // For now, imageQuality: 70 is a strong reduction.
-          compressedImages.add(image);
-        }
-        
         setState(() {
-          _selectedMedia.addAll(compressedImages);
+          _selectedMedia.addAll(images.map((img) => PickedMedia(file: img)));
         });
       }
     } catch (e) {
@@ -67,13 +49,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
      try {
       final XFile? video = await _picker.pickVideo(
         source: ImageSource.gallery,
-        maxDuration: const Duration(minutes: 5), // Limit duration
+        maxDuration: const Duration(minutes: 5),
       );
       if (video != null) {
-        // TODO: Implement video compression if file size is too large
-        // For now, relying on native OS compression during pick if available or maxDuration
+        // Start thumbnail generation immediately and cache the future
+        final future = VideoCompress.getFileThumbnail(video.path);
         setState(() {
-          _selectedMedia.add(video);
+          _selectedMedia.add(PickedMedia(file: video, thumbnailFuture: future));
         });
       }
     } catch (e) {
@@ -101,8 +83,28 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
       // Upload media first
       if (_selectedMedia.isNotEmpty) {
-        for (var file in _selectedMedia) {
-          final url = await provider.uploadMedia(File(file.path));
+        for (var item in _selectedMedia) {
+          File fileToUpload = File(item.file.path);
+          
+          // Compress video if applicable
+          final isVideo = item.file.path.toLowerCase().endsWith('.mp4') || 
+                          item.file.path.toLowerCase().endsWith('.mov');
+          if (isVideo) {
+             try {
+               final mediaInfo = await VideoCompress.compressVideo(
+                  item.file.path,
+                  quality: VideoQuality.MediumQuality, 
+                  deleteOrigin: false,
+               );
+               if (mediaInfo?.file != null) {
+                 fileToUpload = mediaInfo!.file!;
+               }
+             } catch (e) {
+               print("Compression failed: $e, uploading original.");
+             }
+          }
+
+          final url = await provider.uploadMedia(fileToUpload);
           if (url != null) {
             uploadedUrls.add(url);
           } else {
@@ -141,10 +143,10 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   @override
   Widget build(BuildContext context) {
     final user = context.watch<AuthProvider>().currentUser;
-    final canPost = _contentController.text.trim().isNotEmpty || _selectedMedia.isNotEmpty;
 
     return Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false, // Fix lag
       appBar: AppBar(
         title: Text(
           'New Post',
@@ -161,26 +163,37 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           icon: const Icon(Icons.close, color: Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(color: Colors.grey[100], height: 1.0),
+        ),
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: Center(
               child: SizedBox(
                 height: 32,
-                child: ElevatedButton(
-                  onPressed: (canPost && !_isPosting) ? _submitPost : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1313EC),
-                    foregroundColor: Colors.white,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)), // Pill shape
-                    padding: const EdgeInsets.symmetric(horizontal: 20),
-                    disabledBackgroundColor: const Color(0xFFEFF3F4),
-                    disabledForegroundColor: Colors.grey,
-                  ),
-                  child: _isPosting 
-                    ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) 
-                    : Text('Post', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 13)),
+                child: ValueListenableBuilder<TextEditingValue>(
+                  valueListenable: _contentController,
+                  builder: (context, value, child) {
+                    final canPost = value.text.trim().isNotEmpty || _selectedMedia.isNotEmpty;
+                    
+                    return ElevatedButton(
+                      onPressed: (canPost && !_isPosting) ? _submitPost : null,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1313EC),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        disabledBackgroundColor: const Color(0xFFEFF3F4),
+                        disabledForegroundColor: Colors.grey,
+                      ),
+                      child: _isPosting 
+                        ? const SizedBox(width: 14, height: 14, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)) 
+                        : Text('Post', style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w700, fontSize: 13)),
+                    );
+                  },
                 ),
               ),
             ),
@@ -191,7 +204,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: EdgeInsets.fromLTRB(16, 12, 16, MediaQuery.of(context).viewInsets.bottom + 80),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -306,15 +319,20 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                     style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8)),
                  ),
                  const Spacer(),
-                 // Char count circular indicator could be nice here instead of text
+                 // Char count
                  SizedBox(
                    width: 20,
                    height: 20,
-                   child: CircularProgressIndicator(
-                     value: _contentController.text.length / 280,
-                     backgroundColor: Colors.grey[100],
-                     color: _contentController.text.length > 280 ? Colors.red : const Color(0xFF1313EC),
-                     strokeWidth: 3,
+                   child: ValueListenableBuilder<TextEditingValue>(
+                     valueListenable: _contentController,
+                     builder: (context, value, _) {
+                       return CircularProgressIndicator(
+                         value: value.text.length / 280,
+                         backgroundColor: Colors.grey[100],
+                         color: value.text.length > 280 ? Colors.red : const Color(0xFF1313EC),
+                         strokeWidth: 3,
+                       );
+                     },
                    ),
                  ),
               ],
@@ -347,14 +365,26 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
     );
   }
 
-  Widget _buildSingleMedia(XFile file, int index) {
-      final isVideo = file.path.toLowerCase().endsWith('.mp4') || 
-                      file.path.toLowerCase().endsWith('.mov');
+  Widget _buildSingleMedia(PickedMedia item, int index) {
+      final isVideo = item.file.path.toLowerCase().endsWith('.mp4') || 
+                      item.file.path.toLowerCase().endsWith('.mov');
       
       return Stack(
         fit: StackFit.expand,
         children: [
-          Image.file(File(file.path), fit: BoxFit.cover),
+          if (isVideo && item.thumbnailFuture != null)
+             FutureBuilder<File>(
+               future: item.thumbnailFuture, // Use cached future
+               builder: (context, snapshot) {
+                 if (snapshot.connectionState == ConnectionState.done && snapshot.data != null) {
+                   return Image.file(snapshot.data!, fit: BoxFit.cover);
+                 }
+                 return Container(color: Colors.black12, child: const Center(child: CircularProgressIndicator()));
+               },
+             )
+          else
+            Image.file(File(item.file.path), fit: BoxFit.cover),
+            
           if (isVideo)
             const Center(child: Icon(Icons.play_circle_fill, size: 48, color: Colors.white70)),
           Positioned(
@@ -375,7 +405,13 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
         ],
       );
   }
+}
 
+class PickedMedia {
+  final XFile file;
+  final Future<File>? thumbnailFuture;
+
+  PickedMedia({required this.file, this.thumbnailFuture});
 }
 
 

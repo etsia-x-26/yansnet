@@ -93,9 +93,25 @@ class _CreateEventScreenState extends State<CreateEventScreen> {
 
       String? imageUrl;
       if (_selectedImage != null) {
-        imageUrl = await context.read<FeedProvider>().uploadMedia(File(_selectedImage!.path));
+        final file = File(_selectedImage!.path);
+        if (!await file.exists()) {
+           if (mounted) DialogUtils.showError(context, 'Selected image file not found');
+           setState(() => _isSubmitting = false);
+           return;
+        }
+
+        try {
+          // Explicitly specifying the folder logic if needed, but for now we trust the provider
+          // We can also add a loading indicator specifically for upload if needed
+          imageUrl = await context.read<FeedProvider>().uploadMedia(file);
+        } catch (e) {
+          if (mounted) DialogUtils.showError(context, 'Upload exception: $e');
+          setState(() => _isSubmitting = false);
+          return;
+        }
+
         if (imageUrl == null && mounted) {
-           DialogUtils.showError(context, 'Failed to upload image. Please try again.');
+           DialogUtils.showError(context, 'Failed to upload image. Server returned null.');
            setState(() => _isSubmitting = false);
            return;
         }

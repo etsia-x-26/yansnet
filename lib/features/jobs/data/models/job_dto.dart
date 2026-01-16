@@ -9,6 +9,9 @@ class JobDto {
   final String type;
   final String postedAt;
   final String? bannerUrl;
+  final String? applicationUrl;
+  final String? salary;
+  final String? deadline;
 
   JobDto({
     required this.id,
@@ -19,6 +22,9 @@ class JobDto {
     required this.type,
     required this.postedAt,
     this.bannerUrl,
+    this.applicationUrl,
+    this.salary,
+    this.deadline,
   });
 
   factory JobDto.fromJson(Map<String, dynamic> json) {
@@ -26,11 +32,14 @@ class JobDto {
       id: json['id'] ?? 0,
       title: json['title'] ?? '',
       description: json['description'] ?? '',
-      companyName: json['companyName'] ?? '',
+      companyName: json['publisherName'] ?? json['companyName'] ?? '',
       location: json['location'] ?? '',
       type: json['type'] ?? 'FULL_TIME',
-      postedAt: json['postedAt'] ?? DateTime.now().toIso8601String(),
+      postedAt: json['createdAt'] ?? json['postedAt'] ?? DateTime.now().toIso8601String(),
       bannerUrl: json['bannerUrl'],
+      applicationUrl: json['applicationUrl'],
+      salary: json['salary'],
+      deadline: json['deadline'],
     );
   }
 
@@ -44,6 +53,9 @@ class JobDto {
       type: type,
       postedAt: DateTime.tryParse(postedAt) ?? DateTime.now(),
       bannerUrl: bannerUrl,
+      applicationUrl: applicationUrl,
+      salary: salary,
+      deadline: deadline != null ? DateTime.tryParse(deadline!) : null,
     );
   }
 }

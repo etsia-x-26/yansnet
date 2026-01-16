@@ -19,12 +19,17 @@ class ChatRepositoryImpl implements ChatRepository {
   }
 
   @override
-  Future<Message> sendMessage(int conversationId, String content) {
-    return remoteDataSource.sendMessage(conversationId, content);
+  Future<Message> sendMessage(int conversationId, String content, int userId, {String? type, String? url}) async {
+    return await remoteDataSource.sendMessage(conversationId, content, userId, type: type, url: url);
   }
 
   @override
   Future<Conversation> createConversation(int otherUserId) {
     return remoteDataSource.createConversation(otherUserId);
+  }
+
+  @override
+  Future<Conversation> createGroupConversation(List<int> participantIds, String name) {
+    return remoteDataSource.createGroupConversation(participantIds, name);
   }
 }

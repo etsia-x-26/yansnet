@@ -35,7 +35,15 @@ class EventRemoteDataSourceImpl implements EventRemoteDataSource {
 
   @override
   Future<void> rsvpEvent(int eventId) async {
-    await apiClient.dio.post('/api/events/$eventId/rsvp');
+    final userIdStr = await apiClient.storage.read(key: 'user_id');
+    final userId = userIdStr != null ? int.parse(userIdStr) : 0;
+    await apiClient.dio.post(
+      '/api/events/$eventId/rsvp',
+      queryParameters: {
+        'userId': userId,
+        'status': 'GOING',
+      },
+    );
   }
 
   @override

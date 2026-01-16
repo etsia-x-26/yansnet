@@ -7,6 +7,8 @@ class MessageDto {
   final int senderId;
   final DateTime createdAt;
   final bool isRead;
+  final String? type;
+  final String? url;
 
   MessageDto({
     required this.id,
@@ -15,6 +17,8 @@ class MessageDto {
     required this.senderId,
     required this.createdAt,
     this.isRead = false,
+    this.type,
+    this.url,
   });
 
   factory MessageDto.fromJson(Map<String, dynamic> json) {
@@ -25,6 +29,8 @@ class MessageDto {
       senderId: json['senderId'] ?? 0,
       createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
       isRead: json['read'] ?? false,
+      type: json['type'],
+      url: json['url'],
     );
   }
 
@@ -36,6 +42,9 @@ class MessageDto {
       senderId: senderId,
       createdAt: createdAt,
       isRead: isRead,
+      type: type,
+      url: url,
+      status: MessageStatus.sent,
     );
   }
 }

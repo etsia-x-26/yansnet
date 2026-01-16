@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:provider/provider.dart';
 import '../features/events/presentation/providers/events_provider.dart';
-import '../../features/events/domain/entities/event_entity.dart';
 import 'package:intl/intl.dart';
 import 'event_detail_screen.dart';
 import 'create_event_screen.dart';
@@ -25,6 +24,9 @@ class _EventsScreenState extends State<EventsScreen> {
     });
   }
 
+  bool _isSearching = false;
+  final TextEditingController _searchController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,35 +34,45 @@ class _EventsScreenState extends State<EventsScreen> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        title: Text(
-          'University Events',
-          style: GoogleFonts.plusJakartaSans(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 16,
-          ),
-        ),
+        title: _isSearching
+            ? TextField(
+                controller: _searchController,
+                autofocus: true,
+                decoration: InputDecoration(
+                  hintText: 'Search events...',
+                  hintStyle: GoogleFonts.plusJakartaSans(color: Colors.grey),
+                  border: InputBorder.none,
+                ),
+                style: GoogleFonts.plusJakartaSans(color: Colors.black),
+                textInputAction: TextInputAction.search,
+                onSubmitted: (query) {
+                  context.read<EventsProvider>().searchEvents(query);
+                },
+              )
+            : Text(
+                'University Events',
+                style: GoogleFonts.plusJakartaSans(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.search, color: Colors.black),
+            onPressed: () {
+              setState(() {
+                if (_isSearching) {
+                  _isSearching = false;
+                  _searchController.clear();
+                  context.read<EventsProvider>().searchEvents(''); // Clear search
+                } else {
+                  _isSearching = true;
+                }
+              });
+            },
+            icon: Icon(_isSearching ? Icons.close : Icons.search, color: Colors.black),
           ),
         ],
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(40),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            child: Row(
-              children: [
-                _buildFilterChip('All', true),
-                _buildFilterChip('Career', false),
-                _buildFilterChip('Social', false),
-                _buildFilterChip('Workshops', false),
-              ],
-            ),
-          ),
-        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {

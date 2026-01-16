@@ -4,6 +4,7 @@ import '../../domain/usecases/get_events_usecase.dart';
 import '../../domain/usecases/rsvp_event_usecase.dart';
 import '../../domain/usecases/cancel_rsvp_usecase.dart';
 import '../../domain/usecases/create_event_usecase.dart';
+import '../../../../features/search/domain/repositories/search_repository.dart';
 
 class EventsProvider extends ChangeNotifier {
   final GetEventsUseCase getEventsUseCase;
@@ -15,11 +16,14 @@ class EventsProvider extends ChangeNotifier {
   bool _isLoading = false;
   String? _error;
 
+  final SearchRepository searchRepository;
+
   EventsProvider({
     required this.getEventsUseCase,
     required this.rsvpEventUseCase,
     required this.cancelRsvpUseCase,
     required this.createEventUseCase,
+    required this.searchRepository,
   });
 
   List<Event> get events => _events;
@@ -38,6 +42,27 @@ class EventsProvider extends ChangeNotifier {
       _events = newEvents;
     } catch (e) {
       _error = e.toString();
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> searchEvents(String query) async {
+    if (query.isEmpty) {
+      return loadEvents(refresh: true);
+    }
+
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
+
+    try {
+      final results = await searchRepository.searchEvents(query);
+      _events = results;
+    } catch (e) {
+      _error = e.toString();
+      _events = [];
     } finally {
       _isLoading = false;
       notifyListeners();

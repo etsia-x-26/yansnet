@@ -35,4 +35,9 @@ class NetworkRepositoryImpl implements NetworkRepository {
       reason: model.reason,
     )).toList();
   }
+
+  @override
+  Future<bool> followUser(int followerId, int followedId) {
+    return remoteDataSource.followUser(followerId, followedId);
+  }
 }

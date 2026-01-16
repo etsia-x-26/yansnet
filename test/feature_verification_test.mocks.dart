@@ -392,13 +392,17 @@ class MockSendMessageUseCase extends _i1.Mock
           as _i6.ChatRepository);
 
   @override
-  _i10.Future<_i7.Message> call(int? conversationId, String? content) =>
+  _i10.Future<_i7.Message> call(
+    int? conversationId,
+    String? content,
+    int? userId,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#call, [conversationId, content]),
+            Invocation.method(#call, [conversationId, content, userId]),
             returnValue: _i10.Future<_i7.Message>.value(
               _FakeMessage_6(
                 this,
-                Invocation.method(#call, [conversationId, content]),
+                Invocation.method(#call, [conversationId, content, userId]),
               ),
             ),
           )

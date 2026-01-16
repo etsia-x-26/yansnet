@@ -95,7 +95,7 @@ class _CreateChannelScreenState extends State<CreateChannelScreen> {
                 value: _isPrivate,
                 onChanged: (v) => setState(() => _isPrivate = v),
                 contentPadding: EdgeInsets.zero,
-                activeColor: const Color(0xFF1313EC),
+                activeThumbColor: const Color(0xFF1313EC),
               ),
 
               const SizedBox(height: 32),
